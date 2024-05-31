@@ -104,7 +104,7 @@ abstract class Service
         unset($data['image']);
 
         if ($image) {
-            $imageName = $data['code'].$image->getClientOriginalFileExtension();
+            $imageName = $data['code'].$image->extension();
             $image->move(storage_path($this->_imageLocation), $imageName);
             $data['imageUrl'] = $this->_imageLocation.$imageName;
         }
@@ -136,7 +136,7 @@ abstract class Service
         unset($data['image']);
 
         if ($image) {
-            $imageName = $data['code'].$image->getClientOriginalFileExtension();
+            $imageName = $data['code'].$image->extension();
             $image->move(storage_path($this->_imageLocation), $imageName);
             $data['imageUrl'] = $this->_imageLocation.$imageName;
         }
