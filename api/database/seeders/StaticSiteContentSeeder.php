@@ -2,19 +2,19 @@
 
 namespace Database\Seeders;
 
-use App\Models\Language;
+use App\Models\staticSiteContent;
 use Illuminate\Database\Seeder;
 
-class LanguageSeeder extends Seeder
+class StaticSiteContentSeeder extends Seeder
 {
     /**
      * Run the database seeds.
      */
     public function run(): void
     {
-        $data = ReadFromCsv::getDataFromCsv(storage_path('app/data/csv/languages.csv'), ';');
+        $data = ReadFromCsv::getDataFromCsv(storage_path('app/data/csv/staticSiteContents.csv'), ';');
 
-        $model = new Language();
+        $model = new staticSiteContent();
         foreach ($data as $row) {
             $model->create($row);
         }
