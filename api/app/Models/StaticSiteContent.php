@@ -16,6 +16,7 @@ class staticSiteContent extends Model
     ];
 
     protected $fillable = [
+        'property',
         'lang_code',
         'content'
     ];

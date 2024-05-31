@@ -8,8 +8,6 @@ use Illuminate\Support\MessageBag;
 
 class EventService extends Service
 {
-    protected $_model;
-    protected $_errors;
     protected $_rules = [
         'state' => 'required | in:ONLINE,DRAFT, ARCHIVED',
         'title' => 'required | max:100 | string',

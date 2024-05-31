@@ -5,6 +5,7 @@ use App\Http\Controllers\GeocacheApiController;
 use App\Http\Controllers\JwtAuthController;
 use App\Http\Controllers\LanguageApiController;
 use App\Http\Controllers\MessageApiController;
+use App\Http\Controllers\StaticSiteContentController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -26,8 +27,8 @@ Route::group([
 });
 
 Route::get('geocaches', [GeocacheApiController::class, 'allPublic']);
-
 Route::get('languages', [LanguageApiController::class, 'all']);
+Route::get('static',[StaticSiteContentController::class, 'all']);
 
 // Only needed initially, users are not allowed to self register.
 Route::post('register', [JwtAuthController::class, 'register']);
@@ -67,6 +68,12 @@ Route::group([
             Route::post('messages', 'add');
             Route::put('messages/{id}', 'update');
             Route::delete('messages/{id}', 'delete');
+        });
+
+        Route::controller(StaticSiteContentController::class)->group(function () {
+            Route::post('static', 'add');
+            Route::put('static/{id}', 'update');
+            Route::delete('static/{id}', 'delete');
         });
     });
 });

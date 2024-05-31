@@ -14,9 +14,10 @@ return new class extends Migration
         Schema::create('static_site_contents', function (Blueprint $table) {
             $table->bigIncrements('id');
 
+            $table->foreignId('property')->constrained(table: 'static_site_properties', column: 'property')->onUpdate('cascade')->onDelete('cascade');
             $table->foreignId('lang_code')->constrained(table: 'languages', column: 'code')->onUpdate('cascade')->onDelete('cascade');
             $table->string('content');
-            $table->unique(['lang_code', 'content']);
+            $table->unique(['property','lang_code']);
 
             $table->timestamps();
         });

@@ -1,81 +1,129 @@
-lang_code;content
-nl;startpagina
-nl;evenementen
-nl;geocaches
-nl;contact
-nl;"volg ons op sociale media"
-nl;facebook
-nl;instagram
-nl;"X (Twitter)"
-nl;"kunnen wij u helpen?"
-nl;"Heeft u een vraag? Zit er iets dwars, of wilt u ons gewoon iets vertellen? Dan kan dat via dit kanaal; Mail, schrijf, bel of vul het formulier in."
-nl;naam
-nl;mail
-nl;onderwerp
-nl;bericht
-nl;"post"
-nl;"bel ons"
-nl;"stuur ons een e-mail"
-nl;"er zijn momenteel geen geplande evenementen"
-nl;"evenementen laden"
-nl;"geocaches laden"
-en;home
-en;events
-en;geocaches
-en;contact
-en;"follow us on social media"
-en;facebook
-en;instagram
-en;"X (Twitter)"
-en;"can we help you?"
-en;"Do you have a question? Is something bothering you, or do you simply want to tell us something? Then you can do so through this channel; Mail, write, call or fill out the form."
-en;name
-en;mail
-en;subject
-en;message
-en;"postal mail"
-en;"give us a call"
-en;"send us an e-mail"
-en;"there are no planned events at the moment"
-en;"loading events"
-en;"loading geocaches"
-de;Startseite
-de;Veranstaltungen
-de;Geocaches
-de;Kontakt
-de;"Folgen Sie uns in den sozialen Medien"
-de;Facebook
-de;Instagram
-de;"X (Twitter)"
-de;"Können wir Ihnen helfen?"
-de;"Haben Sie eine Frage? Stört Sie etwas, oder möchten Sie uns einfach etwas mitteilen? Dann können Sie dies über diesen Kanal tun; Mailen, schreiben, anrufen oder das Formular ausfüllen."
-de;Name
-de;Mail
-de;Betreff
-de;Nachricht
-de;"Post"
-de;"Rufen Sie uns an"
-de;"Senden Sie uns eine E-Mail"
-de;"Es sind derzeit keine Veranstaltungen geplant"
-de;"Veranstaltungen werden geladen"
-de;"Geocaches werden geladen"
-fr;Accueil
-fr;Événements
-fr;Géocaches
-fr;Contact
-fr;"suivez-nous sur les réseaux sociaux"
-fr;Facebook
-fr;Instagram
-fr;"X (Twitter)"
-fr;"pouvons-nous vous aider?"
-fr;"Avez-vous une question? Quelque chose vous dérange ou vous souhaitez simplement nous dire quelque chose? Vous pouvez le faire par ce canal; Envoyez un mail, écrivez, appelez ou remplissez le formulaire."
-fr;Nom
-fr;Mail
-fr;Objet
-fr;Message
-fr;"courrier postal"
-fr;"appelez-nous"
-fr;"envoyez-nous un e-mail"
-fr;"il n'y a pas d'événements prévus pour le moment"
-fr;"chargement des événements"
-fr;"chargement des géocaches"
+property;lang_code;content
+navHome;en;home
+navHome;nl;home
+navHome;fr;accueil
+navHome;de;Startseite
+navEvents;en;events
+navEvents;nl;evenementen
+navEvents;fr;événements
+navEvents;de;Veranstaltungen
+navGeocaches;en;geocaches
+navGeocaches;nl;geocaches
+navGeocaches;fr;géocaches
+navGeocaches;de;Geocaches
+navShop;en;shop
+navShop;nl;winkel
+navShop;fr;boutique
+navShop;de;Shop
+formFullName;en;fullname
+formFullName;nl;volledige naam
+formFullName;fr;nom complet
+formFullName;de;vollständiger Name
+formFirstName;en;firstname
+formFirstName;nl;voornaam
+formFirstName;fr;prénom
+formFirstName;de;Vorname
+formLastName;en;lastname
+formLastName;nl;achternaam
+formLastName;fr;nom de famille
+formLastName;de;Nachname
+formMail;en;e-mail
+formMail;nl;e-mail
+formMail;fr;e-mail
+formMail;de;E-Mail
+formPhoneNumber;en;phone number
+formPhoneNumber;nl;telefoonnummer
+formPhoneNumber;fr;numéro de téléphone
+formPhoneNumber;de;Telefonnummer
+formAddress;en;address
+formAddress;nl;adres
+formAddress;fr;adresse
+formAddress;de;Adresse
+formSubject;en;subject
+formSubject;nl;onderwerp
+formSubject;fr;sujet
+formSubject;de;Betreff
+formMessage;en;message
+formMessage;nl;bericht
+formMessage;fr;message
+formMessage;de;Nachricht
+SocialsFollowTxt;en;follow us on social media
+SocialsFollowTxt;nl;volg ons op sociale media
+SocialsFollowTxt;fr;suivez-nous sur les réseaux sociaux
+SocialsFollowTxt;de;folgen Sie uns in den sozialen Medien
+SocialsFacebook;en;facebook
+SocialsFacebook;nl;facebook
+SocialsFacebook;fr;facebook
+SocialsFacebook;de;Facebook
+SocialsInstagram;en;instagram
+SocialsInstagram;nl;instagram
+SocialsInstagram;fr;instagram
+SocialsInstagram;de;Instagram
+SocialsTwitter;en;X (Twitter)
+SocialsTwitter;nl;X (Twitter)
+SocialsTwitter;fr;X (Twitter)
+SocialsTwitter;de;X (Twitter)
+ContactHelpQuestionTxt;en;can we help you?
+ContactHelpQuestionTxt;nl;kunnen wij u helpen?
+ContactHelpQuestionTxt;fr;pouvons-nous vous aider?
+ContactHelpQuestionTxt;de;können wir Ihnen helfen?
+ContactHelpTxt;en;Do you have a question? Is something bothering you, or do you simply want to tell us something? Then you can do so through this channel; Mail, write, call or fill out the form.
+ContactHelpTxt;nl;Heeft u een vraag? Zit er iets dwars, of wilt u ons gewoon iets vertellen? Dan kan dat via dit kanaal; Mail, schrijf, bel of vul het formulier in.
+ContactHelpTxt;fr;Avez-vous une question? Quelque chose vous dérange ou vous souhaitez simplement nous dire quelque chose? Vous pouvez le faire par ce canal; Envoyez un mail, écrivez, appelez ou remplissez le formulaire.
+ContactHelpTxt;de;Haben Sie eine Frage? Stört Sie etwas, oder möchten Sie uns einfach etwas mitteilen? Dann können Sie dies über diesen Kanal tun; Mailen, schreiben, anrufen oder das Formular ausfüllen.
+ContactPostalMailTxt;en;postal mail
+ContactPostalMailTxt;nl;post
+ContactPostalMailTxt;fr;courrier postal
+ContactPostalMailTxt;de;Post
+ContactMailTxt;en;send us an e-mail
+ContactMailTxt;nl;stuur ons een e-mail
+ContactMailTxt;fr;envoyez-nous un e-mail
+ContactMailTxt;de;senden Sie uns eine E-Mail
+ContactCallTxt;en;give us a call
+ContactCallTxt;nl;bel ons
+ContactCallTxt;fr;appelez-nous
+ContactCallTxt;de;rufen Sie uns an
+UILoadingEvents;en;loading events
+UILoadingEvents;nl;evenementen laden
+UILoadingEvents;fr;chargement des événements
+UILoadingEvents;de;Veranstaltungen werden geladen
+UILoadingGeocaches;en;loading geocaches
+UILoadingGeocaches;nl;geocaches laden
+UILoadingGeocaches;fr;chargement des géocaches
+UILoadingGeocaches;de;Geocaches werden geladen
+UILoadingSite;en;loading website content
+UILoadingSite;nl;website-inhoud laden
+UILoadingSite;fr;chargement du contenu du site
+UILoadingSite;de;Website-Inhalt wird geladen
+UINoEvents;en;There are no events planned at the moment
+UINoEvents;nl;Er zijn momenteel geen geplande evenementen
+UINoEvents;fr;Il n'y a pas d'événements prévus pour le moment
+UINoEvents;de;Es sind derzeit keine Veranstaltungen geplant
+UINoEventsSubTxt;en;Check back later or subscribe to our ///a///newsletter///a/// so you won't miss it!
+UINoEventsSubTxt;nl;Kom later terug of abonneer je op onze ///a///nieuwsbrief///a/// zodat je het niet mist!
+UINoEventsSubTxt;fr;Revenez plus tard ou abonnez-vous à notre ///a///newsletter///a/// pour ne pas le manquer!
+UINoEventsSubTxt;de;Schauen Sie später wieder vorbei oder abonnieren Sie unseren ///a///Newsletter///a///, damit Sie es nicht verpassen!
+UINoGeocaches;en;There are no public geocaches at the moment
+UINoGeocaches;nl;Er zijn momenteel geen openbare geocaches
+UINoGeocaches;fr;Il n'y a pas de géocaches publiques pour le moment
+UINoGeocaches;de;Es gibt derzeit keine öffentlichen Geocaches
+UINoEventsSubTxt;en;Check back later
+UINoEventsSubTxt;nl;Kom later terug
+UINoEventsSubTxt;fr;Revenez plus tard
+UINoEventsSubTxt;de;Schauen Sie später wieder vorbei
+ButtonBack;en;back
+ButtonBack;nl;terug
+ButtonBack;fr;retour
+ButtonBack;de;zurück
+ButtonNext;en;next
+ButtonNext;nl;volgende
+ButtonNext;fr;suivant
+ButtonNext;de;weiter
+ButtonConfirm;en;confirm
+ButtonConfirm;nl;bevestigen
+ButtonConfirm;fr;confirmer
+ButtonConfirm;de;bestätigen
+ButtonCancel;en;cancel
+ButtonCancel;nl;annuleren
+ButtonCancel;fr;annuler
+ButtonCancel;de;abbrechen
