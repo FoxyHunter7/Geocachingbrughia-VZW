@@ -19,9 +19,10 @@ return new class extends Migration
             $table->string('title');
             $table->string('geolink');
             $table->string('type');
-            $table->string('location');
+            $table->string('location')->nullable();
             $table->dateTime('start_date');
             $table->dateTime('end_date');
+            $table->string('imageUrl');
 
             $table->timestamps();
         });

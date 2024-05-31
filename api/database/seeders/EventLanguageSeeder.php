@@ -13,7 +13,7 @@ class EventLanguageSeeder extends Seeder
      */
     public function run(): void
     {
-        $data = ReadFromCsv::getDataFromCsv(storage_path('app/data/csv/eventsLanguage.csv'), ';');
+        $data = ReadFromCsv::getDataFromCsv(storage_path('app/data/csv/eventsLanguage.csv'), ';', '/');
 
         $model = new EventLanguage();
         foreach ($data as $row) {

@@ -18,7 +18,7 @@ class EventService extends Service
         'end_date' => 'required|date_format:Y-m-d H:i:s'
     ];
 
-    protected $_fields = ['id', "on_home", 'title', 'geolink', 'type', 'location', 'start_date', 'end_date'];
+    protected $_fields = ['id', "on_home", 'title', 'geolink', 'type', 'location', 'start_date', 'end_date', 'imageUrl'];
     protected $_fieldsAdminOnly = ['state'];
     protected $_searchOn = 'title';
     protected $_defaultSortBy = 'start_date';
