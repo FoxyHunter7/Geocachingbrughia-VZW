@@ -38,6 +38,20 @@ class LanguageApiController
         return ["data" => $language];
     }
 
+    public function update(Request $request, string $lang)
+    {
+        $data = $request->all();
+        $language = $this->_service->update($lang, $data);
+
+        if ($this->_service->hasErrors()) {
+            return [
+                "errors" => $this->_service->getErrors()
+            ];
+        }
+
+        return ["data" => $language];
+    }
+
     public function delete(int $id)
     {
         $deletedLanguage = $this->_service->delete($id);

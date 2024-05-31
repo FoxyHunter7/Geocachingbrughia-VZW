@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\EventApiController;
 use App\Http\Controllers\GeocacheApiController;
+use App\Http\Controllers\ImageController;
 use App\Http\Controllers\JwtAuthController;
 use App\Http\Controllers\LanguageApiController;
 use App\Http\Controllers\MessageApiController;
@@ -29,6 +30,7 @@ Route::group([
 Route::get('geocaches', [GeocacheApiController::class, 'allPublic']);
 Route::get('languages', [LanguageApiController::class, 'all']);
 Route::get('static',[StaticSiteContentController::class, 'all']);
+Route::get('images/{p1}/{filename}', [ImageController::class, 'get'])->name('images');
 
 // Only needed initially, users are not allowed to self register.
 Route::post('register', [JwtAuthController::class, 'register']);

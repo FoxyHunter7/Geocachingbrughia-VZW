@@ -12,14 +12,17 @@ class LanguageService extends Service
     protected $_model;
     protected $_errors;
     protected $_rules = [
-        'state' => 'required | string | max:2'
+        'code' => 'required | string | max:2',
+        'name' => 'required | string',
+        'image' => 'required | images | mimes:jpeg,png,jpg,gif,svg|max:4096'
     ];
 
-    protected $_fields = ['code'];
+    protected $_fields = ['code', 'name', 'imageUrl'];
     protected $_fieldsAdminOnly = [];
     protected $_searchOn = 'code';
     protected $_defaultSortBy = 'code';
     protected $_paginate = false;
+    protected $_imageLocation = 'app/images/langFlags';
 
     public function __construct(Language $model)
     {

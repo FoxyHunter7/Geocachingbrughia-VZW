@@ -18,6 +18,7 @@ abstract class Service
     protected $_searchOn;
     protected $_defaultSortBy = 'created_at';
     protected $_paginate = true;
+    protected $_imageLocation = 'app/images/default';
 
     public function __construct(Model $model)
     {
@@ -99,6 +100,15 @@ abstract class Service
         $translations = $data['translations'] ?? [];
         unset($data['translations']);
 
+        $image = $data['image'] ?? null;
+        unset($data['image']);
+
+        if ($image) {
+            $imageName = $data['code'].$image->getClientOriginalFileExtension();
+            $image->move(storage_path($this->_imageLocation), $imageName);
+            $data['imageUrl'] = $this->_imageLocation.$imageName;
+        }
+
         $item = null;
 
         DB::transaction(function () use ($data, $translations, &$item) {
@@ -121,6 +131,15 @@ abstract class Service
 
         $translations = $data['translations'] ?? [];
         unset($data['translations']);
+
+        $image = $data['image'] ?? null;
+        unset($data['image']);
+
+        if ($image) {
+            $imageName = $data['code'].$image->getClientOriginalFileExtension();
+            $image->move(storage_path($this->_imageLocation), $imageName);
+            $data['imageUrl'] = $this->_imageLocation.$imageName;
+        }
 
         DB::transaction(function () use ($id, $data, $translations) {
             $item = $this->_model->find($id);
