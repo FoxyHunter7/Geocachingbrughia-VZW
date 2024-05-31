@@ -18,7 +18,9 @@ class DatabaseSeeder extends Seeder
             EventLanguageSeeder::class,
             GeocacheSeeder::class,
             MessageSeeder::class,
-            MessageLanguageSeeder::class
+            MessageLanguageSeeder::class,
+            StaticSitePropertiesSeeder::class,
+            StaticSiteContentSeeder::class
         ]);
     }
 }

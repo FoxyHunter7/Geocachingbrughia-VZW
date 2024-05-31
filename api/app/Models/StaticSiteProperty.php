@@ -22,8 +22,8 @@ class StaticSiteProperty extends Model
         'property'
     ];
 
-    public function contents()
-    {
-        return $this->hasMany(staticSiteContent::class);
-    }
+    //public function contents()
+    //{
+    //    return $this->hasMany(staticSiteContent::class);
+    //}
 }

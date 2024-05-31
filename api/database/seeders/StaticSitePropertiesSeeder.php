@@ -12,7 +12,7 @@ class StaticSitePropertiesSeeder extends Seeder
      */
     public function run(): void
     {
-        $data = ReadFromCsv::getDataFromCsv(storage_path('app/data/csv/staticSiteProperties.csv'), ';');
+        $data = ReadFromCsv::getDataFromSingleColumnCsv(storage_path('app/data/csv/staticSiteProperties.csv'));
 
         $model = new StaticSiteProperty();
         foreach ($data as $row) {
