@@ -52,9 +52,14 @@ class LanguageApiController
         return ["data" => $language];
     }
 
-    public function delete(int $id)
+    public function delete(string $lang)
     {
-        $deletedLanguage = $this->_service->delete($id);
+        // TODO: Get default lang from config
+        if ($lang == "NL") {
+            return ["warning", "You cannot delete the default language"];
+        }
+
+        $deletedLanguage = $this->_service->delete($lang);
 
         if ($this->_service->hasErrors()) {
             return [

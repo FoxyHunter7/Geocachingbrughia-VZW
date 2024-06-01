@@ -53,6 +53,11 @@ class StaticSiteContentController
 
     public function delete(int $id)
     {
+        // TODO: Get id of default lang dynamically
+        if ($id == 1) {
+            return ["warning", "You cannot delete the default language"];
+        }
+
         $deletedEvent = $this->_service->delete($id);
 
         if ($this->_service->hasErrors()) {
