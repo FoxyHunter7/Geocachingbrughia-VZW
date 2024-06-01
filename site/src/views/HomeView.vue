@@ -4,7 +4,7 @@ import { watch } from 'vue'
 import { ref } from 'vue'
 import LanguageSelector from '../components/LanguageSelector.vue'
 import Events from '../components/Events.vue'
-import uiTranslations from '../data/uiTranslations.json'
+//import uiTranslations from '../data/uiTranslations.json'
 import { getLanguageFromPath } from '../services/LanguageService.js'
 
 const route = useRoute()

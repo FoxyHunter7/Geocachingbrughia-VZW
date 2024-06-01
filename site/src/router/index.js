@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { defaultLanguage } from '../services/LanguageService'
 import HomeView from '@/views/HomeView.vue'
+import { LanguageProvider } from '@/services/LanguageService.js'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -8,22 +8,13 @@ const router = createRouter({
     {
       path: '/',
       redirect: () => {
-        return { path: `/${defaultLanguage()}` }
+        return { path: `/${LanguageProvider.CURR_LANG.toLocaleLowerCase()}` }
       }
     },
     {
       path: '/:lang([A-Za-z]{2})',
       redirect: to => {
-        switch(to.params.lang) {
-          case 'en':
-            return { path: '/en/home' }
-          case 'nl':
-            return { path: '/nl/startpagina' }
-          case 'fr':
-            return { path: '/fr/accueil' }
-          case 'de':
-            return { path: '/de/startseite' }
-        }
+        return `${to.params.lang}/${LanguageProvider.DICTIONARY.navHome[LanguageProvider.CURR_LANG]}`
       }
     },
     {

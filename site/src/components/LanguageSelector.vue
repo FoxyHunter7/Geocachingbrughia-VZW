@@ -1,6 +1,6 @@
 <script setup>
-import uiTranslations from '../data/uiTranslations.json'
-import routingTranslations from '../data/routingTranslations.json'
+//import uiTranslations from '../data/uiTranslations.json'
+//import routingTranslations from '../data/routingTranslations.json'
 
 defineProps({
     lang: String,
