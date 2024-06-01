@@ -9,8 +9,7 @@ const app = createApp(App)
 const langProvider = new LanguageProvider();
 
 async function init() {
-    await langProvider.init()
-
+    //await langProvider.init()
     app.use(router)
     app.mount('#app')
 }
