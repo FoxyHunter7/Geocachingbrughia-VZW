@@ -74,17 +74,21 @@ class LanguageProvider {
     #setRoutes() {
         LanguageProvider.LANGUAGES.forEach(lang => {
             if (lang.code === config.defaultLanguage) {
-                LanguageProvider.ROUTES.navHome.path = `/${lang.code.toLocaleLowerCase()}/${LanguageProvider.DICTIONARY.navHome[lang.code]}`;
-                LanguageProvider.ROUTES.navEvents.path = `/${lang.code.toLocaleLowerCase()}/${LanguageProvider.DICTIONARY.navEvents[lang.code]}`;
-                LanguageProvider.ROUTES.navGeocaches.path = `/${lang.code.toLocaleLowerCase()}/${LanguageProvider.DICTIONARY.navGeocaches[lang.code]}`;
-                LanguageProvider.ROUTES.navShop.path = `/${lang.code.toLocaleLowerCase()}/${LanguageProvider.DICTIONARY.navShop[lang.code]}`;
+                LanguageProvider.ROUTES.navHome.path = this.#constructRoute(lang.code, "navHome");
+                LanguageProvider.ROUTES.navEvents.path = this.#constructRoute(lang.code, "navEvents");
+                LanguageProvider.ROUTES.navGeocaches.path = this.#constructRoute(lang.code, "navGeocaches");
+                LanguageProvider.ROUTES.navShop.path = this.#constructRoute(lang.code, "navShop");
             } else {
-                LanguageProvider.ROUTES.navHome.aliases.push(`/${lang.code.toLocaleLowerCase()}/${LanguageProvider.DICTIONARY.navHome[lang.code]}`);
-                LanguageProvider.ROUTES.navEvents.aliases.push(`/${lang.code.toLocaleLowerCase()}/${LanguageProvider.DICTIONARY.navEvents[lang.code]}`);
-                LanguageProvider.ROUTES.navGeocaches.aliases.push(`/${lang.code.toLocaleLowerCase()}/${LanguageProvider.DICTIONARY.navGeocaches[lang.code]}`);
-                LanguageProvider.ROUTES.navShop.aliases.push(`/${lang.code.toLocaleLowerCase()}/${LanguageProvider.DICTIONARY.navShop[lang.code]}`);
+                LanguageProvider.ROUTES.navHome.aliases.push(this.#constructRoute(lang.code, "navHome"));
+                LanguageProvider.ROUTES.navEvents.aliases.push(this.#constructRoute(lang.code, "navEvents"));
+                LanguageProvider.ROUTES.navGeocaches.aliases.push(this.#constructRoute(lang.code, "navGeocaches"));
+                LanguageProvider.ROUTES.navShop.aliases.push(this.#constructRoute(lang.code, "navShop"));
             }
         });
+    }
+
+    #constructRoute(langCode, routeName) {
+        return `/${langCode.toLocaleLowerCase()}/${LanguageProvider.DICTIONARY[routeName][langCode]}`
     }
 }
 
