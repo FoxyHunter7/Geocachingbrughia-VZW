@@ -11,6 +11,7 @@ class staticSiteContent extends Model
 
     protected $hidden = [
         'id',
+        'property',
         'created_at',
         'updated_at'
     ];
