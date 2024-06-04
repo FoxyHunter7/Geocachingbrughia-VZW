@@ -15,7 +15,6 @@ class StaticSiteContentService extends Service
     ];
 
     protected $_fields = ['property'];
-    protected $_fieldsAdminOnly = ['state'];
     protected $_searchOn = 'property';
     protected $_defaultSortBy = 'property';
     protected $_paginate = false;

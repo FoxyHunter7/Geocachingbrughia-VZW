@@ -28,8 +28,8 @@ Route::group([
 });
 
 Route::get('geocaches', [GeocacheApiController::class, 'allPublic']);
-Route::get('languages', [LanguageApiController::class, 'all']);
-Route::get('static',[StaticSiteContentController::class, 'all']);
+Route::get('languages', [LanguageApiController::class, 'allPublic']);
+Route::get('static',[StaticSiteContentController::class, 'allPublic']);
 Route::get('images/{p1}/{filename}', [ImageController::class, 'get'])->name('images');
 
 // Only needed initially, users are not allowed to self register.
@@ -72,10 +72,18 @@ Route::group([
             Route::delete('messages/{id}', 'delete');
         });
 
+        Route::controller(LanguageApiController::class)->group(function () {
+            Route::get('languages', 'allAdmin');
+            Route::post('languages', 'add');
+            Route::put('languages/{lang}', 'update');
+            Route::delete('languages/{lang}', 'delete');
+        });
+
         Route::controller(StaticSiteContentController::class)->group(function () {
+            Route::get('static', 'allAdmin');
             Route::post('static', 'add');
-            Route::put('static/{id}', 'update');
-            Route::delete('static/{id}', 'delete');
+            Route::put('static/{property}', 'update');
+            Route::delete('static/{property}', 'delete');
         });
     });
 });

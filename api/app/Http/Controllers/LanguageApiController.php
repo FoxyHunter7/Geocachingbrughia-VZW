@@ -15,13 +15,23 @@ class LanguageApiController
         $this->_service = $service;
     }
 
-    public function all(Request $request)
+    public function all(Request $request, $isAdmin)
     {
         $search = $request->query('search', '');
         $sortBy = $request->query('sort_by', '');
         $sortDirection = $request->query('sort_direction', 'desc');
 
-        return response()->json($this->_service->all(search: $search, sortBy: $sortBy, sortDirection: $sortDirection), Response::HTTP_OK);
+        return $this->_service->all(search: $search, sortBy: $sortBy, sortDirection: $sortDirection, isAdmin: $isAdmin);
+    }
+
+    public function allPublic (Request $request)
+    {
+        return response()->json($this->all($request, false), Response::HTTP_OK);
+    }
+
+    public function allAdmin (Request $request)
+    {
+        return response()->json($this->all($request, true), Response::HTTP_OK);
     }
 
     public function add(Request $request)

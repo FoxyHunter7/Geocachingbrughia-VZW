@@ -1,52 +1,64 @@
 property;lang_code;content
-navHome;EN;home
-navHome;NL;home
-navHome;FR;accueil
-navHome;DE;Startseite
-navEvents;EN;events
-navEvents;NL;evenementen
-navEvents;FR;événements
-navEvents;DE;Veranstaltungen
-navGeocaches;EN;geocaches
-navGeocaches;NL;geocaches
-navGeocaches;FR;géocaches
-navGeocaches;DE;Geocaches
-navShop;EN;shop
-navShop;NL;winkel
-navShop;FR;boutique
-navShop;DE;Shop
-formFullName;EN;fullname
-formFullName;NL;"volledige naam"
-formFullName;FR;"nom complet"
-formFullName;DE;"vollständiger Name"
-formFirstName;EN;firstname
-formFirstName;NL;voornaam
-formFirstName;FR;prénom
-formFirstName;DE;Vorname
-formLastName;EN;lastname
-formLastName;NL;achternaam
-formLastName;FR;"nom de famille"
-formLastName;DE;Nachname
-formMail;EN;e-mail
-formMail;NL;e-mail
-formMail;FR;e-mail
-formMail;DE;E-Mail
-formPhoneNumber;EN;"phone number"
-formPhoneNumber;NL;telefoonnummer
-formPhoneNumber;FR;"numéro de téléphone"
-formPhoneNumber;DE;Telefonnummer
-formAddress;EN;address
-formAddress;NL;adres
-formAddress;FR;adresse
-formAddress;DE;Adresse
-formSubject;EN;subject
-formSubject;NL;onderwerp
-formSubject;FR;sujet
-formSubject;DE;Betreff
-formMessage;EN;message
-formMessage;NL;bericht
-formMessage;FR;message
-formMessage;DE;Nachricht
+NavHome;EN;home
+NavHome;NL;home
+NavHome;FR;accueil
+NavHome;DE;Startseite
+NavEvents;EN;events
+NavEvents;NL;evenementen
+NavEvents;FR;événements
+NavEvents;DE;Veranstaltungen
+NavGeocaches;EN;geocaches
+NavGeocaches;NL;geocaches
+NavGeocaches;FR;géocaches
+NavGeocaches;DE;Geocaches
+NavShop;EN;shop
+NavShop;NL;winkel
+NavShop;FR;boutique
+NavShop;DE;Shop
+FormFullName;EN;fullname
+FormFullName;NL;"volledige naam"
+FormFullName;FR;"nom complet"
+FormFullName;DE;"vollständiger Name"
+FormFirstName;EN;firstname
+FormFirstName;NL;voornaam
+FormFirstName;FR;prénom
+FormFirstName;DE;Vorname
+FormLastName;EN;lastname
+FormLastName;NL;achternaam
+FormLastName;FR;"nom de famille"
+FormLastName;DE;Nachname
+FormMail;EN;e-mail
+FormMail;NL;e-mail
+FormMail;FR;e-mail
+FormMail;DE;E-Mail
+FormPhoneNumber;EN;"phone number"
+FormPhoneNumber;NL;telefoonnummer
+FormPhoneNumber;FR;"numéro de téléphone"
+FormPhoneNumber;DE;Telefonnummer
+FormAddress;EN;address
+FormAddress;NL;adres
+FormAddress;FR;adresse
+FormAddress;DE;Adresse
+FormSubject;EN;subject
+FormSubject;NL;onderwerp
+FormSubject;FR;sujet
+FormSubject;DE;Betreff
+FormMessage;EN;message
+FormMessage;NL;bericht
+FormMessage;FR;message
+FormMessage;DE;Nachricht
+SplashTitle;EN;"GeocachingBrughia brings people together"
+SplashTitle;NL;"GeocachingBrughia brengt mensen samen"
+SplashTitle;FR;"GeocachingBrughia rassemble les gens"
+SplashTitle;DE;"GeocachingBrughia vereint Menschen"
+SplashBody;EN;"Every year, we organise a range of Geocaching events that bring people together. These events include activities such as our clean-up effort, known as CITO (Cache In Trash Out), the yearly GIFF-Filmfestival showcasing films made by geocachers worldwide, and our flagship geocaching event, the Brugse Beer."
+SplashBody;NL;"Jaarlijks organiseren wij diverse geocaching evenementen waarbij we mensen samenbrengen. Deze evenementen omvatten onder andere onze zwerfvuilactie, CITO (Cache In Trash Out), het jaarlijkse GIFF-filmfestival, dat gewijd is aan films gemaakt door geocachers van over de hele wereld, en ons vooraanstaande geocaching evenement, de BRUGSE BEER."
+SplashBody;FR;"Chaque année, nous organisons une variété d'événements de géocaching qui rassemblent les gens. Ces événements comprennent des activités telles que notre effort de nettoyage, connu sous le nom de CITO (Cache In Trash Out), le festival annuel GIFF qui présente des films réalisés par des géocacheurs du monde entier, ainsi que notre événement phare de géocaching, le Brugse Beer."
+SplashBody;DE;"Jedes Jahr organisieren wir eine Vielzahl von Geocaching-Veranstaltungen, die Menschen zusammenbringen. Diese Veranstaltungen umfassen Aktivitäten wie unsere Aufräumaktion, bekannt als CITO (Cache In Trash Out), das jährliche GIFF-Filmfestival, bei dem Filme von Geocachern aus der ganzen Welt gezeigt werden, und unser Hauptgeocaching-Event, der Brugse Beer"
+SplashImg;EN;"static/bertje.jpg"
+SplashImg;NL;"static/bertje.jpg"
+SplashImg;FR;"static/bertje.jpg"
+SplashImg;DE;"static/bertje.jpg"
 SocialsFollowTxt;EN;"follow us on social media"
 SocialsFollowTxt;NL;"volg ons op sociale media"
 SocialsFollowTxt;FR;"suivez-nous sur les réseaux sociaux"
