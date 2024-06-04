@@ -1,0 +1,22 @@
+[ 
+        { 
+            "code": "NL",
+            "name": "Nederlands",
+            "imageUrl": "langFlags/NL.svg"
+        },
+        {
+            "code": "FR",
+            "name": "Français",
+            "imageUrl": "langFlags/FR.svg"
+        },
+        {
+            "code": "DE",
+            "name": "Deutsch",
+            "imageUrl": "langFlags/DE.svg"
+        },
+        { 
+            "code": "EN",
+            "name": "English",
+            "imageUrl": "langFlags/EN.svg"
+        } 
+]
