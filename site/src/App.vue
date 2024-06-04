@@ -2,11 +2,11 @@
   import { RouterView } from 'vue-router'
   import { watch } from 'vue'
   import { ref } from 'vue'
-  import { LanguageProvider } from './services/LanguageService';
+  import { StaticContentProvider } from './services/StaticContentService';
 
-  const currLang = ref(LanguageProvider.DICTIONARY)
+  const currLang = ref(StaticContentProvider.DICTIONARY)
 
-  watch(() => LanguageProvider.DICTIONARY, (newLang) => {
+  watch(() => StaticContentProvider.DICTIONARY, (newLang) => {
   currLang.value = newLang;
 })
 </script>

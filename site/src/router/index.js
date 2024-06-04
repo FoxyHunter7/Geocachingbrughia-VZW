@@ -1,13 +1,13 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '@/views/HomeView.vue'
-import { LanguageProvider } from '@/services/LanguageService.js'
+import { StaticContentProvider } from '@/services/StaticContentService'
 import NotFoundView from '@/views/NotFoundView.vue';
 
-await initLanguageProvider();
+await initStaticContentProvider();
 
-async function initLanguageProvider() {
-  const languageProvider = new LanguageProvider()
-  await languageProvider.init()
+async function initStaticContentProvider() {
+  const staticContentProvider = new StaticContentProvider()
+  await staticContentProvider.init()
 }
 
 const router = createRouter({
@@ -16,42 +16,42 @@ const router = createRouter({
     {
       path: '/',
       redirect: () => {
-        return { path: `/${LanguageProvider.CURR_LANG.toLocaleLowerCase()}` }
+        return { path: `/${StaticContentProvider.CURR_LANG.toLocaleLowerCase()}` }
       }
     },
     {
       path: '/:lang([A-Za-z]{2})',
       redirect: to => {
-        return `/${to.params.lang}/${LanguageProvider.DICTIONARY.NavHome[to.params.lang.toLocaleUpperCase()]}`
+        return `/${to.params.lang}/${StaticContentProvider.DICTIONARY.NavHome[to.params.lang.toLocaleUpperCase()]}`
       }
     },
     {
-      path: LanguageProvider.ROUTES.navHome.path,
+      path: StaticContentProvider.ROUTES.navHome.path,
       name: "home",
       props: true,
       component: HomeView,
-      alias: LanguageProvider.ROUTES.navHome.aliases
+      alias: StaticContentProvider.ROUTES.navHome.aliases
     },
     {
-      path: LanguageProvider.ROUTES.navEvents.path,
+      path: StaticContentProvider.ROUTES.navEvents.path,
       name: "events",
       props: true,
       component: HomeView,
-      alias: LanguageProvider.ROUTES.navEvents.aliases
+      alias: StaticContentProvider.ROUTES.navEvents.aliases
     },
     {
-      path: LanguageProvider.ROUTES.navGeocaches.path,
+      path: StaticContentProvider.ROUTES.navGeocaches.path,
       name: "geocaches",
       props: true,
       component: HomeView,
-      alias: LanguageProvider.ROUTES.navGeocaches.aliases
+      alias: StaticContentProvider.ROUTES.navGeocaches.aliases
     },
     {
-      path: LanguageProvider.ROUTES.navShop.path,
+      path: StaticContentProvider.ROUTES.navShop.path,
       name: "shop",
       props: true,
       component: HomeView,
-      alias: LanguageProvider.ROUTES.navShop.aliases
+      alias: StaticContentProvider.ROUTES.navShop.aliases
     },
     {
       path: '/:pathMatch(.*)',
