@@ -4,16 +4,22 @@
   import { ref } from 'vue'
   import { StaticContentProvider } from './services/StaticContentService';
 
-  const currLang = ref(StaticContentProvider.DICTIONARY)
+  const staticInitComplete = ref(StaticContentProvider.INIT_COMPLETE)
 
-  watch(() => StaticContentProvider.DICTIONARY, (newLang) => {
-  currLang.value = newLang;
-})
+  watch(() => StaticContentProvider.INIT_COMPLETE, (newStaticInitComplete) => {
+    staticInitComplete.value = newStaticInitComplete;
+  })
 </script>
 
 <template>
-  <p>{{ currLang }}</p>
-  <RouterView />
+  <p>Hello</p>
+  <p>{{ staticInitComplete }}</p>
+  <template v-if="staticInitComplete">
+    <!--<RouterView />-->
+  </template>
+  <template v-if="!staticInitComplete">
+    <p>Loading page content</p>
+  </template>
 </template>
 
 <style scoped>

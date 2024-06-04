@@ -3,11 +3,83 @@
   <head>
     <meta charset="UTF-8">
     <link rel="icon" href="/favicon.ico">
+    <link rel="stylesheet" href="src/assets/css/base.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vite App</title>
+
+    <style>
+      .initial-loader {
+        height: 5rem;
+        width: 5rem;
+        border: solid 0.7rem;
+        border-radius: 10% 30%;
+        animation: spinner 3s ease-in-out infinite;
+      }
+
+      .initial-loader-subtext {
+        font-weight: bold;
+        font-size: 1.3rem;
+        text-transform: capitalize;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        .loader-wrapper {
+          background-color: #181818;
+        }
+
+        .initial-loader {
+          border-color: #f8f8f8;
+        }
+
+        .initial-loader-subtext {
+          color: #f8f8f8 !important;
+        }
+      }
+
+      @keyframes spinner {
+        from {
+          rotate: 0deg;
+        }
+
+        to {
+          rotate: 360deg;
+        }
+      }
+
+      @keyframes fade-in {
+        from {
+          opacity: 0%;
+        }
+
+        to {
+          opacity: 100%;
+        }
+      }
+    </style>
+    <script type="module">
+      import LanguageProvider from "./src/services/LanguageService.js";
+      import fallbackLanguages from "./src/data/fallbackLanguages.json";
+      import fallbackStaticContent from "./src/data/fallbackStaticContent.json"
+
+      LanguageProvider.autoSetLanguage(fallbackLanguages);
+
+      await new Promise(r => setTimeout(r, 500));
+      document.querySelector(".loader-wrapper")?.classList.remove("hidden");
+
+      const loaderSubtext = document.querySelector(".initial-loader-subtext");
+      if (loaderSubtext) {
+        loaderSubtext.innerHTML = fallbackStaticContent.UILoadingSite[LanguageProvider.CURR_LANG];
+      }
+    </script>
   </head>
   <body>
-    <div id="app"></div>
+    <div id="app">
+      <div class="loader-wrapper hidden" style="height: 100vh; width: 100%; display: flex; gap: 2rem; flex-direction: column; align-items: center; justify-content: center;">
+        <div class="initial-loader">
+        </div>
+        <p class="initial-loader-subtext"></p>
+      </div>
+    </div>
     <script type="module" src="/src/main.js"></script>
   </body>
 </html>

@@ -3,11 +3,11 @@ import fallbackLanguages from "../data/fallbackLanguages.json";
 import fallbackStaticContent from "../data/fallbackStaticContent.json";
 import warnings from "../data/warnings.json";
 import { showConsoleDangerWarning } from "./ConsoleService";
+import { LanguageProvider } from "./LanguageService";
 
 class StaticContentProvider {
     static DICTIONARY = {};
     static LANGUAGES;
-    static CURR_LANG;
     static ROUTES = {
         navHome: {
             path: "",
@@ -30,14 +30,16 @@ class StaticContentProvider {
         "langFetch": "",
         "staticFetch": ""
     };
+    static INIT_COMPLETE = false;
 
     async init() {
-        this.#setCurrentLanguage(fallbackLanguages);
         await this.#fetchSupportedLanguages();
         await this.#fetchDitcionary();
-        this.#setCurrentLanguage(StaticContentProvider.LANGUAGES);
-        this.#setRoutes();
 
+        LanguageProvider.autoSetLanguage(StaticContentProvider.LANGUAGES)
+        this.#setRoutes();
+        
+        StaticContentProvider.INIT_COMPLETE = true;
         showConsoleDangerWarning();
     }
 
@@ -92,25 +94,6 @@ class StaticContentProvider {
             }
 
             StaticContentProvider.DICTIONARY = fallbackStaticContent;
-        }
-    }
-
-    #setCurrentLanguage(languages) {
-        const storedLang = localStorage.getItem("language")
-
-        if (languages.some(lang => lang.code === storedLang)) {
-            StaticContentProvider.CURR_LANG = localStorage.getItem("language");
-            return;
-        }
-
-        const browserPrefferedLang = navigator.language.split("-")[0].toLocaleUpperCase() ?? "";
-
-        if (languages.some(lang => lang.code === browserPrefferedLang)) {
-            StaticContentProvider.CURR_LANG = browserPrefferedLang;
-            localStorage.setItem("language", browserPrefferedLang);
-            return
-        } else {
-            StaticContentProvider.CURR_LANG = config.defaultLanguage;
         }
     }
 

@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '@/views/HomeView.vue'
 import { StaticContentProvider } from '@/services/StaticContentService'
 import NotFoundView from '@/views/NotFoundView.vue';
+import { LanguageProvider } from '@/services/LanguageService';
 
 await initStaticContentProvider();
 
@@ -16,7 +17,7 @@ const router = createRouter({
     {
       path: '/',
       redirect: () => {
-        return { path: `/${StaticContentProvider.CURR_LANG.toLocaleLowerCase()}` }
+        return { path: `/${LanguageProvider.CURR_LANG.toLocaleLowerCase()}` }
       }
     },
     {
