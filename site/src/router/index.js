@@ -22,7 +22,7 @@ const router = createRouter({
     {
       path: '/:lang([A-Za-z]{2})',
       redirect: to => {
-        return `/${to.params.lang}/${LanguageProvider.DICTIONARY.navHome[to.params.lang.toLocaleUpperCase()]}`
+        return `/${to.params.lang}/${LanguageProvider.DICTIONARY.NavHome[to.params.lang.toLocaleUpperCase()]}`
       }
     },
     {

@@ -38,7 +38,7 @@ class LanguageProvider {
         this.#setCurrentLanguage(fallbackLanguages);
         await this.#fetchSupportedLanguages();
         await this.#fetchDitcionary();
-        this.#setCurrentLanguage(LanguageProvider.LANGUAGES ?? fallbackLanguages);
+        this.#setCurrentLanguage(LanguageProvider.LANGUAGES);
         this.#setRoutes();
 
         console.log(`%c${warnings.consoleDangerTitle[LanguageProvider.CURR_LANG]}`, "font-size: 30px; font-weight: bold; color: yellow")
@@ -63,6 +63,8 @@ class LanguageProvider {
                     case 503: LanguageProvider.ERRORS.langFetch = warnings.apiLangOverloaded; break;
                 }
             }
+
+            LanguageProvider.LANGUAGES = fallbackLanguages;
         }
     }
 
@@ -119,15 +121,15 @@ class LanguageProvider {
     #setRoutes() {
         LanguageProvider.LANGUAGES.forEach(lang => {
             if (lang.code === config.defaultLanguage) {
-                LanguageProvider.ROUTES.navHome.path = this.#constructRoute(lang.code, "navHome");
-                LanguageProvider.ROUTES.navEvents.path = this.#constructRoute(lang.code, "navEvents");
-                LanguageProvider.ROUTES.navGeocaches.path = this.#constructRoute(lang.code, "navGeocaches");
-                LanguageProvider.ROUTES.navShop.path = this.#constructRoute(lang.code, "navShop");
+                LanguageProvider.ROUTES.navHome.path = this.#constructRoute(lang.code, "NavHome");
+                LanguageProvider.ROUTES.navEvents.path = this.#constructRoute(lang.code, "NavEvents");
+                LanguageProvider.ROUTES.navGeocaches.path = this.#constructRoute(lang.code, "NavGeocaches");
+                LanguageProvider.ROUTES.navShop.path = this.#constructRoute(lang.code, "NavShop");
             } else {
-                LanguageProvider.ROUTES.navHome.aliases.push(this.#constructRoute(lang.code, "navHome"));
-                LanguageProvider.ROUTES.navEvents.aliases.push(this.#constructRoute(lang.code, "navEvents"));
-                LanguageProvider.ROUTES.navGeocaches.aliases.push(this.#constructRoute(lang.code, "navGeocaches"));
-                LanguageProvider.ROUTES.navShop.aliases.push(this.#constructRoute(lang.code, "navShop"));
+                LanguageProvider.ROUTES.navHome.aliases.push(this.#constructRoute(lang.code, "NavHome"));
+                LanguageProvider.ROUTES.navEvents.aliases.push(this.#constructRoute(lang.code, "NavEvents"));
+                LanguageProvider.ROUTES.navGeocaches.aliases.push(this.#constructRoute(lang.code, "NavGeocaches"));
+                LanguageProvider.ROUTES.navShop.aliases.push(this.#constructRoute(lang.code, "NavShop"));
             }
         });
     }
