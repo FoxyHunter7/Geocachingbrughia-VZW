@@ -21,9 +21,12 @@
 }
 
 :root {
-  --color-background: var(--vt-c-white);
-  --color-background-soft: var(--vt-c-white-soft);
-  --color-background-mute: var(--vt-c-white-mute);
+  --color-text: #0E1809;
+  --color-text2: #0E1809;
+  --color-background: #F7FBF5;
+  --color-primary: #71C94C;
+  --color-secondary: #A4E18B;
+  --color-accent: #7FDA58;
 
   --color-border: var(--vt-c-divider-light-2);
   --color-border-hover: var(--vt-c-divider-light-1);
@@ -36,9 +39,12 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --color-background: var(--vt-c-black);
-    --color-background-soft: var(--vt-c-black-soft);
-    --color-background-mute: var(--vt-c-black-mute);
+    --color-text: #EDF7E9;
+    --color-text: #070b04;
+    --color-background: #070B04;
+    --color-primary: #5CB536;
+    --color-secondary: #37761E;
+    --color-accent: #4CA725;
 
     --color-border: var(--vt-c-divider-dark-2);
     --color-border-hover: var(--vt-c-divider-dark-1);
