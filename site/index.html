@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8">
-    <link rel="icon" href="/favicon.ico">
+    <link rel="icon" href="./src/assets/media/favicon.png">
     <link rel="stylesheet" href="src/assets/css/base.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vite App</title>
@@ -11,7 +11,7 @@
       .initial-loader {
         height: 5rem;
         width: 5rem;
-        border: solid 0.7rem;
+        border: solid 0.7rem var(--color-accent);
         border-radius: 10% 30%;
         animation: spinner 3s ease-in-out infinite;
       }
@@ -22,18 +22,12 @@
         text-transform: capitalize;
       }
 
-      @media (prefers-color-scheme: dark) {
-        .loader-wrapper {
-          background-color: #181818;
-        }
+      .loader-wrapper {
+        background-color: var(--color-background);
+      }
 
-        .initial-loader {
-          border-color: #f8f8f8;
-        }
-
-        .initial-loader-subtext {
-          color: #f8f8f8 !important;
-        }
+      .initial-loader-subtext {
+        color: var(--color-text) !important;
       }
 
       @keyframes spinner {
