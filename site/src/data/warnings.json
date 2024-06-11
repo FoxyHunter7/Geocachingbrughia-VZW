@@ -22,5 +22,17 @@
         "NL": "De informatieserver is overbelast, kon de website-inhoud niet ophalen. Je ziet nu terugvalinformatie die mogelijk verouderd is, het werd voor het laatst bijgewerkt op: ",
         "FR": "Le serveur d'information est surchargé, impossible d'obtenir le contenu du site web. Vous voyez maintenant des informations de secours qui pourraient être obsolètes, elles ont été mises à jour pour la dernière fois le : ",
         "DE": "Der Informationsserver ist überlastet, der Website-Inhalt konnte nicht abgerufen werden. Sie sehen jetzt Fallback-Informationen, die veraltet sein könnten, zuletzt aktualisiert am: "
+    },
+    "websiteError": {
+        "EN": "Something went wrong",
+        "NL": "Er is iets fout gegaan",
+        "FR": "Quelque chose s'est mal passé",
+        "DE": "Es ist etwas schiefgegangen"
+    },
+    "websiteErrorDetailed": {
+        "EN": "The website could not properly be rendered. If this issue persists, please contact: ",
+        "NL": "De website kon niet correct worden weergegeven. Als dit probleem aanhoudt, neem dan contact op met: ",
+        "FR": "Le site web n'a pas pu être correctement rendu. Si ce problème persiste, veuillez contacter : ",
+        "DE": "Die Website konnte nicht ordnungsgemäß gerendert werden. Wenn dieses Problem weiterhin besteht, kontaktieren Sie bitte: "
     }
 }

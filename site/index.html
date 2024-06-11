@@ -16,18 +16,46 @@
         animation: spinner 3s ease-in-out infinite;
       }
 
-      .initial-loader-subtext {
+      .initial-loader-subtext, .app-error h2 {
         font-weight: bold;
         font-size: 1.3rem;
         text-transform: capitalize;
+        color: var(--color-text) !important;
       }
 
-      .loader-wrapper {
+      .loader-wrapper, .app-error {
+        height: 100vh;
         background-color: var(--color-background);
       }
 
-      .initial-loader-subtext {
-        color: var(--color-text) !important;
+      .app-error {
+        height: 100vh;
+      }
+
+      @supports (height: 100dvh) {
+        .loader-wrapper {
+          height: 100dvh;
+        }
+        .app-error {
+          height: 100dvh;
+        }
+      }
+
+      .app-error > div {
+        height: 6rem;
+        width: 6rem;
+        background-color: var(--color-alert);
+        mask: url(./src/assets/media/alert-triangle.svg);
+        mask-size: contain;
+      }
+
+      .app-error p {
+        margin: 0 10%;
+        text-align: center;
+      }
+
+      .app-error a {
+        color: var(--color-alert);
       }
 
       @keyframes spinner {
@@ -53,7 +81,9 @@
     <script type="module">
       import LanguageProvider from "./src/services/LanguageService.js";
       import fallbackLanguages from "./src/data/fallbackLanguages.json";
-      import fallbackStaticContent from "./src/data/fallbackStaticContent.json"
+      import fallbackStaticContent from "./src/data/fallbackStaticContent.json";
+      import warnings from "./src/data/warnings.json";
+      import config from "./src/data/config.json"
 
       LanguageProvider.autoSetLanguage(fallbackLanguages);
 
@@ -64,14 +94,35 @@
       if (loaderSubtext) {
         loaderSubtext.innerHTML = fallbackStaticContent.UILoadingSite[LanguageProvider.CURR_LANG];
       }
+
+      window.addEventListener("unhandledrejection", (e) => {
+        console.log("I was triggered");
+      });
+
+      window.onerror = () => {
+        console.log("I was triggered");
+        document.querySelector(".loader-wrapper")?.classList.add("hidden");
+        document.querySelector(".app-error")?.classList.remove("hidden");
+        const appErrorMessage = document.querySelector(".app-error h2");
+        const appErrorDetails = document.querySelector(".app-error p");
+        if (appErrorMessage && appErrorDetails) {
+          appErrorMessage.innerHTML = warnings.websiteError[LanguageProvider.CURR_LANG];
+          appErrorDetails.innerHTML = `${warnings.websiteErrorDetailed[LanguageProvider.CURR_LANG]}<a href="mailto:${config.technicalContact}">${config.technicalContact}</a>`;
+        }
+      }
     </script>
   </head>
   <body>
     <div id="app">
-      <div class="loader-wrapper hidden" style="height: 100vh; width: 100%; display: flex; gap: 2rem; flex-direction: column; align-items: center; justify-content: center;">
+      <div class="loader-wrapper hidden" style="width: 100%; display: flex; gap: 2rem; flex-direction: column; align-items: center; justify-content: center;">
         <div class="initial-loader">
         </div>
         <p class="initial-loader-subtext"></p>
+      </div>
+      <div class="app-error hidden" style="width: 100%; display:  flex; gap: 2rem; flex-direction: column; align-items: center; justify-content: center;">
+        <div></div>
+        <h2></h2>
+        <p></p>
       </div>
     </div>
     <script type="module" src="/src/main.js"></script>
