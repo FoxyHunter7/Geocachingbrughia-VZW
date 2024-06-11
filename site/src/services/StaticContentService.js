@@ -100,22 +100,23 @@ class StaticContentProvider {
     #setRoutes() {
         StaticContentProvider.LANGUAGES.forEach(lang => {
             if (lang.code === config.defaultLanguage) {
-                StaticContentProvider.ROUTES.navHome.path = this.#constructRoute(lang.code, "NavHome");
-                StaticContentProvider.ROUTES.navEvents.path = this.#constructRoute(lang.code, "NavEvents");
-                StaticContentProvider.ROUTES.navGeocaches.path = this.#constructRoute(lang.code, "NavGeocaches");
-                StaticContentProvider.ROUTES.navShop.path = this.#constructRoute(lang.code, "NavShop");
+                StaticContentProvider.ROUTES.navHome.path = StaticContentProvider.constructRoute(lang.code, "NavHome");
+                StaticContentProvider.ROUTES.navEvents.path = StaticContentProvider.constructRoute(lang.code, "NavEvents");
+                StaticContentProvider.ROUTES.navGeocaches.path = StaticContentProvider.constructRoute(lang.code, "NavGeocaches");
+                StaticContentProvider.ROUTES.navShop.path = StaticContentProvider.constructRoute(lang.code, "NavShop");
             } else {
-                StaticContentProvider.ROUTES.navHome.aliases.push(this.#constructRoute(lang.code, "NavHome"));
-                StaticContentProvider.ROUTES.navEvents.aliases.push(this.#constructRoute(lang.code, "NavEvents"));
-                StaticContentProvider.ROUTES.navGeocaches.aliases.push(this.#constructRoute(lang.code, "NavGeocaches"));
-                StaticContentProvider.ROUTES.navShop.aliases.push(this.#constructRoute(lang.code, "NavShop"));
+                StaticContentProvider.ROUTES.navHome.aliases.push(StaticContentProvider.constructRoute(lang.code, "NavHome"));
+                StaticContentProvider.ROUTES.navEvents.aliases.push(StaticContentProvider.constructRoute(lang.code, "NavEvents"));
+                StaticContentProvider.ROUTES.navGeocaches.aliases.push(StaticContentProvider.constructRoute(lang.code, "NavGeocaches"));
+                StaticContentProvider.ROUTES.navShop.aliases.push(StaticContentProvider.constructRoute(lang.code, "NavShop"));
             }
         });
     }
 
-    #constructRoute(langCode, routeName) {
+    static constructRoute(langCode, routeName) {
         return `/${langCode.toLocaleLowerCase()}/${StaticContentProvider.DICTIONARY[routeName][langCode]}`
     }
 }
 
+export default StaticContentProvider;
 export { StaticContentProvider };
