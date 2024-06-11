@@ -1,7 +1,10 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '@/views/HomeView.vue'
-import { StaticContentProvider } from '@/services/StaticContentService'
+import { createRouter, createWebHistory } from 'vue-router';
+import HomeView from '@/views/HomeView.vue';
 import NotFoundView from '@/views/NotFoundView.vue';
+import EventsView from '@/views/EventsView.vue';
+import GeocachesView from '@/views/GeocachesView.vue';
+import ShopView from '@/views/ShopView.vue';
+import { StaticContentProvider } from '@/services/StaticContentService'
 import { LanguageProvider } from '@/services/LanguageService';
 
 await initStaticContentProvider();
@@ -37,21 +40,21 @@ const router = createRouter({
       path: StaticContentProvider.ROUTES.navEvents.path,
       name: "events",
       props: true,
-      component: HomeView,
+      component: EventsView,
       alias: StaticContentProvider.ROUTES.navEvents.aliases
     },
     {
       path: StaticContentProvider.ROUTES.navGeocaches.path,
       name: "geocaches",
       props: true,
-      component: HomeView,
+      component: GeocachesView,
       alias: StaticContentProvider.ROUTES.navGeocaches.aliases
     },
     {
       path: StaticContentProvider.ROUTES.navShop.path,
       name: "shop",
       props: true,
-      component: HomeView,
+      component: ShopView,
       alias: StaticContentProvider.ROUTES.navShop.aliases
     },
     {

@@ -3,7 +3,7 @@
 
 <template>
   <main>
-    <p>Home</p>
+    <p>Events</p>
   </main>
 </template>
 
