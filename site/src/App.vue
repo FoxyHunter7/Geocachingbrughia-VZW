@@ -22,21 +22,21 @@ import { onMounted, ref, computed } from 'vue';
 
 <style scoped>
   Header {
-    height: 6rem;
+    height: 5rem;
     box-sizing: border-box;
-    max-width: 100dvw;
+    max-width: 100vw;
     overflow: hidden;
   }
 
   #side-menu {
     background-color: var(--color-secondary);
     position: absolute;
-    top: 6rem;
+    top: 5rem;
     right: 0;
     width: 0;
     max-width: 80dvw;
     overflow-x: hidden;
-    height: calc(100lvh - 6rem);
+    height: calc(100lvh - 5rem);
     transition: width ease 0.3s;
     display: flex;
     flex-direction: column;

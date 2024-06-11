@@ -40,7 +40,7 @@
     }
 
     header > img.logo {
-        height: 4rem;
+        height: 3rem;
     }
 
     header > nav {
@@ -58,11 +58,19 @@
         margin: 2rem 2.5rem;
     }
 
+    #side-menu > nav a {
+        color: var(--color-text);
+    }
+
+    #side-menu > nav a.router-link-active {
+        border-bottom: 0.2rem solid var(--color-text);
+    }
+
     header > .nav {
         margin: auto 0 auto auto;
         height: 80%;
         aspect-ratio: 1 / 1;
-        background-color: var(--color-text);
+        background-color: var(--color-text2);
         mask: url(../assets/media/menu.svg);
         mask-size: contain;
     }
@@ -77,7 +85,7 @@
         text-transform: capitalize;
         font-size: 1rem;
         font-weight: normal;
-        color: var(--color-text);
+        color: var(--color-text2);
         border-bottom: 0.2rem solid rgba(0, 0, 0, 0);
         transition: border-bottom, font-weight 0.1s;
     }
@@ -88,7 +96,7 @@
     }
 
     nav a.router-link-active {
-        border-bottom: 0.2rem solid var(--color-text);
+        border-bottom: 0.2rem solid var(--color-text2);
         transition: border-bottom, font-weight 0.1s;
         font-weight: bold;
     }
