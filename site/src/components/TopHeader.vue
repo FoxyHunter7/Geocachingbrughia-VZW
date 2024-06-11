@@ -11,7 +11,6 @@
 
     const dictionary = SCP.DICTIONARY;
     const scsErrors = SCP.ERRORS;
-
 </script>
 
 <template>
@@ -20,17 +19,17 @@
         <img v-if="isMobile" src="../assets/media/logo-head-black.webp" class="logo">
         <Teleport to="#side-menu" :disabled="!isMobile">
             <nav>
-                <RouterLink :to="{ path: SCP.constructRoute(lang, 'NavHome') }">{{ dictionary.NavHome[lang] }}</RouterLink>
-                <RouterLink :to="{ path: SCP.constructRoute(lang, 'NavEvents') }">{{ dictionary.NavEvents[lang] }}</RouterLink>
-                <RouterLink :to="{ path: SCP.constructRoute(lang, 'NavGeocaches') }">{{ dictionary.NavGeocaches[lang] }}</RouterLink>
-                <RouterLink :to="{ path: SCP.constructRoute(lang, 'NavShop') }">{{ dictionary.NavShop[lang] }}</RouterLink>
+                <RouterLink @click="if (isMobile) {isNavOpen = !isNavOpen; $emit('menuStateChange', isNavOpen)}" :to="{ path: SCP.constructRoute(lang, 'NavHome') }">{{ dictionary.NavHome[lang] }}</RouterLink>
+                <RouterLink @click="if (isMobile) {isNavOpen = !isNavOpen; $emit('menuStateChange', isNavOpen)}" :to="{ path: SCP.constructRoute(lang, 'NavEvents') }">{{ dictionary.NavEvents[lang] }}</RouterLink>
+                <RouterLink @click="if (isMobile) {isNavOpen = !isNavOpen; $emit('menuStateChange', isNavOpen)}" :to="{ path: SCP.constructRoute(lang, 'NavGeocaches') }">{{ dictionary.NavGeocaches[lang] }}</RouterLink>
+                <RouterLink @click="if (isMobile) {isNavOpen = !isNavOpen; $emit('menuStateChange', isNavOpen)}" :to="{ path: SCP.constructRoute(lang, 'NavShop') }">{{ dictionary.NavShop[lang] }}</RouterLink>
             </nav>
         </Teleport>
         <div v-if="isMobile" class="nav" :class="{open: isNavOpen}" @click="isNavOpen = !isNavOpen; $emit('menuStateChange', isNavOpen)"></div>
     </header>
 </template>
 
-<style scroped>
+<style scoped>
     header {
         background-color: var(--color-primary);
         display: grid;
