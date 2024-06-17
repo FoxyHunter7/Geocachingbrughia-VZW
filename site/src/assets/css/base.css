@@ -27,7 +27,7 @@
   --color-primary: #71C94C;
   --color-secondary: #A4E18B;
   --color-accent: #7FDA58;
-  --color-alert: #ff9100;
+  --color-alert: #ffc400;
 
   --color-border: var(--vt-c-divider-light-2);
   --color-border-hover: var(--vt-c-divider-light-1);
@@ -43,7 +43,7 @@
     --color-primary: #5CB536;
     --color-secondary: #37761E;
     --color-accent: #4CA725;
-    --color-alert: #ff9100;
+    --color-alert: #ffbb00;
 
     --color-border: var(--vt-c-divider-dark-2);
     --color-border-hover: var(--vt-c-divider-dark-1);
