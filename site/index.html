@@ -98,7 +98,6 @@
       }
 
       window.onerror = () => {
-        console.log("I was triggered");
         document.querySelector(".loader-wrapper")?.classList.add("hidden");
         document.querySelector(".app-error")?.classList.remove("hidden");
         const appErrorMessage = document.querySelector(".app-error h2");
