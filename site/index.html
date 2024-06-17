@@ -87,17 +87,15 @@
 
       LanguageProvider.autoSetLanguage(fallbackLanguages);
 
-      await new Promise(r => setTimeout(r, 500));
-      document.querySelector(".loader-wrapper")?.classList.remove("hidden");
+      async function init() {
+        await new Promise(r => setTimeout(r, 500));
+        document.querySelector(".loader-wrapper")?.classList.remove("hidden");
 
-      const loaderSubtext = document.querySelector(".initial-loader-subtext");
-      if (loaderSubtext) {
-        loaderSubtext.innerHTML = fallbackStaticContent.UILoadingSite[LanguageProvider.CURR_LANG];
+        const loaderSubtext = document.querySelector(".initial-loader-subtext");
+        if (loaderSubtext) {
+          loaderSubtext.innerHTML = fallbackStaticContent.UILoadingSite[LanguageProvider.CURR_LANG];
+        }
       }
-
-      window.addEventListener("unhandledrejection", (e) => {
-        console.log("I was triggered");
-      });
 
       window.onerror = () => {
         console.log("I was triggered");
@@ -110,6 +108,8 @@
           appErrorDetails.innerHTML = `${warnings.websiteErrorDetailed[LanguageProvider.CURR_LANG]}<a href="mailto:${config.technicalContact}">${config.technicalContact}</a>`;
         }
       }
+
+      init()
     </script>
   </head>
   <body>
