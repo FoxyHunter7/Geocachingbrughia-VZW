@@ -2,21 +2,21 @@
         { 
             "code": "NL",
             "name": "Nederlands",
-            "imageUrl": "langFlags/NL.svg"
+            "imageUrl": "fallbackLangFlags/NL.svg"
         },
         {
             "code": "FR",
             "name": "Français",
-            "imageUrl": "langFlags/FR.svg"
+            "imageUrl": "fallbackLangFlags/FR.svg"
         },
         {
             "code": "DE",
             "name": "Deutsch",
-            "imageUrl": "langFlags/DE.svg"
+            "imageUrl": "fallbackLangFlags/DE.svg"
         },
         { 
             "code": "EN",
             "name": "English",
-            "imageUrl": "langFlags/EN.svg"
+            "imageUrl": "fallbackLangFlags/EN.svg"
         } 
 ]
