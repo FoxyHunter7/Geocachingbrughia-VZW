@@ -27,10 +27,7 @@ class StaticContentProvider {
             aliases: []
         }
     };
-    static ERRORS = ref({
-        "langFetch": "",
-        "staticFetch": ""
-    });
+    static ERRORS = ref("");
     static INIT_COMPLETE = false;
 
     async init() {
@@ -107,11 +104,11 @@ class StaticContentProvider {
     #setErrors(err) {
         if (err.response && err.response.status) {
             switch (err.response.status) {
-                case 400 || 401 || 404 || 500: StaticContentProvider.ERRORS.value.staticFetch = warnings.apiComm[LanguageProvider.CURR_LANG]; break;
-                case 503: StaticContentProvider.ERRORS.value.staticFetch = warnings.apiOverloaded[LanguageProvider.CURR_LANG]; break;
+                case 400 || 401 || 404 || 500: StaticContentProvider.ERRORS.value = warnings.apiComm[LanguageProvider.CURR_LANG]; break;
+                case 503: StaticContentProvider.ERRORS.value = warnings.apiOverloaded[LanguageProvider.CURR_LANG]; break;
             }
         }  else {
-            StaticContentProvider.ERRORS.value.langFetch = warnings.apiComm[LanguageProvider.CURR_LANG];
+            StaticContentProvider.ERRORS.value = warnings.apiComm[LanguageProvider.CURR_LANG];
         }
     }
 }
