@@ -1,10 +1,16 @@
 <script setup>
-import { onMounted, ref, computed } from 'vue';
-  import { RouterView } from 'vue-router'
+  import { onMounted, ref, computed } from 'vue';
+  import { RouterView } from 'vue-router';
+  import { StaticContentProvider as SCP } from '@/services/StaticContentService';
+  import config from '@/data/config.json'
   import TopHeader from '@/components/TopHeader.vue'
+  import WarningBanner from './components/WarningBanner.vue';
 
   const innerWidth = ref(window.innerWidth);
   const isSideMenuOpen = ref(false);
+
+  const scsErrors = SCP.ERRORS;
+
   const isMobile = computed(() => {
     return innerWidth.value <= 850;
   });
@@ -17,6 +23,9 @@ import { onMounted, ref, computed } from 'vue';
 <template>
   <section id="side-menu" :class="{ open: isSideMenuOpen }"></section>
   <TopHeader :isMobile="isMobile" @menu-state-change="(state) => {isSideMenuOpen = state}"/>
+  <div id="messages">
+    <WarningBanner :error="scsErrors" :date="config.fallbackLastUpdated"></WarningBanner>
+  </div>
   <RouterView />
 </template>
 
@@ -34,9 +43,9 @@ import { onMounted, ref, computed } from 'vue';
     top: 5rem;
     right: 0;
     width: 0;
+    bottom: 0;
     max-width: 80dvw;
     overflow-x: hidden;
-    height: calc(100lvh - 5rem);
     transition: width ease 0.3s;
     display: flex;
     flex-direction: column;
@@ -59,5 +68,14 @@ import { onMounted, ref, computed } from 'vue';
     height: fit-content;
     overflow: visible;
     text-overflow: default;
+  }
+
+  #messages {
+    position: relative;
+    height: fit-content;
+    top: 0;
+    left: 0;
+    padding: 1rem 0.8rem;
+    z-index: -1;
   }
 </style>

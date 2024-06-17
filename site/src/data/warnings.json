@@ -12,16 +12,16 @@
         "DE": "Geben Sie nicht einfach irgendetwas in diese Konsole ein. Wenn Ihnen jemand gesagt hat, hier etwas einzufügen, könnte es sein, dass er versucht, Sie zu hacken.\n\n"
     },
     "apiComm": {
-        "EN": "Something went wrong whilst getting the website content. You are now seeing fallback information which might be outdated, it was last updated at: ",
-        "NL": "Er is iets misgegaan bij het ophalen van de website-inhoud. Je ziet nu terugvalinformatie die mogelijk verouderd is, het werd voor het laatst bijgewerkt op: ",
-        "FR": "Une erreur est survenue lors de la récupération du contenu du site web. Vous voyez maintenant des informations de secours qui pourraient être obsolètes, elles ont été mises à jour pour la dernière fois le : ",
-        "DE": "Beim Abrufen des Website-Inhalts ist etwas schiefgegangen. Sie sehen jetzt Fallback-Informationen, die veraltet sein könnten, zuletzt aktualisiert am: "
+        "EN": "Failed to load website information. Showing backup information last updated at: ",
+        "NL": "Fout bij het laden van de website informatie. U ziet nu backup informatie die laatst upgedate werd op: ",
+        "FR": "Erreur lors du chargement des informations du site. Affichage des données de secours, dernière mise à: ",
+        "DE": "Fehler beim Laden der Website-Informationen. Zeige Backup-Daten, zuletzt aktualisiert am: "
     },
     "apiOverloaded": {
-        "EN": "The information server is overloaded, couldn't get website content. You are now seeing fallback information which might be outdated, it was last updated at: ",
-        "NL": "De informatieserver is overbelast, kon de website-inhoud niet ophalen. Je ziet nu terugvalinformatie die mogelijk verouderd is, het werd voor het laatst bijgewerkt op: ",
-        "FR": "Le serveur d'information est surchargé, impossible d'obtenir le contenu du site web. Vous voyez maintenant des informations de secours qui pourraient être obsolètes, elles ont été mises à jour pour la dernière fois le : ",
-        "DE": "Der Informationsserver ist überlastet, der Website-Inhalt konnte nicht abgerufen werden. Sie sehen jetzt Fallback-Informationen, die veraltet sein könnten, zuletzt aktualisiert am: "
+        "EN": "Our servers are overloaded and cannot provide the latest information right now. You are viewing backup data last updated at: ",
+        "NL": "Onze servers zijn overbelast en kunnen momenteel geen actuele data leveren. U ziet nu reservegegevens die voor het laatst zijn bijgewerkt op: ",
+        "FR": "Nos serveurs sont surchargés et ne peuvent pas fournir de données actuelles pour le moment. Vous visualisez des données de secours mises à jour pour la dernière fois le: ",
+        "DE": "Unsere Server sind überlastet und können derzeit keine aktuellen Daten bereitstellen. Sie sehen Backup-Daten, zuletzt aktualisiert am: "
     },
     "websiteError": {
         "EN": "Something went wrong",
