@@ -15,7 +15,7 @@
         "EN": "Failed to load website information. Showing backup information last updated at: ",
         "NL": "Fout bij het laden van de website informatie. U ziet nu backup informatie die laatst upgedate werd op: ",
         "FR": "Erreur lors du chargement des informations du site. Affichage des données de secours, dernière mise à: ",
-        "DE": "Fehler beim Laden der Website-Informationen. Zeige Backup-Daten, zuletzt aktualisiert am: "
+        "DE": "Fehler beim Laden der Website-Informationen. Zuletzt aktualisierte Backuo-Daten am: "
     },
     "apiOverloaded": {
         "EN": "Our servers are overloaded and cannot provide the latest information right now. You are viewing backup data last updated at: ",
