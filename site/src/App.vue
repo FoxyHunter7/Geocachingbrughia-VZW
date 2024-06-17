@@ -24,7 +24,7 @@
   <section id="side-menu" :class="{ open: isSideMenuOpen }"></section>
   <TopHeader :isMobile="isMobile" @menu-state-change="(state) => {isSideMenuOpen = state}"/>
   <div id="messages">
-    <WarningBanner :error="scsErrors" :date="config.fallbackLastUpdated"></WarningBanner>
+    <WarningBanner v-if="scsErrors" :error="scsErrors" :date="config.fallbackLastUpdated"></WarningBanner>
   </div>
   <RouterView />
 </template>
@@ -77,5 +77,9 @@
     left: 0;
     padding: 1rem 0.8rem;
     z-index: -1;
+  }
+
+  #messages:empty {
+    padding: 0;
   }
 </style>
