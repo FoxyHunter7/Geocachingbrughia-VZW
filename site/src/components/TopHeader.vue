@@ -5,12 +5,12 @@
     import { StaticContentProvider as SCP } from '@/services/StaticContentService';
 
     const props = defineProps(["isMobile"]);
+    const emits = defineEmits(['menuStateChange']);
 
     const lang = ref(LanguageProvider.CURR_LANG);
     const isNavOpen = ref(false);
 
     const dictionary = SCP.DICTIONARY;
-    const scsErrors = SCP.ERRORS;
 </script>
 
 <template>
