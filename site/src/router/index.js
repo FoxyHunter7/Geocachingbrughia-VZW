@@ -7,62 +7,55 @@ import ShopView from '@/views/ShopView.vue';
 import { StaticContentProvider } from '@/services/StaticContentService'
 import { LanguageProvider } from '@/services/LanguageService';
 
-await initStaticContentProvider();
-
-async function initStaticContentProvider() {
-  const staticContentProvider = new StaticContentProvider()
-  await staticContentProvider.init()
+export default function setupRouter() {
+  return createRouter({
+    history: createWebHistory(import.meta.env.BASE_URL),
+    routes: [
+      {
+        path: '/',
+        redirect: () => {
+          return { path: `/${LanguageProvider.CURR_LANG.toLocaleLowerCase()}` }
+        }
+      },
+      {
+        path: '/:lang([A-Za-z]{2})',
+        redirect: to => {
+          return `/${to.params.lang}/${StaticContentProvider.DICTIONARY.NavHome[to.params.lang.toLocaleUpperCase()]}`
+        }
+      },
+      {
+        path: StaticContentProvider.ROUTES.navHome.path,
+        name: "home",
+        props: true,
+        component: HomeView,
+        alias: StaticContentProvider.ROUTES.navHome.aliases
+      },
+      {
+        path: StaticContentProvider.ROUTES.navEvents.path,
+        name: "events",
+        props: true,
+        component: EventsView,
+        alias: StaticContentProvider.ROUTES.navEvents.aliases
+      },
+      {
+        path: StaticContentProvider.ROUTES.navGeocaches.path,
+        name: "geocaches",
+        props: true,
+        component: GeocachesView,
+        alias: StaticContentProvider.ROUTES.navGeocaches.aliases
+      },
+      {
+        path: StaticContentProvider.ROUTES.navShop.path,
+        name: "shop",
+        props: true,
+        component: ShopView,
+        alias: StaticContentProvider.ROUTES.navShop.aliases
+      },
+      {
+        path: '/:pathMatch(.*)',
+        name: "NotFound",
+        component: NotFoundView,
+      }
+    ]
+  })
 }
-
-const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
-  routes: [
-    {
-      path: '/',
-      redirect: () => {
-        return { path: `/${LanguageProvider.CURR_LANG.toLocaleLowerCase()}` }
-      }
-    },
-    {
-      path: '/:lang([A-Za-z]{2})',
-      redirect: to => {
-        return `/${to.params.lang}/${StaticContentProvider.DICTIONARY.NavHome[to.params.lang.toLocaleUpperCase()]}`
-      }
-    },
-    {
-      path: StaticContentProvider.ROUTES.navHome.path,
-      name: "home",
-      props: true,
-      component: HomeView,
-      alias: StaticContentProvider.ROUTES.navHome.aliases
-    },
-    {
-      path: StaticContentProvider.ROUTES.navEvents.path,
-      name: "events",
-      props: true,
-      component: EventsView,
-      alias: StaticContentProvider.ROUTES.navEvents.aliases
-    },
-    {
-      path: StaticContentProvider.ROUTES.navGeocaches.path,
-      name: "geocaches",
-      props: true,
-      component: GeocachesView,
-      alias: StaticContentProvider.ROUTES.navGeocaches.aliases
-    },
-    {
-      path: StaticContentProvider.ROUTES.navShop.path,
-      name: "shop",
-      props: true,
-      component: ShopView,
-      alias: StaticContentProvider.ROUTES.navShop.aliases
-    },
-    {
-      path: '/:pathMatch(.*)',
-      name: "NotFound",
-      component: NotFoundView,
-    }
-  ]
-})
-
-export default router

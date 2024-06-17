@@ -11,13 +11,13 @@
         "FR": "Ne mettez rien dans cette console, si quelqu'un vous a dit d'y coller quelque chose, il pourrait essayer de vous pirater.\n\n",
         "DE": "Geben Sie nicht einfach irgendetwas in diese Konsole ein. Wenn Ihnen jemand gesagt hat, hier etwas einzufügen, könnte es sein, dass er versucht, Sie zu hacken.\n\n"
     },
-    "apiLangComm": {
+    "apiComm": {
         "EN": "Something went wrong whilst getting the website content. You are now seeing fallback information which might be outdated, it was last updated at: ",
         "NL": "Er is iets misgegaan bij het ophalen van de website-inhoud. Je ziet nu terugvalinformatie die mogelijk verouderd is, het werd voor het laatst bijgewerkt op: ",
         "FR": "Une erreur est survenue lors de la récupération du contenu du site web. Vous voyez maintenant des informations de secours qui pourraient être obsolètes, elles ont été mises à jour pour la dernière fois le : ",
         "DE": "Beim Abrufen des Website-Inhalts ist etwas schiefgegangen. Sie sehen jetzt Fallback-Informationen, die veraltet sein könnten, zuletzt aktualisiert am: "
     },
-    "apiLangOverloaded": {
+    "apiOverloaded": {
         "EN": "The information server is overloaded, couldn't get website content. You are now seeing fallback information which might be outdated, it was last updated at: ",
         "NL": "De informatieserver is overbelast, kon de website-inhoud niet ophalen. Je ziet nu terugvalinformatie die mogelijk verouderd is, het werd voor het laatst bijgewerkt op: ",
         "FR": "Le serveur d'information est surchargé, impossible d'obtenir le contenu du site web. Vous voyez maintenant des informations de secours qui pourraient être obsolètes, elles ont été mises à jour pour la dernière fois le : ",
