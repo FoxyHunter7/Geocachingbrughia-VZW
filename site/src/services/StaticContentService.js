@@ -46,12 +46,12 @@ class StaticContentProvider {
             const response = await fetch(`${config.apiUrl}languages`);
 
             if (!response.ok) {
-                throw new ResponseError("Bad fetch response", response);
+                throw new error("Bad fetch response", response);
             }
 
             StaticContentProvider.LANGUAGES = await response.json();
         } catch (err) {
-            console.log("ERROR While fetching languages: ", err);
+            console.error("Failed to fetch (site languages)", err);
             this.#setErrors(err);
             StaticContentProvider.LANGUAGES = fallbackLanguages;
         }
@@ -62,7 +62,7 @@ class StaticContentProvider {
             const response = await fetch(`${config.apiUrl}static`);
 
             if (!response.ok) {
-                throw new ResponseError("Bad fetch response", response);
+                throw new error("Bad fetch response", response);
             }
 
             const unformattedDictionary = await response.json();
@@ -75,7 +75,7 @@ class StaticContentProvider {
                 });
             });
         } catch (err) {
-            console.log("ERROR While fetching static site content: ", err);
+            console.error("Failed to fetch (static site content)", err);
             this.#setErrors(err);
             StaticContentProvider.DICTIONARY = fallbackStaticContent;
         }
