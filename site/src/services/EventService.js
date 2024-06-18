@@ -1,6 +1,11 @@
-async function fetchAllEvents(lang) {
-    const response = await fetch(`http://127.0.0.1:8000/api/events?lang=${lang}`)
-    return await response.json()
+import fetchFromServer from "./fetcher"
+
+async function getAllEvents(search, perPage, sortBy, sortDirection) {
+    return fetchFromServer("events", search, perPage, sortBy, sortDirection);
 }
 
-export { fetchAllEvents }
+async function getHomePageEvents() {
+    return fetchFromServer("home_events");
+}
+
+export { getAllEvents, getHomePageEvents };
