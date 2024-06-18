@@ -1,22 +1,26 @@
-[ 
-        { 
-            "code": "NL",
-            "name": "Nederlands",
-            "imageUrl": "fallbackLangFlags/NL.svg"
-        },
-        {
-            "code": "FR",
-            "name": "Français",
-            "imageUrl": "fallbackLangFlags/FR.svg"
-        },
-        {
-            "code": "DE",
-            "name": "Deutsch",
-            "imageUrl": "fallbackLangFlags/DE.svg"
-        },
-        { 
-            "code": "EN",
-            "name": "English",
-            "imageUrl": "fallbackLangFlags/EN.svg"
-        } 
+[
+    { 
+        "code": "NL",
+        "name": "Nederlands",
+        "fallback": true,
+        "imageUrl": "fallbackLangFlags/NL.svg"
+    },
+    {
+        "code": "FR",
+        "name": "Français",
+        "fallback": true,
+        "imageUrl": "fallbackLangFlags/FR.svg"
+    },
+    {
+        "code": "DE",
+        "name": "Deutsch",
+        "fallback": true,
+        "imageUrl": "fallbackLangFlags/DE.svg"
+    },
+    { 
+        "code": "EN",
+        "name": "English",
+        "fallback": true,
+        "imageUrl": "fallbackLangFlags/EN.svg"
+    }
 ]
