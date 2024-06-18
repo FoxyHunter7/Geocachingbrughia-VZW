@@ -37,6 +37,13 @@ class EventApiController
         return response()->json($this->all($request, true), Response::HTTP_OK);
     }
 
+    public function homePageEvents(Request $request)
+    {
+        $language = $request->get('lang');
+
+        return response()->json($this->_service->getHomePageEvents($language), Response::HTTP_OK);
+    }
+
     public function getByIdAdmin(Request $request, int $id)
     {
         $language = $request->get('lang');

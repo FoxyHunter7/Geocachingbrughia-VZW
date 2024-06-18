@@ -24,6 +24,7 @@ Route::group([
     'middleware' => ['language']
 ], function() {
     Route::get('events', [EventApiController::class, 'allPublic']);
+    Route::get('home_events', [EventApiController::class, 'homePageEvents']);
     Route::get('messages', [MessageApiController::class, 'allPublic']);
 });
 

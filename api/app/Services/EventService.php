@@ -31,6 +31,18 @@ class EventService extends Service
         $this->_errors = new MessageBag;
     }
 
+    public function getHomePageEvents($language)
+    {
+        $model = $this->_model->where("on_home", true);
+
+        $results = $model
+        ->select($this->_fields)
+        ->with($this->getLanguageSpecificFields($language, false))
+        ->get();
+
+        return $results;
+    }
+
     protected function getLanguageSpecificFields($language, $isAdmin)
     {
         return [
