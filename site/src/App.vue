@@ -7,15 +7,53 @@
   import WarningBanner from './components/WarningBanner.vue';
   import LanguageSelector from './components/LanguageSelector.vue';
 
-  const innerWidth = ref(window.innerWidth);
-  const isSideMenuOpen = ref(false);
-  const isLangSelectorOpen = ref(false);
-
   const scsErrors = SCP.ERRORS;
 
+  const innerWidth = ref(window.innerWidth);
   const isMobile = computed(() => {
     return innerWidth.value <= 850;
   });
+
+  const isSideMenuOpen = ref(false);
+
+  const keepPopupMenuOpen = ref(false);
+  const popupMenuStates = ref({
+    "languageSelector": false
+  });
+  const isPopupOpen = computed(() => {
+    return keepPopupMenuOpen.value || Object.values(popupMenuStates.value).some(state => state === true);
+  });
+  const popupMenuQueue = [];
+
+  function openInPopup(componentName) {
+    console.log(isPopupOpen.value);
+    if (isPopupOpen.value) {
+      popupMenuQueue.push(componentName);
+    } else {
+      popupMenuStates.value[componentName] = true;
+    }
+  }
+
+  function closeOutPopup(componentName = "") {
+    if (isPopupOpen.value) {
+      if (popupMenuQueue.length > 0) {
+        keepPopupMenuOpen.value = true;
+        clearFromPopup(componentName);
+        popupMenuStates.value[popupMenuQueue.shift()] = true;
+        keepPopupMenuOpen.value = false;
+      } else {
+        clearFromPopup(componentName);
+      }
+    }
+
+    function clearFromPopup(componentName) {
+      if (componentName) {
+        popupMenuStates.value[componentName] = false;
+      } else {
+        Object.keys(popupMenuStates.value).forEach(componentName => popupMenuStates.value[componentName] = false);
+      }
+    }
+  }
 
   onMounted(() => {
         window.addEventListener('resize', () => {innerWidth.value = window.innerWidth});
@@ -24,14 +62,14 @@
 
 <template>
   <section id="side-menu" :class="{ open: isSideMenuOpen }"></section>
-  <TopHeader :isMobile="isMobile" @menu-state-change="(state) => {isSideMenuOpen = state}" @lang-selector="isLangSelectorOpen = !isLangSelectorOpen"/>
+  <TopHeader :isMobile="isMobile" @menu-state-change="(state) => { isSideMenuOpen = state }" @lang-selector="openInPopup('languageSelector')"/>
   <div id="messages">
     <WarningBanner v-if="scsErrors" :error="scsErrors" :date="config.fallbackLastUpdated"></WarningBanner>
   </div>
-  <div id="popup-menu" :class="{hidden: !isLangSelectorOpen}">
-    <LanguageSelector @close="isLangSelectorOpen = !isLangSelectorOpen"/>
+  <div id="popup-menu" :class="{ hidden: !isPopupOpen }">
+    <LanguageSelector v-if="popupMenuStates.languageSelector" @close="closeOutPopup('languageSelector')"/>
   </div>
-  <div @click="isLangSelectorOpen = !isLangSelectorOpen" id="overlay" :class="{hidden: !isLangSelectorOpen}"></div>
+  <div id="overlay" :class="{ hidden: !isPopupOpen }" @click="closeOutPopup()"></div>
   <RouterView />
 </template>
 
