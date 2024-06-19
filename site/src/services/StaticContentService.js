@@ -4,7 +4,6 @@ import fallbackStaticContent from "../data/fallbackStaticContent.json";
 import warnings from "../data/warnings.json";
 import { showConsoleDangerWarning } from "./ConsoleService";
 import { LanguageProvider } from "./LanguageService";
-import { ref } from "vue";
 
 class StaticContentProvider {
     static DICTIONARY = {};
@@ -27,7 +26,7 @@ class StaticContentProvider {
             aliases: []
         }
     };
-    static ERRORS = ref("");
+    static ERRORS = "";
     static INIT_COMPLETE = false;
 
     async init() {
@@ -51,7 +50,7 @@ class StaticContentProvider {
 
             StaticContentProvider.LANGUAGES = await response.json();
         } catch (err) {
-            console.error("Failed to fetch (site languages)", err);
+            console.error("Failed to fetch (site languages)");
             this.#setErrors(err);
             StaticContentProvider.LANGUAGES = fallbackLanguages;
         }
@@ -75,7 +74,7 @@ class StaticContentProvider {
                 });
             });
         } catch (err) {
-            console.error("Failed to fetch (static site content)", err);
+            console.error("Failed to fetch (static site content)");
             this.#setErrors(err);
             StaticContentProvider.DICTIONARY = fallbackStaticContent;
         }
@@ -104,11 +103,11 @@ class StaticContentProvider {
     #setErrors(err) {
         if (err.response && err.response.status) {
             switch (err.response.status) {
-                case 400 || 401 || 404 || 500: StaticContentProvider.ERRORS.value = warnings.apiComm[LanguageProvider.CURR_LANG]; break;
-                case 503: StaticContentProvider.ERRORS.value = warnings.apiOverloaded[LanguageProvider.CURR_LANG]; break;
+                case 400 || 401 || 404 || 500: StaticContentProvider.ERRORS = warnings.apiComm; break;
+                case 503: StaticContentProvider.ERRORS = warnings.apiOverloaded; break;
             }
         }  else {
-            StaticContentProvider.ERRORS.value = warnings.apiComm[LanguageProvider.CURR_LANG];
+            StaticContentProvider.ERRORS = warnings.apiComm;
         }
     }
 }

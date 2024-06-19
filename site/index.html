@@ -93,7 +93,7 @@
 
         const loaderSubtext = document.querySelector(".initial-loader-subtext");
         if (loaderSubtext) {
-          loaderSubtext.innerHTML = fallbackStaticContent.UILoadingSite[LanguageProvider.CURR_LANG];
+          loaderSubtext.innerHTML = fallbackStaticContent.UILoadingSite[LanguageProvider.CURR_LANG.value];
         }
       }
 
@@ -103,8 +103,8 @@
         const appErrorMessage = document.querySelector(".app-error h2");
         const appErrorDetails = document.querySelector(".app-error p");
         if (appErrorMessage && appErrorDetails) {
-          appErrorMessage.innerHTML = warnings.websiteError[LanguageProvider.CURR_LANG];
-          appErrorDetails.innerHTML = `${warnings.websiteErrorDetailed[LanguageProvider.CURR_LANG]}<a href="mailto:${config.technicalContact}">${config.technicalContact}</a>`;
+          appErrorMessage.innerHTML = warnings.websiteError[LanguageProvider.CURR_LANG.value];
+          appErrorDetails.innerHTML = `${warnings.websiteErrorDetailed[LanguageProvider.CURR_LANG.value]}<a href="mailto:${config.technicalContact}">${config.technicalContact}</a>`;
         }
       }
 

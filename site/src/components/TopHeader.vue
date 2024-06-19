@@ -1,14 +1,19 @@
 <script setup>
-    import { ref } from 'vue';
+    import { ref, computed } from 'vue';
     import { RouterLink } from 'vue-router';
     import LanguageProvider from '@/services/LanguageService';
+    import config from '../data/config.json';
     import { StaticContentProvider as SCP } from '@/services/StaticContentService';
 
     const props = defineProps(["isMobile"]);
-    const emits = defineEmits(['menuStateChange']);
+    const emits = defineEmits(['menuStateChange', 'langSelector']);
 
-    const lang = ref(LanguageProvider.CURR_LANG);
+    const lang = computed(() => LanguageProvider.CURR_LANG.value);
     const isNavOpen = ref(false);
+
+    const langInfo = computed(() => {
+        return SCP.LANGUAGES.find(lang => lang.code === LanguageProvider.CURR_LANG.value);
+    });
 
     const dictionary = SCP.DICTIONARY;
 </script>
@@ -24,7 +29,12 @@
                 <RouterLink @click="if (isMobile) {isNavOpen = !isNavOpen; $emit('menuStateChange', isNavOpen)}" :to="{ path: SCP.constructRoute(lang, 'NavGeocaches') }">{{ dictionary.NavGeocaches[lang] }}</RouterLink>
                 <RouterLink @click="if (isMobile) {isNavOpen = !isNavOpen; $emit('menuStateChange', isNavOpen)}" :to="{ path: SCP.constructRoute(lang, 'NavShop') }">{{ dictionary.NavShop[lang] }}</RouterLink>
             </nav>
+            <figure @click="$emit('langSelector')" id="lang-selector">
+                <img :src="(langInfo.fallback) ? `/src/assets/media/${langInfo.imageUrl}` : `${config.apiUrl}images/${langInfo.imageUrl}`">
+                <p>{{ langInfo.name }}</p>
+            </figure>
         </Teleport>
+        <div v-if="isMobile"></div>
         <div v-if="isMobile" class="nav" :class="{open: isNavOpen}" @click="isNavOpen = !isNavOpen; $emit('menuStateChange', isNavOpen)"></div>
     </header>
 </template>
@@ -33,7 +43,7 @@
     header {
         background-color: var(--color-primary);
         display: grid;
-        grid-template-columns: 2fr 6fr;
+        grid-template-columns: 2fr 6fr 1.5fr;
         gap: 5rem;
         padding: 1rem;
     }
@@ -54,7 +64,7 @@
         flex-direction: column;
         align-items: flex-end;
         gap: 1.5rem;
-        margin: 2rem 2.5rem;
+        margin: 2rem 2.5rem 0 2.5rem;
     }
 
     #side-menu > nav a {
@@ -66,10 +76,10 @@
     }
 
     header > .nav {
-        margin: auto 0 auto auto;
+        margin: auto 0.5rem auto auto;
         height: 80%;
         aspect-ratio: 1 / 1;
-        background-color: var(--color-text2);
+        background-color: var(--color-text);
         mask: url(../assets/media/menu.svg);
         mask-size: contain;
     }
@@ -97,6 +107,48 @@
     nav a.router-link-active {
         border-bottom: 0.2rem solid var(--color-text);
         transition: border-bottom, font-weight 0.1s;
+        font-weight: bold;
+    }
+
+    figure {
+        height: 3rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-between;
+        width: min-content;
+        margin-left: auto;
+        padding: 0.2rem;
+        border-radius: 0.5rem;
+        transform: scale(100%);
+        transition: transform 0.1s;
+    }
+
+    figure:hover {
+        transform: scale(102%);
+        transition: transform 0.1s;
+        cursor: pointer;
+    }
+
+    figure img {
+        height: 50%;
+    }
+
+    figure p {
+        color: var(--color-text);
+        line-height: 100%;
+    }
+
+    #side-menu > figure {
+        flex-direction: row;
+        justify-content: flex-start;
+        height: 3.5rem;
+        gap: 1rem;
+        margin: 0 2.5rem 2rem auto;
+    }
+
+    #side-menu > figure p {
+        color: var(--color-text);
         font-weight: bold;
     }
 </style>

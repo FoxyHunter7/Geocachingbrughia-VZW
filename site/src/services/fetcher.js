@@ -3,7 +3,7 @@ import LanguageProvider from "./LanguageService";
 
 async function fetchFromServer(endpoint, search = "", perPage = null, sortBy = "", sortDirection = "") {
     const queryParams = {
-        lang: `?lang=${LanguageProvider.CURR_LANG}`,
+        lang: `?lang=${LanguageProvider.CURR_LANG.value}`,
         search: (search) ? `&search=${search}` : "",
         perPage: (perPage) ? `&per_page=${perPage}` : "",
         sortBy: (sortBy) ? `&sort_by=${sortBy}` : "",
@@ -20,7 +20,7 @@ async function fetchFromServer(endpoint, search = "", perPage = null, sortBy = "
 
         return await response.json();
     } catch (err) {
-        console.error(`Failed to fetch (endpoint: ${endpoint})`, err);
+        console.error(`Failed to fetch (endpoint: ${endpoint})`);
         return [];
     }
 }

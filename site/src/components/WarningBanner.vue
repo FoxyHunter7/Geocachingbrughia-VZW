@@ -1,7 +1,9 @@
 <script setup>
+    import LanguageProvider from '@/services/LanguageService';
     import { computed } from 'vue';
+
     const props = defineProps({
-        error: String,
+        error: Object,
         date: String
     });
 
@@ -17,14 +19,15 @@
             minute: '2-digit',
             timeZoneName: 'short'
         };
-        return date.toLocaleString(navigator.language, options);
+        return date.toLocaleString(LanguageProvider.CURR_LANG.value, options);
     });
+    const errorMessage = computed(() => props.error[LanguageProvider.CURR_LANG.value]);
 </script>
 
 <template>
     <div>
         <div class="warn-icon"></div>
-        <p>{{ error + formattedDate }}</p>
+        <p>{{ errorMessage + formattedDate }}</p>
     </div>
 </template>
 
@@ -42,7 +45,7 @@
     div.warn-icon {
         height: 80%;
         aspect-ratio: 1 / 1;
-        background-color: var(--color-text2);
+        background-color: var(--color-text);
         mask: url(../assets/media/alert-triangle.svg);
         mask-size: contain;
     }

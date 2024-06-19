@@ -5,9 +5,11 @@
   import config from '@/data/config.json'
   import TopHeader from '@/components/TopHeader.vue'
   import WarningBanner from './components/WarningBanner.vue';
+  import LanguageSelector from './components/LanguageSelector.vue';
 
   const innerWidth = ref(window.innerWidth);
   const isSideMenuOpen = ref(false);
+  const isLangSelectorOpen = ref(false);
 
   const scsErrors = SCP.ERRORS;
 
@@ -22,10 +24,14 @@
 
 <template>
   <section id="side-menu" :class="{ open: isSideMenuOpen }"></section>
-  <TopHeader :isMobile="isMobile" @menu-state-change="(state) => {isSideMenuOpen = state}"/>
+  <TopHeader :isMobile="isMobile" @menu-state-change="(state) => {isSideMenuOpen = state}" @lang-selector="isLangSelectorOpen = !isLangSelectorOpen"/>
   <div id="messages">
     <WarningBanner v-if="scsErrors" :error="scsErrors" :date="config.fallbackLastUpdated"></WarningBanner>
   </div>
+  <div id="popup-menu" :class="{hidden: !isLangSelectorOpen}">
+    <LanguageSelector @close="isLangSelectorOpen = !isLangSelectorOpen"/>
+  </div>
+  <div @click="isLangSelectorOpen = !isLangSelectorOpen" id="overlay" :class="{hidden: !isLangSelectorOpen}"></div>
   <RouterView />
 </template>
 
@@ -81,5 +87,30 @@
 
   #messages:empty {
     padding: 0;
+  }
+
+  #popup-menu {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      align-items: center;
+      background-color: var(--color-background);
+      border-radius: 0.5rem;
+      z-index: 20;
+      max-width: 60vw;
+  }
+
+  #overlay {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 10;
+    background-color: rgba(0, 0, 0, 0.5)
   }
 </style>

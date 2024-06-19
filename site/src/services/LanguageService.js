@@ -5,7 +5,7 @@ class LanguageProvider {
     static #CURR_LANG = ref('');
 
     static get CURR_LANG() {
-        return LanguageProvider.#CURR_LANG.value;
+        return LanguageProvider.#CURR_LANG;
     }
 
     static set CURR_LANG(newLang) {

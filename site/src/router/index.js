@@ -1,3 +1,4 @@
+import { computed } from 'vue';
 import { createRouter, createWebHistory } from 'vue-router';
 import HomeView from '@/views/HomeView.vue';
 import NotFoundView from '@/views/NotFoundView.vue';
@@ -8,13 +9,15 @@ import { StaticContentProvider } from '@/services/StaticContentService'
 import { LanguageProvider } from '@/services/LanguageService';
 
 export default function setupRouter() {
+  const lang = computed(() => LanguageProvider.CURR_LANG.value);
+
   return createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
     routes: [
       {
         path: '/',
         redirect: () => {
-          return { path: `/${LanguageProvider.CURR_LANG.toLocaleLowerCase()}` }
+          return { path: `/${lang.toLocaleLowerCase()}` }
         }
       },
       {
