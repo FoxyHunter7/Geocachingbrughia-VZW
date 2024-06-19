@@ -17,7 +17,7 @@ export default function setupRouter() {
       {
         path: '/',
         redirect: () => {
-          return { path: `/${lang.toLocaleLowerCase()}` }
+          return { path: `/${lang.value.toLocaleLowerCase()}` }
         }
       },
       {
