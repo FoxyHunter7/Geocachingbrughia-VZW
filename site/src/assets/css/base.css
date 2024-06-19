@@ -21,13 +21,13 @@
 }
 
 :root {
-  --color-text: #0E1809;
-  --color-text2: #0E1809;
-  --color-background: #F7FBF5;
-  --color-primary: #71C94C;
-  --color-secondary: #A4E18B;
-  --color-accent: #7FDA58;
-  --color-alert: #ffc400;
+  --color-text: #0f200f;
+  --color-text2: #F9FAF0;
+  --color-background: #F9FAF0;
+  --color-primary: #9dc209;
+  --color-secondary: #91af1a;
+  --color-tertiary: #4A7400;
+  --color-alert: #ffaf37;
 
   --color-border: var(--vt-c-divider-light-2);
   --color-border-hover: var(--vt-c-divider-light-1);

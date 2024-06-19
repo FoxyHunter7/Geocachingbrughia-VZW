@@ -84,7 +84,7 @@
         text-transform: capitalize;
         font-size: 1rem;
         font-weight: normal;
-        color: var(--color-text2);
+        color: var(--color-text);
         border-bottom: 0.2rem solid rgba(0, 0, 0, 0);
         transition: border-bottom, font-weight 0.1s;
     }
@@ -95,7 +95,7 @@
     }
 
     nav a.router-link-active {
-        border-bottom: 0.2rem solid var(--color-text2);
+        border-bottom: 0.2rem solid var(--color-text);
         transition: border-bottom, font-weight 0.1s;
         font-weight: bold;
     }

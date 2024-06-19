@@ -48,6 +48,6 @@
     }
 
     p {
-        color: var(--color-text2);
+        color: var(--color-text);
     }
 </style>
