@@ -9,18 +9,27 @@
 </script>
 
 <template>
-    <div @click="$emit('close')" class="cross-btn"></div>
-    <ul>
-        <li v-for="lang in SCP.LANGUAGES" :class="{selected: lang.code === language}">
-            <figure @click="LanguageProvider.CURR_LANG = lang.code; $emit('close')">
-                <img :src="(lang.fallback) ? `/src/assets/media/${lang.imageUrl}` : `${config.apiUrl}images/${lang.imageUrl}`">
-                <p>{{ lang.name }}</p>
-            </figure>
-        </li>
-    </ul>
+    <section>
+        <div @click="$emit('close')" class="cross-btn"></div>
+        <ul>
+            <li v-for="lang in SCP.LANGUAGES" :class="{selected: lang.code === language}">
+                <figure @click="LanguageProvider.CURR_LANG = lang.code; $emit('close')">
+                    <img :src="(lang.fallback) ? `/src/assets/media/${lang.imageUrl}` : `${config.apiUrl}images/${lang.imageUrl}`">
+                    <p>{{ lang.name }}</p>
+                </figure>
+            </li>
+        </ul>
+    </section>
 </template>
 
 <style scoped>
+    section {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
     .cross-btn {
         width: 1.5rem;
         aspect-ratio: 1 / 1;

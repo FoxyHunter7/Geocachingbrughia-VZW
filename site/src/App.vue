@@ -26,7 +26,6 @@
   const popupMenuQueue = [];
 
   function openInPopup(componentName) {
-    console.log(isPopupOpen.value);
     if (isPopupOpen.value) {
       popupMenuQueue.push(componentName);
     } else {
