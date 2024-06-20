@@ -3,6 +3,7 @@
   import { getHomePageEvents } from '@/services/EventService';
   import { getAllMessages } from '@/services/MessageService';
   import LanguageProvider from '@/services/LanguageService';
+  import Message from '@/components/Message.vue'
 
   const events = ref([]);
   const messages = ref([]);
@@ -19,10 +20,9 @@
 </script>
 
 <template>
-  <div v-for="message in messages" >
-    <h2>{{ message.title }}</h2>
-    <p>{{ message.body }}</p>
-  </div>
+  <Teleport to="#messages">
+    <Message v-for="message in messages" :message="message" />
+  </Teleport>
   <main>
   </main>
 </template>
