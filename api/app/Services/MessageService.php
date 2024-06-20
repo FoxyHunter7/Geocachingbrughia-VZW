@@ -20,6 +20,7 @@ class MessageService extends Service
     protected $_fieldsAdminOnly = ['state'];
     protected $_searchOn = 'title';
     protected $_defaultSortBy = 'updated_at';
+    protected $_paginate = false;
 
     public function __construct(Message $model)
     {
