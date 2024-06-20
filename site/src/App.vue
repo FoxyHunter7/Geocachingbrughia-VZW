@@ -66,10 +66,10 @@
   <div id="messages">
     <WarningBanner v-if="scsErrors" :error="scsErrors" :date="config.fallbackLastUpdated"></WarningBanner>
   </div>
-  <div id="popup-menu" :class="{ hidden: !isPopupOpen }">
-    <LanguageSelector v-if="popupMenuStates.languageSelector" @close="closeOutPopup('languageSelector')"/>
+  <div id="popup-menu" v-show="isPopupOpen">
+    <LanguageSelector v-show="popupMenuStates.languageSelector" @close="closeOutPopup('languageSelector')"/>
   </div>
-  <div id="overlay" :class="{ hidden: !isPopupOpen }" @click="closeOutPopup()"></div>
+  <div id="overlay" v-show="isPopupOpen" @click="closeOutPopup()"></div>
   <RouterView />
 </template>
 
