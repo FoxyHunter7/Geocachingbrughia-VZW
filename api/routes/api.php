@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ContactFormResponseApiController;
 use App\Http\Controllers\EventApiController;
 use App\Http\Controllers\GeocacheApiController;
 use App\Http\Controllers\ImageController;
@@ -21,22 +22,29 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::group([
-    'middleware' => ['language']
+    'middleware' => ['throttle:api']
 ], function() {
-    Route::get('events', [EventApiController::class, 'allPublic']);
-    Route::get('home_events', [EventApiController::class, 'homePageEvents']);
-    Route::get('messages', [MessageApiController::class, 'allPublic']);
+    Route::group([
+        'middleware' => ['language']
+    ], function() {
+        Route::get('events', [EventApiController::class, 'allPublic']);
+        Route::get('home_events', [EventApiController::class, 'homePageEvents']);
+        Route::get('messages', [MessageApiController::class, 'allPublic']);
+    });
+
+    Route::get('geocaches', [GeocacheApiController::class, 'allPublic']);
+    Route::get('languages', [LanguageApiController::class, 'allPublic']);
+    Route::get('static',[StaticSiteContentController::class, 'allPublic']);
+
+    Route::get('images/{p1}/{filename}', [ImageController::class, 'get'])->name('images');
+
+    Route::post('contact/form/responses', [ContactFormResponseApiController::class, 'add']);
+
+    // Only needed initially, users are not allowed to self register.
+    Route::post('register', [JwtAuthController::class, 'register']);
+    Route::post('login', [JwtAuthController::class, 'login']);
+    Route::get('denied', [JwtAuthController::class, 'accessDenied'])->name('denied');
 });
-
-Route::get('geocaches', [GeocacheApiController::class, 'allPublic']);
-Route::get('languages', [LanguageApiController::class, 'allPublic']);
-Route::get('static',[StaticSiteContentController::class, 'allPublic']);
-Route::get('images/{p1}/{filename}', [ImageController::class, 'get'])->name('images');
-
-// Only needed initially, users are not allowed to self register.
-Route::post('register', [JwtAuthController::class, 'register']);
-Route::post('login', [JwtAuthController::class, 'login']);
-Route::get('denied', [JwtAuthController::class, 'accessDenied'])->name('denied');
 
 Route::group([
     'middleware' => ['auth.csrf.jwt', 'auth:api']
@@ -85,6 +93,10 @@ Route::group([
             Route::post('static', 'add');
             Route::put('static/{property}', 'update');
             Route::delete('static/{property}', 'delete');
+        });
+
+        Route::controller(ContactFormResponseApiController::class)->group(function () {
+            Route::get('contact/form/responses', 'all');
         });
     });
 });
