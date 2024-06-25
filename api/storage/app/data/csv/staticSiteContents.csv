@@ -123,6 +123,14 @@ UINoGeocachesSubTxt;EN;"Check back later"
 UINoGeocachesSubTxt;NL;"Kom later terug"
 UINoGeocachesSubTxt;FR;"Revenez plus tard"
 UINoGeocachesSubTxt;DE;"Schauen Sie später wieder vorbei"
+UIPageNotFound;EN;"Page Not Found"
+UIPageNotFound;NL;"Pagina niet gevonden"
+UIPageNotFound;FR;"Page non trouvée"
+UIPageNotFound;DE;"Seite nicht gefunden"
+UIPageNotFoundSubTxt;EN;"Oops! The page you are looking for could not be found. You will be redirected back to the homepage in: ///t/// seconds."
+UIPageNotFoundSubTxt;NL;"Oeps! De pagina die u zoekt, kon niet worden gevonden. U wordt binnen ///t/// seconden teruggeleid naar de homepage."
+UIPageNotFoundSubTxt;FR;"Oops ! La page que vous recherchez est introuvable. Vous serez redirigé vers la page d'accueil dans ///t/// secondes."
+UIPageNotFoundSubTxt;DE;"Oops! Die gesuchte Seite konnte nicht gefunden werden. Sie werden in ///t/// Sekunden zur Startseite weitergeleitet."
 ButtonBack;EN;back
 ButtonBack;NL;terug
 ButtonBack;FR;retour
