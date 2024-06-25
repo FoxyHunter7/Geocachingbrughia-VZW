@@ -1,1 +1,14 @@
 @import './base.css';
+
+#app {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+}
+
+@supports (height: 100lvh) {
+    #app {
+        height: 100lvh;
+    }
+}

@@ -39,7 +39,6 @@
         align-items: center;
         gap: 2rem;
         padding: 1rem;
-        border-radius: 0.5rem;
     }
 
     div.warn-icon {

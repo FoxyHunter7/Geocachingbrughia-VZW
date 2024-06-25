@@ -21,8 +21,7 @@
         color: var(--color-text);
         background-color: var(--color-secondary);
         padding: 1rem;
-        border-radius: 0.5rem;
-        width: fit-content;
+        width: 100%;
     }
 
     h2 {

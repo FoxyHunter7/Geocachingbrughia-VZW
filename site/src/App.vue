@@ -74,7 +74,10 @@
 
 <style scoped>
   Header {
+    position: sticky;
+    top: 0;
     height: 5rem;
+    flex-shrink: 0;
     box-sizing: border-box;
     max-width: 100vw;
     overflow: hidden;
@@ -102,6 +105,7 @@
   }
   
   #side-menu p {
+    z-index: 1;
     height: 1.5rem;
     text-overflow: ellipsis;
     overflow: hidden;
@@ -114,15 +118,14 @@
   }
 
   #messages {
-    position: relative;
+    background-color: var(--color-tertiary);
+    position: sticky;
     height: fit-content;
-    top: 0;
+    top: 5rem;
     left: 0;
-    padding: 1rem 0.8rem;
-    z-index: -1;
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 0.1rem;
   }
 
   #messages:empty {

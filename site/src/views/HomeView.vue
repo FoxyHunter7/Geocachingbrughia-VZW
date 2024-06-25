@@ -24,8 +24,20 @@
     <Message v-for="message in messages" :message="message" />
   </Teleport>
   <main>
+    <section></section>
+    <section></section>
   </main>
 </template>
 
 <style scoped>
+  main {
+    flex: 1 1 auto;
+    height: 100%;
+    background-color: hotpink;
+  }
+
+  section {
+    border: 1rem solid black;
+    height: 100%;
+  }
 </style>
