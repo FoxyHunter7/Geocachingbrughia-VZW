@@ -4,11 +4,41 @@
     height: 100vh;
     display: flex;
     flex-direction: column;
-    overflow-y: auto;
+    overflow-y:hidden;
 }
 
 @supports (height: 100lvh) {
     #app {
         height: 100lvh;
     }
+}
+
+div.ProseMirror {
+    position: static !important;
+}
+
+.tiptap {
+    z-index: 0;
+}
+
+.tiptap p {
+    padding: 0.3rem 0;
+}
+
+@media screen and (max-width: 800px) {
+    .tiptap p {
+        text-align: center;
+    }
+}
+
+p strong {
+    font-weight: bold;
+}
+
+p em {
+    font-style: italic;
+}
+
+p u {
+    text-decoration: underline;
 }

@@ -24,10 +24,12 @@
   --color-text: #0f200f;
   --color-text2: #F9FAF0;
   --color-background: #F9FAF0;
+  --color-background2: #dee6be;
   --color-primary: #9dc209;
   --color-secondary: #91af1a;
-  --color-tertiary: #4A7400;
-  --color-alert: #ff8c00;
+  --color-tertiary: #69a00a;
+  --color-quaternary: #4A7400;
+  --color-alert: #fc5252;
 
   --color-border: var(--vt-c-divider-light-2);
   --color-border-hover: var(--vt-c-divider-light-1);

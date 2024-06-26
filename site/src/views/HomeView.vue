@@ -4,8 +4,9 @@
   import { getAllMessages } from '@/services/MessageService';
   import LanguageProvider from '@/services/LanguageService';
   import Message from '@/components/Message.vue'
+  import Event from '@/components/Event.vue'
 
-  const events = ref([]);
+  const events = ref(["loading"]);
   const messages = ref([]);
   const lang = computed(() => LanguageProvider.CURR_LANG.value);
 
@@ -24,8 +25,9 @@
     <Message v-for="message in messages" :message="message" />
   </Teleport>
   <main>
-    <section></section>
-    <section></section>
+    <section v-show=" events.length !== 0 && events[0] === 'loading'" id=loading><p>Loading</p></section>
+    <section v-show="events.length === 0" id="default-hero"><p>Default Hero</p></section>
+    <Event v-if="events.length !== 0 && events[0] !== 'loading'" v-for="event in events" :event="event" />
   </main>
 </template>
 
@@ -33,11 +35,11 @@
   main {
     flex: 1 1 auto;
     height: 100%;
-    background-color: hotpink;
+    overflow-y: auto;
   }
 
   section {
-    border: 1rem solid black;
     height: 100%;
+    max-height: 50rem;
   }
 </style>
