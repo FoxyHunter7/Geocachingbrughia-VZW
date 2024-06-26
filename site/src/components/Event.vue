@@ -80,20 +80,20 @@
 </script>
 
 <template>
-<section>
-    <div>
-        <img :src="`${config.apiUrl}images/${event.imageUrl}`">
-    </div>
-    <div>
-        <h2>{{ event.title }}</h2>
-        <editor-content :editor="editor" />
-        <ul>
-            <li><img :src="`/src/assets/media/eventtypes/${event.type}.png`"><p>{{ event.type }}</p></li>
-            <li><p><span>{{ formattedStartDate }}</span> - <span>{{ formattedEndDate }}</span></p></li>
-            <li><a :href="event.geolink" target="_blank">geocaching.com</a></li>
-        </ul>
-    </div>
-</section>
+    <section>
+        <div>
+            <img :src="`${config.apiUrl}images/${event.imageUrl}`">
+        </div>
+        <div>
+            <h2>{{ event.title }}</h2>
+            <editor-content :editor="editor" />
+            <ul>
+                <li><img :src="`/src/assets/media/eventtypes/${event.type}.png`"><p>{{ event.type }}</p></li>
+                <li><p><span>{{ formattedStartDate }}</span> - <span>{{ formattedEndDate }}</span></p></li>
+                <li><a :href="event.geolink" target="_blank">geocaching.com</a></li>
+            </ul>
+        </div>
+    </section>
 </template>
 
 <style scoped>
@@ -102,10 +102,6 @@
         grid-template-columns: 1fr 2fr;
         gap: 3rem;
         padding: 3rem;
-    }
-
-    section > div:first-child {
-        height: 100%;
     }
 
     section > div:first-child {
