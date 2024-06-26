@@ -34,8 +34,7 @@
   </Teleport>
   <main>
     <section v-show=" events.length !== 0 && events[0] === 'loading'" id=loading>
-      <div v-show="loaderActive" class="initial-loader">
-      </div>
+      <div v-show="loaderActive" class="initial-loader"></div>
     </section>
     <Hero v-show="events.length === 0" id="default-hero"/>
     <Event v-if="events.length !== 0 && events[0] !== 'loading'" v-for="event in events" :event="event" />
