@@ -3,8 +3,8 @@
   import { getHomePageEvents } from '@/services/EventService';
   import { getAllMessages } from '@/services/MessageService';
   import LanguageProvider from '@/services/LanguageService';
-  import Message from '@/components/Message.vue'
-  import Event from '@/components/Event.vue'
+  import Message from '@/components/Message.vue';
+  import Event from '@/components/Event.vue';
   import Hero from '@/components/Hero.vue';
 
   const events = ref(["loading"]);
