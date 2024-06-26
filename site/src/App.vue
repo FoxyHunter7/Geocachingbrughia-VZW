@@ -97,6 +97,7 @@
     flex-direction: column;
     align-items: flex-end;
     gap: 3rem;
+    z-index: 5;
   }
   
   #side-menu.open {
@@ -105,7 +106,6 @@
   }
   
   #side-menu p {
-    z-index: 1;
     height: 1.5rem;
     text-overflow: ellipsis;
     overflow: hidden;
