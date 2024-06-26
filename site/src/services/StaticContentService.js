@@ -1,3 +1,4 @@
+import { ref } from "vue";
 import config from "../data/config.json";
 import fallbackLanguages from "../data/fallbackLanguages.json";
 import fallbackStaticContent from "../data/fallbackStaticContent.json";
@@ -28,6 +29,7 @@ class StaticContentProvider {
     };
     static ERRORS = "";
     static INIT_COMPLETE = false;
+    static DICT_ON_FALLBACK = ref(false);
 
     async init() {
         await this.#fetchSupportedLanguages();
@@ -76,6 +78,7 @@ class StaticContentProvider {
         } catch (err) {
             console.error("Failed to fetch (static site content)");
             this.#setErrors(err);
+            StaticContentProvider.DICT_ON_FALLBACK.value = true;
             StaticContentProvider.DICTIONARY = fallbackStaticContent;
         }
     }

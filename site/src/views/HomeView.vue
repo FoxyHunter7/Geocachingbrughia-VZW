@@ -5,6 +5,7 @@
   import LanguageProvider from '@/services/LanguageService';
   import Message from '@/components/Message.vue'
   import Event from '@/components/Event.vue'
+  import Hero from '@/components/Hero.vue';
 
   const events = ref(["loading"]);
   const messages = ref([]);
@@ -26,7 +27,7 @@
   </Teleport>
   <main>
     <section v-show=" events.length !== 0 && events[0] === 'loading'" id=loading><p>Loading</p></section>
-    <section v-show="events.length === 0" id="default-hero"><p>Default Hero</p></section>
+    <Hero v-show="events.length === 0" id="default-hero"/>
     <Event v-if="events.length !== 0 && events[0] !== 'loading'" v-for="event in events" :event="event" />
   </main>
 </template>
