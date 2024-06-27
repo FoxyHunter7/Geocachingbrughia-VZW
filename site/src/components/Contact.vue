@@ -1,5 +1,5 @@
 <script setup>
-    import { computed } from 'vue';
+    import { computed, ref } from 'vue';
     import LanguageProvider from '@/services/LanguageService';
     import StaticContentProvider from '@/services/StaticContentService';
     import { postContact } from '@/services/ContactService';
@@ -7,6 +7,13 @@
 
     const lang = computed(() => LanguageProvider.CURR_LANG.value);
     const dictionary = StaticContentProvider.DICTIONARY;
+
+    const email = ref("");
+    const subject = ref("");
+    const message = ref("");
+    function handleFormSubmit() {
+        postContact(email.value, subject.value, message.value);
+    }
 </script>
 
 <template>
@@ -14,18 +21,18 @@
         <h2>{{ dictionary.ContactHelpQuestionTxt[lang] }}</h2>
         <p>{{ dictionary.ContactHelpTxt[lang] }}</p>
         <div>
-            <form method="post" action="#">
+            <form method="post" @submit.prevent="handleFormSubmit">
                 <div>
                     <label for="email">{{ dictionary.FormMail[lang] }}</label>
-                    <input type="email" id="email" name="email" autocomplete="email" required>
+                    <input v-model="email" type="email" id="email" name="email" autocomplete="email" required>
                 </div>
                 <div>
                     <label for="subject">{{ dictionary.FormSubject[lang] }}</label>
-                    <input type="text" id="subject" name="subject" autocomplete="off" required>
+                    <input v-model="subject" type="text" id="subject" name="subject" autocomplete="off" required>
                 </div>
                 <div>
                     <label for="message">{{ dictionary.FormMessage[lang] }}</label>
-                    <textarea id="message" name="message" autocomplete="off"></textarea>
+                    <textarea v-model="message" id="message" name="message" autocomplete="off"></textarea>
                 </div>
                 <input type="submit" value="submit">
             </form>
