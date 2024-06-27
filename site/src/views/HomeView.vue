@@ -8,6 +8,7 @@
   import Event from '@/components/Event.vue';
   import Hero from '@/components/Hero.vue';
   import Socials from '@/components/Socials.vue';
+  import Contact from '@/components/Contact.vue';
 
   const events = ref(["loading"]);
   const messages = ref([]);
@@ -43,6 +44,7 @@
     <Hero v-show="events.length === 0" id="default-hero"/>
     <Event v-if="events.length !== 0 && events[0] !== 'loading'" v-for="event in events" :event="event" />
     <Socials v-if="socials.length !== 0 && events[0] !== 'loading'" :socials="socials"/>
+    <Contact />
   </main>
 </template>
 
