@@ -20,6 +20,7 @@ abstract class Service
     protected $_defaultSortBy = 'created_at';
     protected $_paginate = true;
     protected $_imageLocation = 'app/images/default';
+    protected $_translationsRelationName = 'translations';
 
     public function __construct(Model $model)
     {
@@ -98,16 +99,16 @@ abstract class Service
             return;
         }
 
-        $translations = $data['translations'] ?? [];
-        unset($data['translations']);
+        $translations = $data[$this->_translationsRelationName] ?? [];
+        unset($data[$this->_translationsRelationName]);
 
         $image = $data['image'] ?? null;
         unset($data['image']);
 
         if ($image) {
             $imageName = $this->imageName($image, $data);
-            $image->move(storage_path($this->_imageLocation), $imageName);
-            $data['imageUrl'] = $this->_imageLocation.$imageName;
+            $image->move(storage_path('app/images/'.$this->_imageLocation), $imageName);
+            $this->saveImageUrl($data, $imageName);
         }
 
         $item = null;
@@ -130,16 +131,16 @@ abstract class Service
             return;
         }
 
-        $translations = $data['translations'] ?? [];
-        unset($data['translations']);
+        $translations = $data[$this->_translationsRelationName] ?? [];
+        unset($data[$this->_translationsRelationName]);
 
         $image = $data['image'] ?? null;
         unset($data['image']);
 
         if ($image) {
             $imageName = $this->imageName($image, $data);
-            $image->move(storage_path($this->_imageLocation), $imageName);
-            $data['imageUrl'] = $this->_imageLocation.$imageName;
+            $image->move(storage_path('app/images/'.$this->_imageLocation), $imageName);
+            $this->saveImageUrl($data, $imageName);
         }
 
         DB::transaction(function () use ($id, $data, $translations) {
@@ -222,5 +223,10 @@ abstract class Service
     protected function imageName($image, $data)
     {
         return Str::uuid() . '.' . $image->extension();
+    }
+
+    protected function saveImageUrl(&$data, $imageName)
+    {
+        $data['imageUrl'] = $this->_imageLocation.$imageName;
     }
 }

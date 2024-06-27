@@ -23,7 +23,7 @@ class EventService extends Service
     protected $_fieldsAdminOnly = ['state'];
     protected $_searchOn = 'title';
     protected $_defaultSortBy = 'start_date';
-    protected $_imageLocation = 'app/images/events';
+    protected $_imageLocation = 'events/';
 
     public function __construct(Event $model)
     {

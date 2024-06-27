@@ -22,7 +22,7 @@ class LanguageService extends Service
     protected $_searchOn = 'code';
     protected $_defaultSortBy = 'code';
     protected $_paginate = false;
-    protected $_imageLocation = 'app/images/langFlags';
+    protected $_imageLocation = 'langFlags/';
 
     public function __construct(Language $model)
     {
