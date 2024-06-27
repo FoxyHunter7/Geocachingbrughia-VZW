@@ -1,4 +1,4 @@
-import fetchFromServer from "./fetcher";
+import { fetchFromServer } from "./fetcher";
 
 async function getAllMessages() {
     const messages = await fetchFromServer("messages");
