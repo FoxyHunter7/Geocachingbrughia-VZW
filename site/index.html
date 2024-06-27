@@ -30,6 +30,9 @@
 
       .app-error {
         height: 100vh;
+        z-index: 100;
+        position: absolute;
+        top: 0;
       }
 
       @supports (height: 100dvh) {
@@ -47,6 +50,7 @@
         background-color: var(--color-alert);
         mask: url(./src/assets/media/alert-triangle.svg);
         mask-size: contain;
+        z-index: 100;
       }
 
       .app-error p {
