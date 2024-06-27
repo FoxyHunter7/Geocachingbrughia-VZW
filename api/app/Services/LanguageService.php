@@ -5,7 +5,6 @@ namespace App\Services;
 use App\Models\Language;
 use App\Services\Service;
 use Illuminate\Support\MessageBag;
-use Illuminate\Support\Facades\Log;
 
 class LanguageService extends Service
 {
