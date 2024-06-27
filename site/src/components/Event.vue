@@ -90,7 +90,7 @@
             <ul>
                 <li><img :src="`/src/assets/media/eventtypes/${event.type}.png`"><p>{{ event.type }}</p></li>
                 <li><p><span>{{ formattedStartDate }}</span> - <span>{{ formattedEndDate }}</span></p></li>
-                <li><a :href="event.geolink" target="_blank">geocaching.com</a></li>
+                <li><a :href="event.geolink" target="_blank">Geocaching.com</a></li>
             </ul>
         </div>
     </section>
@@ -158,15 +158,21 @@
     }
 
     a {
-        background-color: var(--color-tertiary);
-        color: var(--color-text2);
-        padding: 0.4rem 0.6rem;
+        display: block;
+        background-color: var(--color-secondary);
+        color: var(--color-text);
+        font-weight: bold;
+        padding: 0.4rem 1.5rem;
         text-decoration: none;
-        border-radius: 0.5rem;
+        border-radius: 0.4rem;
+        transform: scale(100%);
+        box-shadow: var(--color-background2) 0.5rem 0.5rem;
+        transition: transform 0.15s;
     }
 
     a:hover {
-        background-color: var(--color-quaternary);
+        transform: scale(103%);
+        transition: transform 0.25s;
     }
 
     @media screen and (max-width: 1000px) {
