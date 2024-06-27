@@ -5,7 +5,7 @@
     import config from '../data/config.json';
 
     const lang = computed(() => LanguageProvider.CURR_LANG.value);
-    const dictOnFallback = computed(() => StaticContentProvider.DICT_ON_FALLBACK.value)
+    const dictOnFallback = computed(() => StaticContentProvider.DICT_ON_FALLBACK.value);
     const dictionary = StaticContentProvider.DICTIONARY;
 </script>
 
