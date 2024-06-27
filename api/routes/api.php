@@ -7,6 +7,7 @@ use App\Http\Controllers\ImageController;
 use App\Http\Controllers\JwtAuthController;
 use App\Http\Controllers\LanguageApiController;
 use App\Http\Controllers\MessageApiController;
+use App\Http\Controllers\SocialApiController;
 use App\Http\Controllers\StaticSiteContentController;
 use Illuminate\Support\Facades\Route;
 
@@ -35,6 +36,7 @@ Route::group([
     Route::get('geocaches', [GeocacheApiController::class, 'allPublic']);
     Route::get('languages', [LanguageApiController::class, 'allPublic']);
     Route::get('static',[StaticSiteContentController::class, 'allPublic']);
+    Route::get('socials', [SocialApiController::class, 'allPublic']);
 
     Route::get('images/{p1}/{filename}', [ImageController::class, 'get'])->name('images');
 
@@ -93,6 +95,13 @@ Route::group([
             Route::post('static', 'add');
             Route::put('static/{property}', 'update');
             Route::delete('static/{property}', 'delete');
+        });
+
+        Route::controller(SocialApiController::class)->group(function () {
+            Route::get('socials', 'allAdmin');
+            Route::post('socials', 'add');
+            Route::put('socials', 'update');
+            Route::delete('socials', 'delete');
         });
 
         Route::controller(ContactFormResponseApiController::class)->group(function () {

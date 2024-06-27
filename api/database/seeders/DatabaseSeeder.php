@@ -20,7 +20,8 @@ class DatabaseSeeder extends Seeder
             MessageSeeder::class,
             MessageLanguageSeeder::class,
             StaticSitePropertiesSeeder::class,
-            StaticSiteContentSeeder::class
+            StaticSiteContentSeeder::class,
+            SocialsSeeder::class
         ]);
     }
 }
