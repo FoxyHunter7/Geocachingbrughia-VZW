@@ -57,6 +57,8 @@
 
   section {
     height: 100%;
+    max-width: 100rem;
+    margin: 0 auto 5rem auto;
   }
 
   #loading {

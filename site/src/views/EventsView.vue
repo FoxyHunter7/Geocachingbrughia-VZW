@@ -49,7 +49,9 @@
 
   section {
     height: 100%;
-    max-height: 50rem;
+    max-height: 40rem;
+    max-width: 100rem;
+    margin: 0 auto 5rem auto;
   }
 
   #loading {

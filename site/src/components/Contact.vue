@@ -59,6 +59,7 @@
     section {
         padding: 3rem;
         max-height: 40rem;
+        height: max-content !important;
     }
 
     h2 {
