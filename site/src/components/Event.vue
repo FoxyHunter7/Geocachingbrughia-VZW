@@ -102,6 +102,7 @@
         grid-template-columns: 1fr 2fr;
         gap: 3rem;
         padding: 3rem;
+        max-height: 40rem;
     }
 
     section > div:first-child {
@@ -122,6 +123,7 @@
 
     h2 {
         text-transform: uppercase;
+        font-weight: bold;
     }
 
     ul {
@@ -169,10 +171,10 @@
 
     @media screen and (max-width: 1000px) {
         section {
-            height: calc(200% - 6rem) !important;
+            height: max-content !important;
             max-height: 80rem !important;
             grid-template-columns: 1fr;
-            grid-template-rows: 1fr 1fr;
+            grid-template-rows: 3fr 4fr;
             justify-content: center;
             align-items: center;
         }

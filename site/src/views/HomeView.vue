@@ -55,7 +55,6 @@
 
   section {
     height: 100%;
-    max-height: 50rem;
   }
 
   #loading {
