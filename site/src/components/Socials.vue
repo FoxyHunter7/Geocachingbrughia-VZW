@@ -27,7 +27,6 @@
     section {
         height: auto !important;
         padding: 3rem;
-        background-color: var(--color-background2)
     }
 
     section div {
@@ -46,23 +45,29 @@
 
     figure {
         padding: 1.5rem;
-        border-radius: 0.5rem;
-        height: 10rem;
-        background-color: var(--color-tertiary);
+        border-radius: 1rem;
+        height: 12rem;
+        width: 12rem;
+        background-color: var(--color-secondary);
         transform: scale(100%);
-        transition: transform 0.3s;
+        transition: transform 0.15s;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        box-shadow: var(--color-background2) 1rem 1rem;
     }
 
     figure:hover {
         cursor: pointer;
         transform: scale(105%);
-        transition: transform 0.3s;
+        transition: transform 0.25s;
         text-decoration: underline;
-        color: var(--color-text2);
+        color: var(--color-text);
     }
 
     figure img {
-        max-height: 70%;
+        object-fit: contain;
+        max-height: 50%;
         margin-bottom: 0.5rem;
     }
 
@@ -71,8 +76,9 @@
     }
 
     figure a {
+        font-weight: bold;
         text-decoration: none;
         text-transform: capitalize;
-        color: var(--color-text2);
+        color: var(--color-text);
     }
 </style>
