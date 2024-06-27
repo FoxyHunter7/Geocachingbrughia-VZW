@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Service\ContactFormResponseService;
+use App\Services\ContactFormResponseService;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
