@@ -34,4 +34,9 @@ class LanguageService extends Service
     {
         return $this->_model->select($this->_fields)->get()->contains('code', strtoupper($language));
     }
+
+    protected function imageName($image, $data)
+    {
+        return $data['code'] . '.' . $image->extension();
+    }
 }

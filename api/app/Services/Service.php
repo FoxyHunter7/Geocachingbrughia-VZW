@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\ItemNotFoundException;
 use Illuminate\Support\MessageBag;
+use Illuminate\Support\Str;
 
 abstract class Service
 {
@@ -104,7 +105,7 @@ abstract class Service
         unset($data['image']);
 
         if ($image) {
-            $imageName = $data['code'].$image->extension();
+            $imageName = $this->imageName($image, $data);
             $image->move(storage_path($this->_imageLocation), $imageName);
             $data['imageUrl'] = $this->_imageLocation.$imageName;
         }
@@ -136,7 +137,7 @@ abstract class Service
         unset($data['image']);
 
         if ($image) {
-            $imageName = $data['code'].$image->extension();
+            $imageName = $this->imageName($image, $data);
             $image->move(storage_path($this->_imageLocation), $imageName);
             $data['imageUrl'] = $this->_imageLocation.$imageName;
         }
@@ -217,4 +218,9 @@ abstract class Service
 
     protected function modelHiddenoverwrites($results, $isAdmin)
     {}
+
+    protected function imageName($image, $data)
+    {
+        return Str::uuid() . '.' . $image->extension();
+    }
 }
