@@ -43,6 +43,7 @@
 <style scoped>
   main {
     flex: 1 1 auto;
+    gap: 5rem;
     height: 100%;
     overflow-y: auto;
   }
@@ -51,7 +52,7 @@
     height: 100%;
     max-height: 40rem;
     max-width: 100rem;
-    margin: 0 auto 5rem auto;
+    margin: 0 auto;
   }
 
   #loading {
