@@ -34,7 +34,7 @@
                     <label for="message">{{ dictionary.FormMessage[lang] }}</label>
                     <textarea v-model="message" id="message" name="message" autocomplete="off"></textarea>
                 </div>
-                <input type="submit" value="submit">
+                <input type="submit" :value="dictionary.FormSubmit[lang]">
             </form>
             <ul>
                 <li>
