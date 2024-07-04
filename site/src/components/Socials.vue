@@ -50,8 +50,8 @@
     figure {
         padding: 1.5rem;
         border-radius: 1rem;
-        height: 12rem;
-        width: 12rem;
+        height: 10rem;
+        width: 10rem;
         background-color: var(--color-secondary);
         transform: scale(100%);
         transition: transform 0.15s;
@@ -84,5 +84,29 @@
         text-decoration: none;
         text-transform: capitalize;
         color: var(--color-text);
+    }
+
+    @media screen and (max-width: 50rem) {
+        figure {
+            height: 8rem;
+            width: 8rem;
+            padding: 1.5rem 1rem;
+        }
+
+        section {
+            padding: 1rem;
+        }
+
+        section div {
+            gap: 2rem;
+        }
+    }
+
+    @media screen and (max-width: 30rem) {
+        figure {
+            height: 6rem;
+            width: 6rem;
+            padding: 1rem 0.5rem;
+        }
     }
 </style>

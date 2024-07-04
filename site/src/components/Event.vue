@@ -178,11 +178,21 @@
     @media screen and (max-width: 1000px) {
         section {
             height: max-content !important;
-            max-height: 80rem !important;
+            max-height: max-content !important;
             grid-template-columns: 1fr;
-            grid-template-rows: 3fr 4fr;
+            grid-template-rows: auto;
             justify-content: center;
             align-items: center;
+            padding: 1rem;
+        }
+
+        section > div:first-child {
+            height: 70vh;
+            max-height: 40rem;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            overflow: hidden;
         }
 
         ul {

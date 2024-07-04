@@ -144,7 +144,7 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-        padding-inline-start: none;
+        padding-inline-start: 0rem;
         list-style: none;
         text-transform: capitalize;
     }
@@ -160,5 +160,31 @@
         margin-top: 0.3rem;
         text-decoration: none;
         color: var(--color-quaternary);
+    }
+
+    @media screen and (max-width: 80rem) {
+        form > div input {
+            width: 25rem;
+        }
+
+        ul {
+            width: 25rem;
+        }
+    }
+
+    @media screen and (max-width: 50rem) {
+        section {
+            padding: 1rem;
+        }
+
+        ul {
+            text-align: center;
+            width: 100%;
+        }
+
+        form input[type="submit"] {
+            align-self: center;
+            margin-top: 1rem;
+        }
     }
 </style>
