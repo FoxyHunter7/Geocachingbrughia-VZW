@@ -11,6 +11,8 @@ FormPhoneNumber
 FormAddress
 FormSubject
 FormMessage
+FormSubmit
+FormSearch
 SplashTitle
 SplashBody
 SplashImg

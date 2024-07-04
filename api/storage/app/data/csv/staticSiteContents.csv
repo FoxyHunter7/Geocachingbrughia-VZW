@@ -47,6 +47,14 @@ FormMessage;EN;message
 FormMessage;NL;bericht
 FormMessage;FR;message
 FormMessage;DE;Nachricht
+FormSubmit;EN;submit
+FormSubmit;NL;verzenden
+FormSubmit;FR;envoyer
+FormSubmit;DE;einreichen
+FormSearch;EN;search
+FormSubmit;NL;zoeken
+FormSubmit;FR;rechercher
+FormSubmit;DE;suchen
 SplashTitle;EN;"GeocachingBrughia brings people together"
 SplashTitle;NL;"GeocachingBrughia brengt mensen samen"
 SplashTitle;FR;"GeocachingBrughia rassemble les gens"
