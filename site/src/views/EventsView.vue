@@ -9,11 +9,15 @@
   const dictionary = StaticContentProvider.DICTIONARY;
 
   const events = ref(["loading"]);
+  const currPage = ref(1);
+  const lastPage = ref(1);
 
   async function fetchData() {
-    const pagedResponse = await getAllEvents();
+    const pagedResponse = await getAllEvents("", "", "", "", currPage.value);
     if (pagedResponse.data) {
       events.value = pagedResponse.data;
+      currPage.value = pagedResponse.current_page;
+      lastPage.value = pagedResponse.last_page;
     } else {
       events.value = pagedResponse;
     }
@@ -31,6 +35,18 @@
     );
   });
 
+  function nextPage() {
+    if (currPage.value < lastPage.value) {
+      currPage.value++;
+    }
+  }
+
+  function prevPage() {
+    if (currPage > 1) {
+      currPage--;
+    }
+  }
+
   const loaderActive = ref(false);
 
   async function initLoaderOnDelay() {
@@ -40,6 +56,7 @@
 
   onMounted(fetchData);
   watch(lang, async () => await fetchData());
+  watch(currPage, async () => await fetchData());
 
   initLoaderOnDelay();
 </script>
@@ -50,21 +67,27 @@
       <div v-show="loaderActive" class="initial-loader"></div>
     </section>
     <section v-show="events.length === 0"><p>No events Found</p></section>
-    <form method="post">
+    <form method="post" @submit.prevent="" >
       <div>
         <input v-model="search" type="search" id="search" name="search" autocomplete="search" required :placeholder="dictionary.FormSearch[lang]">
       </div>
     </form>
     <Event v-if="events.length !== 0 && events[0] !== 'loading'" v-for="event in filteredEvents" :event="event" />
+    <div id="pager">
+      <div class="prev pagerNavBtn" :class="{ disabled: currPage === 1 }" @click="prevPage"></div>
+      <p>{{ currPage }} / {{ lastPage }}</p>
+      <div class="next pagerNavBtn" :class="{ disabled: currPage === lastPage}" @click="nextPage"></div>
+    </div>
   </main>
 </template>
 
 <style scoped>
   main {
+    position: relative;
     flex: 1 1 auto;
-    gap: 5rem;
     height: 100%;
     overflow-y: auto;
+    padding-bottom: 5rem;
   }
 
   section {
@@ -78,6 +101,46 @@
     display: flex;
     justify-content: center;
     align-items: center;
+  }
+
+  #pager {
+    position: absolute;
+    bottom: 1.5rem;
+    left: 1rem;
+    right: 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+  }
+
+  #pager p {
+    text-align: center;
+    font-size: 1rem;
+    font-weight: bold;
+    letter-spacing: 0.5rem;
+  }
+
+  #pager .pagerNavBtn {
+    width: 2rem;
+    height: 2rem;
+    background-color: var(--color-text);
+    cursor: pointer;
+  }
+
+  #pager .pagerNavBtn.next {
+    mask: url(../assets/media/chevron-right.svg);
+    mask-size: contain;
+  }
+
+  #pager .pagerNavBtn.prev {
+    mask: url(../assets/media/chevron-left.svg);
+    mask-size: contain;
+  }
+
+  #pager .pagerNavBtn.disabled {
+    filter: opacity(30%);
+    cursor: auto;
   }
 
   form {
