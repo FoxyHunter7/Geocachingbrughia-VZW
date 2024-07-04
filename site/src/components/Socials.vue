@@ -9,13 +9,17 @@
     });
 
     const lang = computed(() => LanguageProvider.CURR_LANG.value);
+
+    function openLink(url) {
+        window.open(url, '_blank');
+    }
 </script>
 
 <template>
     <section>
         <h2>{{ StaticContentProvider.DICTIONARY.SocialsFollowTxt[lang] }}</h2>
         <div>
-            <figure v-for="social in socials">
+            <figure v-for="social in socials" @click="openLink(social.url)">
                 <img :src="`${config.apiUrl}images/${social.imageUrl}`">
                 <p><a :href="social.url" target="_blank">{{ social.name }}</a></p>
             </figure>
