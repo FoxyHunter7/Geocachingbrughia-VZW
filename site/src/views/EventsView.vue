@@ -89,6 +89,7 @@
 
   form > div input {
     width: 20rem;
+    max-width: 95vw;
   }
 
   form > div {
@@ -118,5 +119,11 @@
     padding: 0 0.5rem 0 2rem;
     line-height: 2rem;
     text-transform: capitalize;
+  }
+
+  @media screen and (max-width: 1000px) {
+    form {
+      justify-content: center;
+    }
   }
 </style>
