@@ -3,23 +3,7 @@
     import { computed } from 'vue';
 
     const props = defineProps({
-        error: Object,
-        date: String
-    });
-
-    const formattedDate = computed(() => {
-        if (!props.date) return '';
-
-        const date = new Date(props.date);
-        const options = {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
-            timeZoneName: 'short'
-        };
-        return date.toLocaleString(LanguageProvider.CURR_LANG.value, options);
+        error: Object
     });
     const errorMessage = computed(() => props.error[LanguageProvider.CURR_LANG.value]);
 </script>
@@ -27,7 +11,7 @@
 <template>
     <div>
         <div class="warn-icon"></div>
-        <p>{{ errorMessage + formattedDate }}</p>
+        <p>{{ errorMessage }}</p>
     </div>
 </template>
 

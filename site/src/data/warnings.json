@@ -12,16 +12,16 @@
         "DE": "Geben Sie nicht einfach irgendetwas in diese Konsole ein. Wenn Ihnen jemand gesagt hat, hier etwas einzufügen, könnte es sein, dass er versucht, Sie zu hacken.\n\n"
     },
     "apiComm": {
-        "EN": "Failed to load website information. Showing backup information last updated at: ",
-        "NL": "Fout bij het laden van de website informatie. U ziet nu backup informatie die laatst upgedate werd op: ",
-        "FR": "Erreur lors du chargement des informations du site. Affichage des données de secours, dernière mise à: ",
-        "DE": "Fehler beim Laden der Website-Informationen. Zuletzt aktualisierte Backuo-Daten am: "
+        "EN": "Information could be missing or out of date! Failed to load website information.",
+        "NL": "Informatie kan ontbreken of verouderd zijn! Website informatie kon niet ingeladen worden.",
+        "FR": "Les informations pourraient être manquantes ou obsolètes! Échec du chargement des informations du site web.",
+        "DE": "nformationen könnten fehlen oder veraltet sein! Laden der Website-Informationen fehlgeschlagen."
     },
     "apiOverloaded": {
-        "EN": "Our servers are overloaded and cannot provide the latest information right now. You are viewing backup data last updated at: ",
-        "NL": "Onze servers zijn overbelast en kunnen momenteel geen actuele data leveren. U ziet nu reservegegevens die voor het laatst zijn bijgewerkt op: ",
-        "FR": "Nos serveurs sont surchargés et ne peuvent pas fournir de données actuelles pour le moment. Vous visualisez des données de secours mises à jour pour la dernière fois le: ",
-        "DE": "Unsere Server sind überlastet und können derzeit keine aktuellen Daten bereitstellen. Sie sehen Backup-Daten, zuletzt aktualisiert am: "
+        "EN": "Information could be missing or out of date! Failed to load website information as the servers are overloaded.",
+        "NL": "Informatie kan ontbreken of verouderd zijn! Website informatie kon niet ingeladen worden, de servers zijn overbelast.",
+        "FR": "Les informations pourraient être manquantes ou obsolètes ! Échec du chargement des informations du site web en raison de la surcharge des serveurs.",
+        "DE": "Informationen könnten fehlen oder veraltet sein! Das Laden der Website-Informationen ist aufgrund von Überlastung der Server fehlgeschlagen."
     },
     "websiteError": {
         "EN": "Something went wrong",

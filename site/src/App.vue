@@ -63,7 +63,7 @@
   <section id="side-menu" :class="{ open: isSideMenuOpen }"></section>
   <TopHeader :isMobile="isMobile" @menu-state-change="(state) => { isSideMenuOpen = state }" @lang-selector="openInPopup('languageSelector')"/>
   <div id="messages">
-    <WarningBanner v-if="scsErrors" :error="scsErrors" :date="config.fallbackLastUpdated"></WarningBanner>
+    <WarningBanner v-if="scsErrors" :error="scsErrors"></WarningBanner>
   </div>
   <div id="popup-menu" v-show="isPopupOpen">
     <LanguageSelector v-show="popupMenuStates.languageSelector" @close="closeOutPopup('languageSelector')"/>
