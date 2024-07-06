@@ -23,7 +23,7 @@
   }
 
   async function initLoaderOnDelay() {
-    await new Promise(r => setTimeout(r, 2500));
+    await new Promise(r => setTimeout(r, 500));
     loaderActive.value = true;
   }
 
