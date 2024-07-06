@@ -214,5 +214,29 @@
         "EN": "Oops! The page you are looking for could not be found. You will be redirected back to the homepage in: ///t/// seconds.",
         "FR": "Oops ! La page que vous recherchez est introuvable. Vous serez redirigé vers la page d'accueil dans ///t/// secondes.",
         "NL": "Oeps! De pagina die u zoekt, kon niet worden gevonden. U wordt binnen ///t/// seconden teruggeleid naar de homepage."
+    },
+    "GeocacheTitle": {
+        "EN": "title",
+        "NL": "titel",
+        "FR": "titre",
+        "DE": "titel"
+    },
+    "GeocacheGeoLink": {
+        "EN": "link to cache",
+        "NL": "link naar cache",
+        "FR": "lien vers la cache",
+        "DE": "Link zur Cache"
+    },
+    "GeocacheDifficulty": {
+        "EN": "difficulty",
+        "NL": "moeilijkheidsgraad",
+        "FR": "difficulté",
+        "DE": "Schwierigkeit"
+    },
+    "GeocacheTerrain": {
+        "EN": "terrain",
+        "NL": "terrein",
+        "FR": "terrain",
+        "DE": "Gelände"
     }
 }
