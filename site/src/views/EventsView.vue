@@ -87,11 +87,11 @@
     flex: 1 1 auto;
     height: 100%;
     overflow-y: auto;
-    padding-bottom: 5rem;
+    padding-bottom: 1rem;
   }
 
   section {
-    height: 100%;
+    height: 70vh;
     max-height: 40rem;
     max-width: 100rem;
     margin: 0 auto;
@@ -104,14 +104,11 @@
   }
 
   #pager {
-    position: absolute;
-    bottom: 1.5rem;
-    left: 1rem;
-    right: 1rem;
     display: flex;
     justify-content: center;
     align-items: center;
     gap: 2rem;
+    margin-top: 1rem;
   }
 
   #pager p {
