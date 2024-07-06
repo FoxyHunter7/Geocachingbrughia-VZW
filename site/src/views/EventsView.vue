@@ -66,14 +66,17 @@
     <section v-show="events.length !== 0 && events[0] === 'loading'" id=loading>
       <div v-show="loaderActive" class="initial-loader"></div>
     </section>
-    <section v-show="events.length === 0"><p>No events Found</p></section>
-    <form method="post" @submit.prevent="" >
+    <section id="no-events" v-show="events.length === 0">
+      <h2>{{ dictionary.UINoEvents[lang] }}</h2>
+      <p>{{ dictionary.UINoEventsSubTxt[lang] }}</p>
+    </section>
+    <form v-show="events.length > 0 && events[0] !== 'loading'" method="post" @submit.prevent="" >
       <div>
         <input v-model="search" type="search" id="search" name="search" autocomplete="search" required :placeholder="dictionary.FormSearch[lang]">
       </div>
     </form>
     <Event v-if="events.length !== 0 && events[0] !== 'loading'" v-for="event in filteredEvents" :event="event" />
-    <div id="pager">
+    <div id="pager" v-show="events.length > 0 && events[0] !== 'loading'">
       <div class="prev pagerNavBtn" :class="{ disabled: currPage === 1 }" @click="prevPage"></div>
       <p>{{ currPage }} / {{ lastPage }}</p>
       <div class="next pagerNavBtn" :class="{ disabled: currPage === lastPage}" @click="nextPage"></div>
@@ -179,6 +182,34 @@
     padding: 0 0.5rem 0 2rem;
     line-height: 2rem;
     text-transform: capitalize;
+  }
+
+  #no-events {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
+    padding: 0 1rem;
+  }
+
+  #no-events h2 {
+    text-align: center;
+    font-weight: bold;
+    font-size: 1.2rem;
+  }
+
+  #no-events p {
+    text-align: center;
+  }
+
+  #no-events a {
+    color: var(--color-quaternary);
+    text-decoration: none;
+  }
+
+  #no-events a:hover {
+    text-decoration: underline;
+    cursor: pointer;
   }
 
   @media screen and (max-width: 1000px) {

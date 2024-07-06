@@ -180,28 +180,28 @@
         "NL": "website-inhoud laden"
     },
     "UINoEvents": {
-        "DE": "Es sind derzeit keine Veranstaltungen geplant",
-        "EN": "There are no events planned at the moment",
-        "FR": "Il n'y a pas d'événements prévus pour le moment",
-        "NL": "Er zijn momenteel geen geplande evenementen"
+        "DE": "Veranstaltungen können im Moment nicht angezeigt werden.",
+        "EN": "Events can not be shown at the moment.",
+        "FR": "Les événements ne peuvent pas être affichés pour le moment.",
+        "NL": "Evenementen kunnen op dit ogenblik niet worden getoond."
     },
     "UINoEventsSubTxt": {
-        "DE": "Schauen Sie später wieder vorbei oder abonnieren Sie unseren ///a///Newsletter///a///, damit Sie es nicht verpassen!",
-        "EN": "Check back later or subscribe to our ///a///newsletter///a/// so you won't miss it!",
-        "FR": "Revenez plus tard ou abonnez-vous à notre ///a///newsletter///a/// pour ne pas le manquer!",
-        "NL": "Kom later terug of abonneer je op onze ///a///nieuwsbrief///a/// zodat je het niet mist!"
+        "DE": "Die Veranstaltungsinformationen konnten nicht abgerufen werden.",
+        "EN": "The event information could not be retrieved.",
+        "FR": "Les informations sur les événements n'ont pas pu être récupérées.",
+        "NL": "De informatie over de evenementen kon niet worden opgehaald."
     },
     "UINoGeocaches": {
-        "DE": "Es gibt derzeit keine öffentlichen Geocaches",
-        "EN": "There are no public geocaches at the moment",
-        "FR": "Il n'y a pas de géocaches publiques pour le moment",
-        "NL": "Er zijn momenteel geen openbare geocaches"
+        "DE": "Geocaches können im Moment nicht angezeigt werden.",
+        "EN": "Geocaches can not be shown at the moment",
+        "FR": "Les géocaches ne peuvent pas être affichés pour le moment.",
+        "NL": "Geocaches kunnen op dit ogebblik niet worden getoond."
     },
     "UINoGeocachesSubTxt": {
-        "DE": "Schauen Sie später wieder vorbei",
-        "EN": "Check back later",
-        "FR": "Revenez plus tard",
-        "NL": "Kom later terug"
+        "DE": "Die Geocache-Informationen konnten nicht abgerufen werden.",
+        "EN": "The geocache information could not be retrieved.",
+        "FR": "Les informations sur les géocaches n'ont pas pu être récupérées.",
+        "NL": "De informatie over de geocaches kon niet worden opgehaald."
     },
     "UIPageNotFound": {
         "DE": "Seite nicht gefunden",
