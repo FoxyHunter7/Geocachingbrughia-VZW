@@ -182,6 +182,8 @@
     padding: 0 0.5rem 0 2rem;
     line-height: 2rem;
     text-transform: capitalize;
+    background-color: var(--color-background);
+    color: var(--color-text)
   }
 
   #no-events {

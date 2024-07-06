@@ -112,6 +112,8 @@
         font-family: inherit;
         font-size: 0.85rem;
         box-sizing: border-box;
+        background-color: var(--color-background);
+        color: var(--color-text)
     }
 
     form textarea {

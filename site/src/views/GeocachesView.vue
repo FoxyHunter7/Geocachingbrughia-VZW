@@ -117,6 +117,17 @@
     padding-bottom: 1rem;
   }
 
+  a {
+    text-decoration: none;
+    color: var(--color-quaternary);
+    font-weight: bold;
+  }
+
+  a:hover {
+    text-decoration: underline;
+    cursor: pointer;
+  }
+
   section {
     height: 70vh;
     max-height: 40rem;
@@ -206,6 +217,8 @@
     padding: 0 0.5rem 0 2rem;
     line-height: 2rem;
     text-transform: capitalize;
+    background-color: var(--color-background);
+    color: var(--color-text)
   }
 
   #no-geocaches {
@@ -278,6 +291,7 @@
   }
 
   th {
+    color: var(--color-text2);
     padding: 0 0.5rem;
     font-weight: bold;
     text-transform: capitalize;
