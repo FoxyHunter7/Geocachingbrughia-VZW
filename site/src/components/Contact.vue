@@ -3,7 +3,6 @@
     import LanguageProvider from '@/services/LanguageService';
     import StaticContentProvider from '@/services/StaticContentService';
     import { postContact } from '@/services/ContactService';
-    import config from '../data/config.json';
 
     const lang = computed(() => LanguageProvider.CURR_LANG.value);
     const dictionary = StaticContentProvider.DICTIONARY;
@@ -60,6 +59,7 @@
         padding: 3rem;
         max-height: 40rem;
         height: max-content !important;
+        margin-bottom: 0 !important;
     }
 
     h2 {
