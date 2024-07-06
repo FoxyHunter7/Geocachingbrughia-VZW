@@ -143,3 +143,19 @@ ButtonCancel;EN;cancel
 ButtonCancel;NL;annuleren
 ButtonCancel;FR;annuler
 ButtonCancel;DE;abbrechen
+GeocacheTitle;EN;title
+GeocacheTitle;NL;titel
+GeocacheTitle;FR;titre
+GeocacheTitle;DE;titel
+GeocacheGeoLink;EN;link to cache
+GeocacheGeoLink;NL;link naar cache
+GeocacheGeoLink;FR;lien vers la cache
+GeocacheGeoLink;DE;Link zur Cache
+GeocacheDifficulty;EN;difficulty
+GeocacheDifficulty;NL;moeilijkheidsgraad
+GeocacheDifficulty;FR;difficulté
+GeocacheDifficulty;DE;Schwierigkeit
+GeocacheTerrain;EN;terrain
+GeocacheTerrain;NL;terrein
+GeocacheTerrain;FR;terrain
+GeocacheTerrain;DE;Gelände
