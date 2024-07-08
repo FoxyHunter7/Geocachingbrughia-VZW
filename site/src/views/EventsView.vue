@@ -13,7 +13,7 @@
   const lastPage = ref(1);
 
   async function fetchData() {
-    const pagedResponse = await getAllEvents("", "", "", "", currPage.value);
+    const pagedResponse = await getAllEvents(false, currPage.value);
     if (pagedResponse.data) {
       events.value = pagedResponse.data;
       currPage.value = pagedResponse.current_page;

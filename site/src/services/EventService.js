@@ -1,7 +1,7 @@
 import { fetchFromServer } from "./fetcher"
 
-async function getAllEvents(search, perPage, sortBy, sortDirection, page) {
-    return fetchFromServer("events", search, perPage, sortBy, sortDirection, page);
+async function getAllEvents(admin = false, page = null, search= "", perPage = null, sortBy = "", sortDirection = "") {
+    return fetchFromServer("events", admin, page, search, perPage, sortBy, sortDirection);
 }
 
 async function getHomePageEvents() {

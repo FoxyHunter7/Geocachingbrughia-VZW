@@ -12,7 +12,7 @@
   const lastPage = ref(1);
 
   async function fetchData() {
-    const pagedResponse = await getAllGeocaches("", "", "", "", currPage.value);
+    const pagedResponse = await getAllGeocaches(false, currPage.value);
     if (pagedResponse.data) {
       geocaches.value = pagedResponse.data;
       currPage.value = pagedResponse.current_page;

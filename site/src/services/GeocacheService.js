@@ -1,7 +1,7 @@
 import { fetchFromServer } from "./fetcher";
 
-async function getAllGeocaches(search, perPage, sortBy, sortDirection, page) {
-    return fetchFromServer("geocaches", search, perPage, sortBy, sortDirection, page);
+async function getAllGeocaches(admin = false, page = null, search = "", perPage = null, sortBy = "", sortDirection = "") {
+    return fetchFromServer("geocaches", admin, page, search, perPage, sortBy, sortDirection);
 }
 
 export { getAllGeocaches };
