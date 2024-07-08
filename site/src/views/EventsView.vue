@@ -43,7 +43,7 @@
 
   function prevPage() {
     if (currPage > 1) {
-      currPage--;
+      currPage.value--;
     }
   }
 
