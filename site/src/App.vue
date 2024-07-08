@@ -1,6 +1,6 @@
 <script setup>
   import { onMounted, ref, computed } from 'vue';
-  import { RouterView } from 'vue-router';
+  import { RouterView, useRoute } from 'vue-router';
   import { StaticContentProvider as SCP } from '@/services/StaticContentService';
   import config from '@/data/config.json'
   import TopHeader from '@/components/TopHeader.vue'
@@ -24,6 +24,9 @@
     return keepPopupMenuOpen.value || Object.values(popupMenuStates.value).some(state => state === true);
   });
   const popupMenuQueue = [];
+
+  const route = useRoute();
+  const isAdminRoute = computed(() => route.name === "admin");
 
   function openInPopup(componentName) {
     if (isPopupOpen.value) {
@@ -61,8 +64,8 @@
 
 <template>
   <section id="side-menu" :class="{ open: isSideMenuOpen }"></section>
-  <TopHeader :isMobile="isMobile" @menu-state-change="(state) => { isSideMenuOpen = state }" @lang-selector="openInPopup('languageSelector')"/>
-  <div id="messages">
+  <TopHeader v-if="!isAdminRoute" :isMobile="isMobile" @menu-state-change="(state) => { isSideMenuOpen = state }" @lang-selector="openInPopup('languageSelector')"/>
+  <div v-if="!isAdminRoute" id="messages">
     <WarningBanner v-if="scsErrors" :error="scsErrors"></WarningBanner>
   </div>
   <div id="popup-menu" v-show="isPopupOpen">
