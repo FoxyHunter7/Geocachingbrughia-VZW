@@ -60,7 +60,7 @@ class JwtAuthController
         $tokenCookie = cookie("token", $token, $ttl);
         $csrfCookie = cookie("X-XSRF-TOKEN", $csrfToken, $ttl);
 
-        return response()->json(["message" => "User logged in succcessfully"])
+        return response()->json(["status" => true, "message" => "User logged in succcessfully"])
             ->withCookie($tokenCookie)
             ->withCookie($csrfCookie);
     }
