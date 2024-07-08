@@ -22,7 +22,7 @@
         justify-content: flex-start;
         align-items: center;
         gap: 2rem;
-        padding: 1rem;
+        padding: 0.75rem 1rem;
     }
 
     div.warn-icon {

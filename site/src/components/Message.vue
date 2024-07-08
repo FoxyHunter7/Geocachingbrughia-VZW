@@ -20,12 +20,12 @@
     div {
         color: var(--color-text);
         background-color: var(--color-secondary);
-        padding: 1rem;
+        padding: 0.75rem 1rem;
         width: 100%;
     }
 
     h2 {
-        font-size: 1.1rem;
+        font-size: 1rem;
         font-weight: bold;
         text-transform: capitalize;
     }

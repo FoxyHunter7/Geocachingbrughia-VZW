@@ -76,7 +76,7 @@
   Header {
     position: sticky;
     top: 0;
-    height: 5rem;
+    height: 4.5rem;
     flex-shrink: 0;
     box-sizing: border-box;
     max-width: 100vw;
@@ -86,7 +86,7 @@
   #side-menu {
     background-color: var(--color-secondary);
     position: absolute;
-    top: 5rem;
+    top: 4.5rem;
     right: 0;
     width: 0;
     bottom: 0;
@@ -121,7 +121,7 @@
     background-color: var(--color-tertiary);
     position: sticky;
     height: fit-content;
-    top: 5rem;
+    top: 4.5rem;
     left: 0;
     display: flex;
     flex-direction: column;
@@ -155,5 +155,11 @@
     left: 0;
     z-index: 10;
     background-color: rgba(0, 0, 0, 0.5)
+  }
+
+  @media (prefers-color-scheme: dark) {
+    #overlay {
+      background-color: rgba(60, 60, 60, 0.5);
+    }
   }
 </style>

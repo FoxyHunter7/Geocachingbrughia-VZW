@@ -45,7 +45,7 @@
         display: grid;
         grid-template-columns: 2fr 6fr 1.5fr;
         gap: 5rem;
-        padding: 1rem;
+        padding: 0.75rem 1rem;
     }
 
     header > img.logo {
@@ -79,7 +79,7 @@
         margin: auto 0.5rem auto auto;
         height: 80%;
         aspect-ratio: 1 / 1;
-        background-color: var(--color-text);
+        background-color: var(--color-text3);
         mask: url(../assets/media/menu.svg);
         mask-size: contain;
     }
@@ -94,7 +94,7 @@
         text-transform: capitalize;
         font-size: 1rem;
         font-weight: normal;
-        color: var(--color-text);
+        color: var(--color-text3);
         border-bottom: 0.2rem solid rgba(0, 0, 0, 0);
         transition: border-bottom, font-weight 0.1s;
     }
@@ -105,7 +105,7 @@
     }
 
     nav a.router-link-active {
-        border-bottom: 0.2rem solid var(--color-text);
+        border-bottom: 0.2rem solid var(--color-text3);
         transition: border-bottom, font-weight 0.1s;
         font-weight: bold;
     }
@@ -135,7 +135,7 @@
     }
 
     figure p {
-        color: var(--color-text);
+        color: var(--color-text3);
         line-height: 100%;
     }
 
