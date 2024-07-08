@@ -55,6 +55,12 @@ export default function setupRouter() {
         alias: StaticContentProvider.ROUTES.navShop.aliases
       },*/
       {
+        path: '/admin',
+        name: "admin",
+        props: false,
+        component: AdminView
+      },
+      {
         path: '/:pathMatch(.*)',
         name: "NotFound",
         component: NotFoundView,
