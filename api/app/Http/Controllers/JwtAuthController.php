@@ -18,7 +18,7 @@ class JwtAuthController
 
     public function accessDenied()
     {
-        return response()->json(["access_denied" => "You are not autherised to access this restricted endpoint"]);
+        return response()->json(["status" => false, "access_denied" => "You are not autherised to access this restricted endpoint"]);
     }
 
     public function register(Request $request)
