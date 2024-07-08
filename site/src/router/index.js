@@ -5,6 +5,7 @@ import NotFoundView from '@/views/NotFoundView.vue';
 import EventsView from '@/views/EventsView.vue';
 import GeocachesView from '@/views/GeocachesView.vue';
 import ShopView from '@/views/ShopView.vue';
+import AdminView from '@/views/AdminView.vue';
 import { StaticContentProvider } from '@/services/StaticContentService'
 import { LanguageProvider } from '@/services/LanguageService';
 
