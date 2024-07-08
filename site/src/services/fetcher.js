@@ -3,7 +3,7 @@ import LanguageProvider from "./LanguageService";
 
 async function fetchFromServer(endpoint, includeCreds = false, page = null, search = "", perPage = null, sortBy = "", sortDirection = "") {
     const queryParams = {
-        lang: `?lang=${LanguageProvider.CURR_LANG.value}`,
+        lang: (includeCreds) ? "" : `?lang=${LanguageProvider.CURR_LANG.value}`,
         page: (page) ? `&page=${page}` : "",
         search: (search) ? `&search=${search}` : "",
         perPage: (perPage) ? `&per_page=${perPage}` : "",
