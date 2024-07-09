@@ -26,7 +26,7 @@
         if (pagedResponse.data) {
             events.value = pagedResponse.data;
             currPage.value = pagedResponse.current_page;
-            lastPage.value = pagedResponse.lastPage;
+            lastPage.value = pagedResponse.last_page;
         } else if (pagedResponse.access_denied) {
             window.alert(response.access_denied);
             router.push({ name: "admin" });
@@ -114,6 +114,11 @@
                 </tr>
             </tbody>
         </table>
+        <div id="pager" v-show="events.length > 0 && events[0] !== 'loading'">
+            <div class="prev pagerNavBtn" :class="{ disabled: currPage === 1 }" @click="prevPage"></div>
+            <p>{{ currPage }} / {{ lastPage }}</p>
+            <div class="next pagerNavBtn" :class="{ disabled: currPage === lastPage}" @click="nextPage"></div>
+        </div>
     </main>
 </template>
 
@@ -269,6 +274,43 @@
     div.icon-edit:hover {
         cursor: pointer;
         background-color: var(--color-primary);
+    }
+
+    #pager {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 2rem;
+        margin-top: 1rem;
+    }
+
+    #pager p {
+        text-align: center;
+        font-size: 1rem;
+        font-weight: bold;
+        letter-spacing: 0.5rem;
+    }
+
+    #pager .pagerNavBtn {
+        width: 2rem;
+        height: 2rem;
+        background-color: var(--color-text);
+        cursor: pointer;
+    }
+
+    #pager .pagerNavBtn.next {
+        mask: url(../assets/media/chevron-right.svg);
+        mask-size: contain;
+    }
+
+    #pager .pagerNavBtn.prev {
+        mask: url(../assets/media/chevron-left.svg);
+        mask-size: contain;
+    }
+
+    #pager .pagerNavBtn.disabled {
+        filter: opacity(30%);
+        cursor: auto;
     }
 
     @media (prefers-color-scheme: dark) {
