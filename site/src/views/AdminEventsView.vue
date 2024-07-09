@@ -76,21 +76,37 @@
         });
     }
 
+    const currentlyEditing = ref(-1);
+    const currentlyEditingData = ref({});
+
+    function editEvent(event) {
+        currentlyEditing.value = event.id;
+        currentlyEditingData.value = event;
+        console.log(currentlyEditingData.value.start_date + "");
+    }
+
+    function stopEditing(save = "") {
+        if (!save) {
+            currentlyEditing.value = -1;
+            currentlyEditingData.value = {};
+        }
+    }
+
     onMounted(verifyLogin);
     watch(currPage, async () => await fetchData());
 </script>
 
 <template>
     <header>
-        <button type="button">Terug</button>
-        <form v-show="events.length > 0 && events[0] !== 'loading'" method="post" @submit.prevent="" >
+        <button @click="() => (currentlyEditing === -1) ? router.push({ name: 'admin'}) : stopEditing()" type="button">Terug</button>
+        <form v-show="events.length > 0 && events[0] !== 'loading' && currentlyEditing === -1" method="post" @submit.prevent="" id="search">
             <div>
                 <input v-model="search" type="search" id="search" name="search" autocomplete="search" required placeholder="Zoeken">
             </div>
         </form>
     </header>
     <main>
-        <table>
+        <table v-show="currentlyEditing === -1">
             <thead>
                 <th>ID</th>
                 <th>Type</th>
@@ -104,13 +120,13 @@
             <tbody>
                 <tr v-for="event in filteredEvents">
                     <td>{{ event.id }}</td>
-                    <td><div><img :src="`/src/assets/media/eventtypes/${event.type}.png`"></div></td>
+                    <td><div><img :src="`/src/assets/media/eventtypes/${event.type}.png`" :alt="event.type" :title="event.type"></div></td>
                     <td :class="event.state">{{ event.state }}</td>
                     <td :class="event.on_home">{{ event.on_home }}</td>
                     <td>{{ event.title }}</td>
                     <td>{{ dateTimeFormatter(event.start_date) }}</td>
                     <td>{{ dateTimeFormatter(event.end_date) }}</td>
-                    <td><div class="icon-edit"></div></td>
+                    <td><div @click="() => editEvent(event)" class="icon-edit"></div></td>
                 </tr>
             </tbody>
         </table>
@@ -119,6 +135,41 @@
             <p>{{ currPage }} / {{ lastPage }}</p>
             <div class="next pagerNavBtn" :class="{ disabled: currPage === lastPage}" @click="nextPage"></div>
         </div>
+        <form @submit.prevent="" method="post" id="eventEdit" v-show="currentlyEditing > -1">
+            <section class="general">
+                <label for="onHome">Toon event op de homepagina<span>*</span></label>
+                <select v-model="currentlyEditingData.on_home" id="onHome" name="onHome">
+                    <option value="false">Neen</option>
+                    <option value="true">Ja</option>
+                </select>
+                <label for="type">Type<span>*</span></label>
+                <select v-model="currentlyEditingData.type" id="type" name="type" required>
+                    <option value="REGULAR">Regular</option>
+                    <option value="CITO">CITO</option>
+                    <option value="MEGA">Mega</option>
+                    <option value="GIGA">Giga</option>
+                    <option value="BLOCK">Block</option>
+                </select>
+                <label for="title">Titel<span>*</span></label>
+                <input v-model="currentlyEditingData.title" type="text" max="100" id="title" name="title" required>
+                <label for="geolink">Geocaching Link<span>*</span> <i>Moet beginnen met: https://www.geocaching.com/geocache/</i></label>
+                <input v-model="currentlyEditingData.geolink" type="text" id="geolink" title="Moet beginnen met: https://www.geocaching.com/geocache/" name="geolink" pattern="https://www\.geocaching\.com/geocache/.+" required>
+                <label for="location">Locatie <i>In GMD notatie, bv: N 34° 56.789 E 123° 45.678</i></label>
+                <input v-model="currentlyEditingData.location" type="text" id="location" name="location" title="In GMD notatie, bv: N 34° 56.789 E 123° 45.678" pattern="^[NS]\s\d+°\s\d+\.\d+\s[EW]\s\d+°\s\d+\.\d+$">
+                <div>
+                    <label for="startDate">Start Datum & Tijd<span>*</span></label>
+                    <input v-model="currentlyEditingData.start_date" type="datetime-local" id="startDate" name="startDate" required>
+                    <label for="endDate">Eind Datum & Tijd<span>*</span></label>
+                    <input v-model="currentlyEditingData.end_date" type="datetime-local" id="endDate" name="endDate" required>
+                </div>
+            </section>
+            <section class="image-upload">
+
+            </section>
+            <section class="translations">
+                
+            </section>
+        </form>
     </main>
 </template>
 
@@ -144,23 +195,29 @@
         margin: 1rem;
     }
 
-    form {
+    button:hover {
+        cursor: pointer;
+        scale: 103%;
+        transition: scale 0.25s;
+    }
+
+    #search {
         display: flex;
         justify-content: flex-end;
         padding: 1rem;
         gap: 1rem;
     }
 
-    form > div input {
+    #search > div input {
         width: 20rem;
         max-width: 95vw;
     }
 
-    form > div {
+    #search > div {
         position: relative;
     }
 
-    form > div::before {
+    #search > div::before {
         content: '';
         height: 1.3rem;
         width: 1.3rem;
@@ -172,6 +229,11 @@
         mask-size: contain;
     }
 
+    #search input {
+        padding: 0 0.5rem 0 2rem;
+        text-transform: capitalize;
+    }
+
     form input, form textarea {
         height: 2rem;
         border-radius: 0.3rem;
@@ -180,9 +242,7 @@
         font-family: inherit;
         font-size: 1rem;
         box-sizing: border-box;
-        padding: 0 0.5rem 0 2rem;
         line-height: 2rem;
-        text-transform: capitalize;
         background-color: var(--color-background);
         color: var(--color-text)
     }
