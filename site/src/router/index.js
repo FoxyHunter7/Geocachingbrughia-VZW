@@ -6,6 +6,12 @@ import EventsView from '@/views/EventsView.vue';
 import GeocachesView from '@/views/GeocachesView.vue';
 import ShopView from '@/views/ShopView.vue';
 import AdminView from '@/views/AdminView.vue';
+import AdminEventsView from "@/views/AdminEventsView.vue";
+import AdminGeocachesView from "@/views/AdminGeocachesView.vue";
+import AdminSocialsView from "@/views/AdminSocialsView.vue";
+import AdminMessagesView from "@/views/AdminMessagesView.vue";
+import AdminStaticView from "@/views/AdminStaticView.vue";
+import AdminLanguagesView from "@/views/AdminLanguagesView.vue";
 import { StaticContentProvider } from '@/services/StaticContentService'
 import { LanguageProvider } from '@/services/LanguageService';
 
@@ -60,6 +66,42 @@ export default function setupRouter() {
         name: "admin",
         props: false,
         component: AdminView
+      },
+      {
+        path: '/admin/events',
+        name: "adminEvents",
+        props: false,
+        component: AdminEventsView
+      },
+      {
+        path: '/admin/geocaches',
+        name: "adminGeocaches",
+        props: false,
+        component: AdminGeocachesView
+      },
+      {
+        path: '/admin/socials',
+        name: "adminSocials",
+        props: false,
+        component: AdminSocialsView
+      },
+      {
+        path: '/admin/messages',
+        name: "adminMessages",
+        props: false,
+        component: AdminMessagesView
+      },
+      {
+        path: '/admin/static',
+        name: "adminStatic",
+        props: false,
+        component: AdminStaticView
+      },
+      {
+        path: '/admin/languages',
+        name: "adminLanguages",
+        props: false,
+        component: AdminLanguagesView
       },
       {
         path: '/:pathMatch(.*)',
