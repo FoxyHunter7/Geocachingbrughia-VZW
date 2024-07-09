@@ -103,19 +103,19 @@
         <section>
             <h2>website inhoud</h2>
             <div>
-                <figure @click="() => router.push('adminEvents')">
+                <figure @click="() => router.push({ name: 'adminEvents' })">
                     <div class="icon icon-event"></div>
                     <p>Evenementen</p>
                 </figure>
-                <figure @click="() => router.push('adminGeocaches')">
+                <figure @click="() => router.push({ name: 'adminGeocaches' })">
                     <div class="icon icon-cache"></div>
                     <p>Geocaches</p>
                 </figure>
-                <figure @click="() => router.push('adminSocials')">
+                <figure @click="() => router.push({ name: 'adminSocials' })">
                     <div class="icon icon-social"></div>
                     <p>Sociale Media</p>
                 </figure>
-                <figure @click="() => router.push('adminMessages')">
+                <figure @click="() => router.push({ name: 'adminMessages' })">
                     <div class="icon icon-msg"></div>
                     <p>Berichten</p>
                 </figure>
@@ -128,11 +128,11 @@
         <section>
             <h2>Technisch</h2>
             <div>
-                <figure @click="() => router.push('adminStatic')">
+                <figure @click="() => router.push({ name: 'adminStatic' })">
                     <div class="icon icon-static"></div>
                     <p>Vertaaltabel</p>
                 </figure>
-                <figure @click="() => router.push('adminLanguages')">
+                <figure @click="() => router.push({ name: 'adminLanguages' })">
                     <div class="icon icon-lang"></div>
                     <p>Talen</p>
                 </figure>
