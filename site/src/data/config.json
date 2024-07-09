@@ -1,5 +1,5 @@
 {
-    "apiUrl": "http://127.0.0.1:8000/api/",
+    "apiUrl": "http://localhost:8000/api/",
     "defaultLanguage": "NL",
     "fallbackLastUpdated": "2024-06-03T12:51:00Z",
     "technicalContact": "issue-report@technical.geocachingbrughia.be"
