@@ -17,4 +17,8 @@ async function logout() {
     return fetchFromServer("logout", true);
 }
 
-export { login, getProfileData, logout };
+async function fetchEvents() {
+    return fetchFromServer("admin/events", true);
+}
+
+export { login, getProfileData, logout, fetchEvents };

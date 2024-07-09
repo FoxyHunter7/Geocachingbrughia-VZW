@@ -26,7 +26,7 @@
   const popupMenuQueue = [];
 
   const route = useRoute();
-  const isAdminRoute = computed(() => route.name === "admin");
+  const isAdminRoute = computed(() => route.name && route.name.includes("admin"));
 
   function openInPopup(componentName) {
     if (isPopupOpen.value) {
