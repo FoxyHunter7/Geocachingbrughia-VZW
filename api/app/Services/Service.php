@@ -100,6 +100,9 @@ abstract class Service
         }
 
         $translations = $data[$this->_translationsRelationName] ?? [];
+        if (is_string($translations)) {
+            $translations = json_decode($translations, true); // Decode JSON string to array
+        }
         unset($data[$this->_translationsRelationName]);
 
         $image = $data['image'] ?? null;

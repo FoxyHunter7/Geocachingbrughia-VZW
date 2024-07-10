@@ -23,7 +23,8 @@ class Event extends Model
         'type',
         'location',
         'start_date',
-        'end_date'
+        'end_date',
+        'imageUrl'
     ];
 
     public function translations()
