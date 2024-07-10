@@ -39,15 +39,18 @@ async function fetchFromServer(endpoint, includeCreds = false, page = null, sear
     }
 }
 
-async function postToServer(endpoint, json, includeCreds = false) {
+async function postToServer(endpoint, json, includeCreds = false, headerContentType = "application/json") {
     try {
         const headers = {
-            "Content-Type": "application/json",
             "Accept": "application/json"
         };
 
         if (includeCreds) {
             headers.credentials = "include";
+        }
+
+        if (headerContentType) {
+            headers["Content-Type"] = headerContentType;
         }
 
         const response = await fetch(`${config.apiUrl}${endpoint}`, {

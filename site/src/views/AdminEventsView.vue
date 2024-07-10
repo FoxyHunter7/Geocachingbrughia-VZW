@@ -1,7 +1,9 @@
 <script setup>
-    import { fetchEvents, getProfileData } from '@/services/AdminService';
-    import { onMounted, ref, computed, watch } from 'vue';
+    import { fetchEvents, getProfileData, postEvent } from '@/services/AdminService';
+    import { onMounted, ref, computed, watch, toRaw } from 'vue';
     import { useRouter } from 'vue-router';
+    import TipTapEditor from '@/components/TipTapEditor.vue'
+    import StaticContentProvider from '@/services/StaticContentService';
 
     const router = useRouter();
 
@@ -78,18 +80,89 @@
 
     const currentlyEditing = ref(-1);
     const currentlyEditingData = ref({});
+    let newEvent = false;
+
+    const fileInput = ref(null);
+    const fiLePreviewURL = ref(null);
+    const editors = ref([]);
+
+    function previewFile() {
+        if (fileInput.value.files.length > 0) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                fiLePreviewURL.value = e.target.result;
+            };
+            reader.readAsDataURL(fileInput.value.files[0]);
+        }
+    }
 
     function editEvent(event) {
         currentlyEditing.value = event.id;
-        currentlyEditingData.value = event;
-        console.log(currentlyEditingData.value.start_date + "");
+        currentlyEditingData.value = structuredClone(toRaw(event));
+        delete currentlyEditingData.value.id;
     }
 
-    function stopEditing(save = "") {
-        if (!save) {
-            currentlyEditing.value = -1;
-            currentlyEditingData.value = {};
+    function createEvent() {
+        newEvent = true;
+        currentlyEditing.value = -2;
+
+        const translations = [];
+
+        StaticContentProvider.LANGUAGES.forEach(language => {
+            translations.push({lang_code: language.lang_code, description: '{"type":"doc","content":[]}'});
+        });
+
+        currentlyEditingData.value = {
+            state: "DRAFT",
+            on_home: false,
+            title: "",
+            geolink: "",
+            type: "REGULAR",
+            location: "",
+            start_date: "",
+            end_date: "",
+            translations: translations
         }
+    }
+
+    function stopEditing() {
+        editors.value = [];
+        currentlyEditing.value = -1;
+        currentlyEditingData.value = {};
+    }
+
+    const saving = ref(false);
+
+    async function save(state) {
+        if (!document.querySelector("#eventEdit").checkValidity()) {
+            document.querySelector("#eventEdit").reportValidity();
+            return;
+        }
+
+        saving.value = true;
+
+        const translations = [];
+        editors.value.forEach(editor => {
+            translations.push(editor.getContent());
+        });
+
+        currentlyEditingData.value.translations = translations;
+        currentlyEditingData.value.state = state;
+
+        const [start_date, end_date] = [currentlyEditingData.value.start_date, currentlyEditingData.value.end_date];
+        currentlyEditingData.value.start_date = `${start_date.split("T")[0]} ${start_date.split("T")[1]}:00`;
+        currentlyEditingData.value.end_date = `${end_date.split("T")[0]} ${end_date.split("T")[1]}:00`;
+
+        const formData = new FormData();
+        
+        for(let property in currentlyEditingData.value) {
+            formData.append(property, currentlyEditingData.value[property]);
+        }
+
+        formData.append("image", fileInput.value.files[0]);
+
+        const response = await postEvent(formData);
+        console.log(response);
     }
 
     onMounted(verifyLogin);
@@ -130,12 +203,13 @@
                 </tr>
             </tbody>
         </table>
-        <div id="pager" v-show="events.length > 0 && events[0] !== 'loading'">
+        <button v-show="currentlyEditing === -1" type="button" @click="createEvent">Nieuw Event</button>
+        <div id="pager" v-show="events.length > 0 && events[0] !== 'loading' && currentlyEditing === -1">
             <div class="prev pagerNavBtn" :class="{ disabled: currPage === 1 }" @click="prevPage"></div>
             <p>{{ currPage }} / {{ lastPage }}</p>
             <div class="next pagerNavBtn" :class="{ disabled: currPage === lastPage}" @click="nextPage"></div>
         </div>
-        <form @submit.prevent="" method="post" id="eventEdit" v-show="currentlyEditing > -1">
+        <form @submit.prevent="" method="post" id="eventEdit" v-show="currentlyEditing !== -1">
             <section class="general">
                 <label for="onHome">Toon event op de homepagina<span>*</span></label>
                 <select v-model="currentlyEditingData.on_home" id="onHome" name="onHome">
@@ -164,11 +238,21 @@
                 </div>
             </section>
             <section class="image-upload">
-
+                <label for="imgUpload">Poster Foto</label>
+                <input type="file" ref="fileInput" accept="image/*" @change="previewFile" id="imgUpload" name="imgUpload" required>
+                <img :src="fiLePreviewURL">
             </section>
             <section class="translations">
-                
+                <h2>Beschrijving</h2>
+                <div v-for="translation in currentlyEditingData.translations">
+                    <p>{{ translation.lang_code }}</p>
+                    <TipTapEditor :content="translation.description" :langCode="translation.lang_code" :editable="true" ref="editors"/>
+                </div>
             </section>
+            <button type="button">Verwijderen</button>
+            <button @click="save('DRAFT')" type="button" v-if="currentlyEditingData.state !== 'ONLINE'">Opslaan Als Concept</button>
+            <button type="button">Publiceren</button>
+            <button type="button" v-if="currentlyEditing.state === 'ONLINE'">Archiveren</button>
         </form>
     </main>
 </template>
@@ -177,6 +261,10 @@
     header {
         display: flex;
         justify-content: space-between;
+    }
+
+    main {
+        overflow-y: auto;
     }
 
     button {

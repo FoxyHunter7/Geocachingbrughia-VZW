@@ -21,4 +21,8 @@ async function fetchEvents() {
     return fetchFromServer("admin/events", true);
 }
 
-export { login, getProfileData, logout, fetchEvents };
+async function postEvent(FormData) {
+    return postToServer("admin/events", FormData, true, "")
+}
+
+export { login, getProfileData, logout, fetchEvents, postEvent };
