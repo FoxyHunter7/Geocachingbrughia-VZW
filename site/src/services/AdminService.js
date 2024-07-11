@@ -17,6 +17,10 @@ async function logout() {
     return fetchFromServer("logout", true);
 }
 
+/* -----
+EVENTS
+----- */
+
 async function fetchEvents() {
     return fetchFromServer("admin/events", true);
 }
@@ -33,4 +37,36 @@ async function deleteEvent(id) {
     return deleteFromServer(`admin/events/${id}`);
 }
 
-export { login, getProfileData, logout, fetchEvents, postEvent, updateEvent, deleteEvent };
+/* -----
+GEOCACHES
+----- */
+
+async function fetchGeocaches() {
+    return fetchFromServer("admin/geocaches", true);
+}
+
+async function postGeocache(formData) {
+    return fetchToServer("admin/geocache", "POST", formData, true, "");
+}
+
+async function updateGeocache(id, formData) {
+    return fetchToServer(`admin/geocache/${id}?_method=PUT`, "POST", formData, true, "");
+}
+
+async function deleteGeocache(id) {
+    return deleteFromServer(`admin/geocache/${id}`);
+}
+
+export {
+    login, 
+    getProfileData, 
+    logout, 
+    fetchEvents, 
+    postEvent, 
+    updateEvent, 
+    deleteEvent, 
+    fetchGeocaches,
+    postGeocache,
+    updateGeocache,
+    deleteGeocache
+};
