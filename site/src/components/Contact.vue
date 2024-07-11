@@ -10,8 +10,20 @@
     const email = ref("");
     const subject = ref("");
     const message = ref("");
-    function handleFormSubmit() {
-        postContact(email.value, subject.value, message.value);
+
+    const lastSubmitResult = ref("");
+    async function handleFormSubmit() {
+        const response = await postContact(email.value, subject.value, message.value);
+
+        email.value = "";
+        subject.value = "";
+        message.value = "";
+
+        if (response.success && response.data && response.data.data) {
+            lastSubmitResult.value = dictionary.FormSuccess[lang.value];
+        } else {
+            lastSubmitResult.value = dictionary.FormFailed[lang.value];
+        }
     }
 </script>
 
@@ -31,9 +43,12 @@
                 </div>
                 <div>
                     <label for="message">{{ dictionary.FormMessage[lang] }}</label>
-                    <textarea v-model="message" id="message" name="message" autocomplete="off"></textarea>
+                    <textarea v-model="message" id="message" name="message" autocomplete="off" required></textarea>
                 </div>
-                <input type="submit" :value="dictionary.FormSubmit[lang]">
+                <div>
+                    <input type="submit" :value="dictionary.FormSubmit[lang]">
+                    <p>{{ lastSubmitResult }}</p>
+                </div>
             </form>
             <ul>
                 <li>
@@ -93,6 +108,19 @@
         display: flex;
         flex-direction: column;
         gap: 0.2rem;
+    }
+
+    form div:last-child {
+        flex-direction: row;
+        align-items: center;
+        gap: 2rem;
+    }
+
+    form div:last-child p {
+        text-transform: capitalize;
+        font-weight: bold;
+        font-size: 0.8rem;
+        padding-top: 0.5rem;
     }
 
     form label {

@@ -7,7 +7,8 @@ async function postContact(email, subject, message) {
         message: message
     });
 
-    const result = await fetchToServer("contact/form/responses", "POST", json);
+    const response = await fetchToServer("contact/form/responses", "POST", json);
+    return response;
 }
 
 export { postContact };
