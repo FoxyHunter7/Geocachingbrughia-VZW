@@ -57,6 +57,26 @@ async function deleteGeocache(id) {
     return deleteFromServer(`admin/geocaches/${id}`);
 }
 
+/* -----
+SOCIALS
+----- */
+
+async function fetchSocials() {
+    return fetchFromServer("admin/socials", true);
+}
+
+async function postSocial(formData) {
+    return fetchToServer("admin/socials", "POST", formData, true, "");
+}
+
+async function updateSocial(id, formData) {
+    return fetchToServer(`admin/socials/${id}?_method=PUT`, "POST", formData, true, "");
+}
+
+async function deleteSocial(id) {
+    return deleteFromServer(`admin/socials/${id}`);
+}
+
 export {
     login, 
     getProfileData, 
@@ -68,5 +88,9 @@ export {
     fetchGeocaches,
     postGeocache,
     updateGeocache,
-    deleteGeocache
+    deleteGeocache,
+    fetchSocials,
+    postSocial,
+    updateSocial,
+    deleteSocial
 };
