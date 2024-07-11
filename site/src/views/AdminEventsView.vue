@@ -80,7 +80,6 @@
 
     const currentlyEditing = ref(-1);
     const currentlyEditingData = ref({});
-    let newEvent = false;
 
     const fileInput = ref(null);
     const fiLePreviewURL = ref(null);
@@ -103,13 +102,10 @@
     }
 
     function createEvent() {
-        newEvent = true;
-        currentlyEditing.value = -2;
-
         const translations = [];
 
         StaticContentProvider.LANGUAGES.forEach(language => {
-            translations.push({lang_code: language.lang_code, description: '{"type":"doc","content":[]}'});
+            translations.push({lang_code: language.code, description: '{"type":"doc","content":[]}'});
         });
 
         currentlyEditingData.value = {
@@ -123,6 +119,8 @@
             end_date: "",
             translations: translations
         }
+
+        currentlyEditing.value = -2;
     }
 
     function stopEditing() {
@@ -134,35 +132,104 @@
     const saving = ref(false);
 
     async function save(state) {
-        if (!document.querySelector("#eventEdit").checkValidity()) {
-            document.querySelector("#eventEdit").reportValidity();
+        if (!verifyInputs()) {
             return;
         }
-
         saving.value = true;
 
+        currentlyEditingData.value.state = state;        
+        const formData = setFormData();
+
+        const response = await postEvent(formData);
+        console.log(response);
+
+        if (!response.success) {
+            window.alert(response.error);
+            if (response.error.includes("Unautherized")) {
+                router.push({ name: "admin" });
+            }
+            saving.value = false;
+        } else if (response.success && response.data) {
+            if (response.data.errors) {
+                let errorsString = ""
+                for (let field in response.data.errors) {
+                    errorsString += `${field}: ${response.data.errors[field]}\n`;
+                }
+                window.alert(errorsString);
+                saving.value = false;
+            } else if (response.data.data) {
+                currentlyEditingData.value = {};
+                currentlyEditing.value = -1;
+                saving.value = false;
+                fetchData()
+            } ;
+        } else {
+            window.alert("onbekende fout");
+            saving.value = false;
+        }
+    }
+
+    async function update(state) {
+
+    }
+
+    async function remove() {
+
+    }
+
+    function verifyInputs() {
+        const form = document.querySelector("#eventEdit");
+
+        if (!form.checkValidity()) {
+            form.reportValidity();
+            return false;
+        }
+
+        if (StaticContentProvider.LANGUAGES.length !== currentlyEditingData.value.translations.length) {
+            const translations = [];
+            StaticContentProvider.LANGUAGES.forEach(language => {
+                translations.push({lang_code: language.lang_code, description: '{"type":"doc","content":[]}'});
+            });
+            currentlyEditingData.value.translations = translations;
+
+            window.alert("Ontbrekende vertaling, er waren meer talen in het systeem dan vertalingen voor dit event. Het onbrekende vertalingsveld is nu toegevoegd, gelieve deze ook in te vullen.");
+            return false;
+        }
+
+        if (fileInput.value.files[0].size / 1024 > 4096) {
+            window.alert("Afbeelding te groot: " + fileInput.value.files[0].size / (1024 * 1024) + "MB, max: 4MB");
+            return false;
+        }
+
+        return true;
+    }
+
+    function setFormData() {
         const translations = [];
+
         editors.value.forEach(editor => {
             translations.push(editor.getContent());
         });
 
-        currentlyEditingData.value.translations = translations;
-        currentlyEditingData.value.state = state;
-
-        const [start_date, end_date] = [currentlyEditingData.value.start_date, currentlyEditingData.value.end_date];
-        currentlyEditingData.value.start_date = `${start_date.split("T")[0]} ${start_date.split("T")[1]}:00`;
-        currentlyEditingData.value.end_date = `${end_date.split("T")[0]} ${end_date.split("T")[1]}:00`;
+        const [startDate, endDate] = [currentlyEditingData.value.start_date, currentlyEditingData.value.end_date];
+        const formattedStartDate = `${startDate.split("T")[0]} ${startDate.split("T")[1]}:00`;
+        const formattedEndDate = `${endDate.split("T")[0]} ${endDate.split("T")[1]}:00`;
 
         const formData = new FormData();
-        
-        for(let property in currentlyEditingData.value) {
-            formData.append(property, currentlyEditingData.value[property]);
+
+        formData.append("translations", JSON.stringify(translations));
+        formData.append("start_date", formattedStartDate);
+        formData.append("end_date", formattedEndDate);
+
+        for (let property in currentlyEditingData.value) {
+            if (property !== "translations" && property !== "start_date" && property !== "end_date") {
+                formData.append(property, currentlyEditingData.value[property]);
+            }
         }
 
         formData.append("image", fileInput.value.files[0]);
 
-        const response = await postEvent(formData);
-        console.log(response);
+        return formData;
     }
 
     onMounted(verifyLogin);
@@ -249,11 +316,12 @@
                     <TipTapEditor :content="translation.description" :langCode="translation.lang_code" :editable="true" ref="editors"/>
                 </div>
             </section>
-            <button type="button">Verwijderen</button>
-            <button @click="save('DRAFT')" type="button" v-if="currentlyEditingData.state !== 'ONLINE'">Opslaan Als Concept</button>
-            <button type="button">Publiceren</button>
-            <button type="button" v-if="currentlyEditing.state === 'ONLINE'">Archiveren</button>
+            <button @click="remove()" type="button">Verwijderen</button>
+            <button @click="() => (currentlyEditing === -2) ? save('DRAFT') : update('DRAFT')" type="button" v-if="currentlyEditingData.state !== 'ONLINE'">Opslaan Als Concept</button>
+            <button @click="() => (currentlyEditing === -2) ? save('ONLINE') : update('ONLINE')" type="button">Publiceren</button>
+            <button @click="update('archive')" type="button" v-if="currentlyEditing.state === 'ONLINE'">Archiveren</button>
         </form>
+        <div id="overlay" v-show="saving"></div>
     </main>
 </template>
 
@@ -469,6 +537,16 @@
         cursor: auto;
     }
 
+    #overlay {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        z-index: 10;
+        background-color: rgba(0, 0, 0, 0.5)
+    }
+
     @media (prefers-color-scheme: dark) {
         thead {
             background-color: var(--color-secondary);
@@ -480,6 +558,10 @@
 
         td.ARCHIVED, td.false {
             background-color: darkred;
+        }
+
+        #overlay {
+            background-color: rgba(60, 60, 60, 0.5);
         }
     }
 </style>
