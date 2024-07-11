@@ -46,15 +46,15 @@ async function fetchGeocaches() {
 }
 
 async function postGeocache(formData) {
-    return fetchToServer("admin/geocache", "POST", formData, true, "");
+    return fetchToServer("admin/geocaches", "POST", formData, true, "");
 }
 
 async function updateGeocache(id, formData) {
-    return fetchToServer(`admin/geocache/${id}?_method=PUT`, "POST", formData, true, "");
+    return fetchToServer(`admin/geocaches/${id}?_method=PUT`, "POST", formData, true, "");
 }
 
 async function deleteGeocache(id) {
-    return deleteFromServer(`admin/geocache/${id}`);
+    return deleteFromServer(`admin/geocaches/${id}`);
 }
 
 export {
