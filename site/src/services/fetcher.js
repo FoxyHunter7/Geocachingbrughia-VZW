@@ -61,7 +61,7 @@ async function fetchToServer(endpoint, method = "POST", body = "", includeCreds 
         });
 
         if (!response.ok) {
-            throw new Error(`Bad post response: ${response.statusText}`);
+            throw new Error(`Bad ${method} response: ${response.statusText}`);
         }
 
         return {
@@ -69,7 +69,7 @@ async function fetchToServer(endpoint, method = "POST", body = "", includeCreds 
             data: await response.json()
         };
     } catch (err) {
-        console.error(`Failed to post (endpoint: ${endpoint})`);
+        console.error(`Failed to ${method} (endpoint: ${endpoint})`);
         return {
             success: false,
             error: err.message
@@ -77,4 +77,28 @@ async function fetchToServer(endpoint, method = "POST", body = "", includeCreds 
     }
 }
 
-export { fetchFromServer, fetchToServer };
+async function deleteFromServer(endpoint) {
+    try {
+        const response = await fetch(`${config.apiUrl}${endpoint}`, {
+            method: "DELETE",
+            credentials: "include"
+        });
+
+        if (!response.ok) {
+            throw new Error(`Bad response: ${response.statusText}`);
+        }
+
+        return {
+            success: true,
+            data: await response.json()
+        };
+    } catch (err) {
+        console.error(`Failed to delete (endpoint: ${endpoint})`);
+        return {
+            success: false,
+            error: err.message
+        };
+    }
+}
+
+export { fetchFromServer, fetchToServer, deleteFromServer };

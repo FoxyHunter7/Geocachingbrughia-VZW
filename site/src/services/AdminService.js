@@ -1,4 +1,4 @@
-import { fetchFromServer, fetchToServer } from "./fetcher"
+import { deleteFromServer, fetchFromServer, fetchToServer } from "./fetcher"
 
 async function login(email, password) {
     const json = JSON.stringify({
@@ -29,4 +29,8 @@ async function updateEvent(id, formData) {
     return fetchToServer(`admin/events/${id}?_method=PUT`, "POST", formData, true, "");
 }
 
-export { login, getProfileData, logout, fetchEvents, postEvent, updateEvent };
+async function deleteEvent(id) {
+    return deleteFromServer(`admin/events/${id}`);
+}
+
+export { login, getProfileData, logout, fetchEvents, postEvent, updateEvent, deleteEvent };

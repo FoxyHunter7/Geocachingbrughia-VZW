@@ -1,5 +1,5 @@
 <script setup>
-    import { fetchEvents, getProfileData, postEvent, updateEvent } from '@/services/AdminService';
+    import { deleteEvent, fetchEvents, getProfileData, postEvent, updateEvent } from '@/services/AdminService';
     import { onMounted, ref, computed, watch, toRaw } from 'vue';
     import { useRouter } from 'vue-router';
     import config from '@/data/config.json'
@@ -160,7 +160,27 @@
     }
 
     async function remove() {
+        if (window.confirm(`Zeker dat je event: ${currentlyEditingData.value.title} wilt verwijderen?`)) {
+            saving.value = true;
+            
+            const response = await deleteEvent(currentlyEditing.value);
 
+            if (!response.success) {
+                window.alert(response.error);
+                if (response.error.includes("Unautherized")) {
+                    router.push({ name: "admin" });
+                }
+                saving.value = false;
+            } else if (response.success && response.data && response.data.deleted) {
+                currentlyEditingData.value = {};
+                currentlyEditing.value = -1;
+                saving.value = false;
+                fetchData();
+            } else {
+                window.alert("onbekende fout");
+                saving.value = false;
+            }
+        }
     }
 
     const validateImage = ref(true);
@@ -244,8 +264,8 @@
                 currentlyEditingData.value = {};
                 currentlyEditing.value = -1;
                 saving.value = false;
-                fetchData()
-            } ;
+                fetchData();
+            }
         } else {
             window.alert("onbekende fout");
             saving.value = false;
@@ -336,7 +356,7 @@
                     <TipTapEditor :content="translation.description" :langCode="translation.lang_code" :editable="true" ref="editors"/>
                 </div>
             </section>
-            <button @click="remove()" type="button">Verwijderen</button>
+            <button @click="remove()" type="button" v-if="currentlyEditing !== -2">Verwijderen</button>
             <button @click="() => (currentlyEditing === -2) ? save('DRAFT') : update('DRAFT')" type="button" v-if="currentlyEditingData.state !== 'ONLINE'">Opslaan Als Concept</button>
             <button @click="() => (currentlyEditing === -2) ? save('ONLINE') : update('ONLINE')" type="button">Publiceren</button>
             <button @click="update('ARCHIVED')" type="button" v-if="currentlyEditingData.state === 'ONLINE'">Archiveren</button>
