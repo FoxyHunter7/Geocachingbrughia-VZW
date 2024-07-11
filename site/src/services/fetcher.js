@@ -39,7 +39,7 @@ async function fetchFromServer(endpoint, includeCreds = false, page = null, sear
     }
 }
 
-async function postToServer(endpoint, json, includeCreds = false, headerContentType = "application/json") {
+async function fetchToServer(endpoint, method = "POST", body = "", includeCreds = false, headerContentType = "application/json") {
     try {
         const headers = {
             "Accept": "application/json"
@@ -54,10 +54,10 @@ async function postToServer(endpoint, json, includeCreds = false, headerContentT
         }
 
         const response = await fetch(`${config.apiUrl}${endpoint}`, {
-            method: "POST",
+            method: method,
             headers: headers,
             credentials: (includeCreds) ? "include" : "omit",
-            body: json
+            body: body
         });
 
         if (!response.ok) {
@@ -77,4 +77,4 @@ async function postToServer(endpoint, json, includeCreds = false, headerContentT
     }
 }
 
-export { fetchFromServer, postToServer };
+export { fetchFromServer, fetchToServer };
