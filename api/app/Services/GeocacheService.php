@@ -17,7 +17,7 @@ class GeocacheService extends Service
         'type' => 'required | in:TRADITIONAL,MULTI,MYSTERY,EARTH,LETTERBOX,WHEREIGO,VIRTUAL,LAB,WEBCAM',
         'difficulty' => 'required | numeric | between:1,5',
         'terrain' => 'required | numeric | between:1,5',
-        'placed_on' => 'required | date_format:Y-m-d\\TH:i:sP'
+        'placed_on' => 'date_format:Y-m-d'
     ];
 
     protected $_fields = ['id', 'title', 'geolink', 'type', 'difficulty', 'terrain'];
