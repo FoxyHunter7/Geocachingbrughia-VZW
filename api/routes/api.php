@@ -100,8 +100,8 @@ Route::group([
         Route::controller(SocialApiController::class)->group(function () {
             Route::get('socials', 'allAdmin');
             Route::post('socials', 'add');
-            Route::put('socials', 'update');
-            Route::delete('socials', 'delete');
+            Route::put('socials/{id}', 'update');
+            Route::delete('socials/{id}', 'delete');
         });
 
         Route::controller(ContactFormResponseApiController::class)->group(function () {
