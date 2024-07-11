@@ -83,14 +83,14 @@
     const currentlyEditingData = ref({});
 
     const fileInput = ref(null);
-    const fiLePreviewURL = ref(null);
+    const filePreviewURL = ref(null);
     const editors = ref([]);
 
     function previewFile() {
         if (fileInput.value.files.length > 0) {
             const reader = new FileReader();
             reader.onload = (e) => {
-                fiLePreviewURL.value = e.target.result;
+                filePreviewURL.value = e.target.result;
             };
             reader.readAsDataURL(fileInput.value.files[0]);
         }
@@ -100,7 +100,7 @@
         currentlyEditing.value = event.id;
         currentlyEditingData.value = structuredClone(toRaw(event));
         delete currentlyEditingData.value.id;
-        fiLePreviewURL.value = `${config.apiUrl}images/${currentlyEditingData.value.imageUrl}`;
+        filePreviewURL.value = `${config.apiUrl}images/${currentlyEditingData.value.imageUrl}`;
     }
 
     function createEvent() {
@@ -127,7 +127,7 @@
 
     function stopEditing() {
         editors.value = [];
-        fiLePreviewURL.value = "";
+        filePreviewURL.value = "";
         currentlyEditing.value = -1;
         currentlyEditingData.value = {};
     }
@@ -348,7 +348,7 @@
             <section class="image-upload">
                 <label for="imgUpload">Poster Foto</label>
                 <input type="file" ref="fileInput" accept="image/*" @change="previewFile" id="imgUpload" name="imgUpload" :required="validateImage">
-                <img :src="fiLePreviewURL">
+                <img :src="filePreviewURL">
             </section>
             <div>
                 <section class="translations">
