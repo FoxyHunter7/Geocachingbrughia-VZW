@@ -99,7 +99,8 @@ abstract class Service
             return;
         }
 
-        $translations = json_decode($data[$this->_translationsRelationName], true) ?? [];
+        $translations = $data[$this->_translationsRelationName] ?? "[]";
+        $translations = json_decode($translations, true);
         unset($data[$this->_translationsRelationName]);
 
         $image = $data['image'] ?? null;
@@ -131,7 +132,8 @@ abstract class Service
             return;
         }
 
-        $translations = json_decode($data[$this->_translationsRelationName], true) ?? [];
+        $translations = $data[$this->_translationsRelationName] ?? "[]";
+        $translations = json_decode($translations, true);
         unset($data[$this->_translationsRelationName]);
 
         $image = $data['image'] ?? null;
