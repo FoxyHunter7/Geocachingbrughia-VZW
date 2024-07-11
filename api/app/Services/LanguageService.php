@@ -13,7 +13,7 @@ class LanguageService extends Service
     protected $_rules = [
         'code' => 'required | string | max:2',
         'name' => 'required | string',
-        'image' => 'required | images | mimes:jpeg,png,jpg,gif,svg|max:4096'
+        'image' => 'required | image | mimes:jpeg,png,jpg,gif,svg|max:4096'
     ];
 
     protected $_fields = ['code', 'name', 'imageUrl'];

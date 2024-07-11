@@ -13,7 +13,7 @@ class SocialService extends Service
     protected $_rules = [
         'name' => 'required | string | max:70',
         'url' => 'required | url:https',
-        'image' => 'required | images | mimes:jpeg,png,jpg,gif,svg|max:4096'
+        'image' => 'required | image | mimes:jpeg,png,jpg,gif,svg|max:4096'
     ];
 
     protected $_fields = ['id', 'name', 'url', 'imageUrl'];
