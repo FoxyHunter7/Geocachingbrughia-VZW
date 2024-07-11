@@ -77,6 +77,26 @@ async function deleteSocial(id) {
     return deleteFromServer(`admin/socials/${id}`);
 }
 
+/* -----
+MESSAGES
+----- */
+
+async function fetchMessages() {
+    return fetchFromServer("admin/messages", true);
+}
+
+async function postMessage(formData) {
+    return fetchToServer("admin/messages", "POST", formData, true, "");
+}
+
+async function updateMessage(id, formData) {
+    return fetchToServer(`admin/messages/${id}?_method=PUT`, "POST", formData, true, "");
+}
+
+async function deleteMessage(id) {
+    return deleteFromServer(`admin/messages/${id}`);
+}
+
 export {
     login, 
     getProfileData, 
@@ -92,5 +112,9 @@ export {
     fetchSocials,
     postSocial,
     updateSocial,
-    deleteSocial
+    deleteSocial,
+    fetchMessages,
+    postMessage,
+    updateMessage,
+    deleteMessage
 };
