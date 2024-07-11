@@ -76,21 +76,60 @@
 
 <template>
     <div v-if="editor" class="menu">
-        <button @click="editor.chain().focus().toggleBold().run()" :class="{ 'is-active': editor.isActive('bold') }">
+        <button type="button" @click="editor.chain().focus().toggleBold().run()" :class="{ 'is-active': editor.isActive('bold') }">
           Bold
         </button>
-        <button @click="editor.chain().focus().toggleItalic().run()" :class="{ 'is-active': editor.isActive('italic') }">
+        <button type="button" @click="editor.chain().focus().toggleItalic().run()" :class="{ 'is-active': editor.isActive('italic') }">
           Italic
         </button>
-        <button @click="editor.chain().focus().toggleStrike().run()" :class="{ 'is-active': editor.isActive('strike') }">
+        <button type="button" @click="editor.chain().focus().toggleStrike().run()" :class="{ 'is-active': editor.isActive('strike') }">
           Strike
         </button>
-        <button @click="setLink" :class="{ 'is-active': editor.isActive('link') }">
+        <button type="button" @click="setLink" :class="{ 'is-active': editor.isActive('link') }">
           Set link
         </button>
-        <button @click="editor.chain().focus().unsetLink().run()" :disabled="!editor.isActive('link')">
+        <button type="button" @click="editor.chain().focus().unsetLink().run()" :disabled="!editor.isActive('link')">
           Unset link
         </button>
       </div>
-      <editor-content :editor="editor"/>
+      <editor-content class="editor" :editor="editor"/>
 </template>
+
+<style scoped>
+    .editor {
+        border-radius: 0.3rem;
+        border: solid 0.1rem var(--color-text);
+        padding: 0.3rem 0.5rem;
+    }
+
+    .menu {
+        padding: 0.5rem 0;
+        display: flex;
+        gap: 1rem;
+    }
+
+    .menu button {
+        color: var(--color-text);
+        background-color: var(--color-secondary);
+        border: none;
+        height: 2rem;
+        font-family: inherit;
+        border-radius: 0.4rem;
+        box-shadow: var(--color-background2) 0.5rem 0.5rem;
+        text-transform: capitalize;
+        font-weight: bold;
+        scale: 100%;
+        transition: scale 0.15s;
+        padding: 0 0.5rem;
+    }
+
+    .menu button:hover {
+        cursor: pointer;
+        scale: 103%;
+        transition: scale 0.25s;
+    }
+
+    .menu button:disabled {
+        display: none;
+    }
+</style>

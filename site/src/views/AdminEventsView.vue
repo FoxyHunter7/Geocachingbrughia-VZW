@@ -278,7 +278,10 @@
 
 <template>
     <header>
-        <button @click="() => (currentlyEditing === -1) ? router.push({ name: 'admin'}) : stopEditing()" type="button">Terug</button>
+        <div>
+            <button @click="() => (currentlyEditing === -1) ? router.push({ name: 'admin'}) : stopEditing()" type="button">Terug</button>
+            <button v-show="currentlyEditing === -1" type="button" @click="createEvent">Nieuw Event</button>
+        </div>
         <form v-show="events.length > 0 && events[0] !== 'loading' && currentlyEditing === -1" method="post" @submit.prevent="" id="search">
             <div>
                 <input v-model="search" type="search" id="search" name="search" autocomplete="search" required placeholder="Zoeken">
@@ -310,7 +313,6 @@
                 </tr>
             </tbody>
         </table>
-        <button v-show="currentlyEditing === -1" type="button" @click="createEvent">Nieuw Event</button>
         <div id="pager" v-show="events.length > 0 && events[0] !== 'loading' && currentlyEditing === -1">
             <div class="prev pagerNavBtn" :class="{ disabled: currPage === 1 }" @click="prevPage"></div>
             <p>{{ currPage }} / {{ lastPage }}</p>
@@ -333,33 +335,34 @@
                 </select>
                 <label for="title">Titel<span>*</span></label>
                 <input v-model="currentlyEditingData.title" type="text" max="100" id="title" name="title" required>
-                <label for="geolink">Geocaching Link<span>*</span> <i>Moet beginnen met: https://www.geocaching.com/geocache/</i></label>
+                <label for="geolink">Geocaching Link<span>*</span><br><i>Moet beginnen met: https://www.geocaching.com/geocache/</i></label>
                 <input v-model="currentlyEditingData.geolink" type="text" id="geolink" title="Moet beginnen met: https://www.geocaching.com/geocache/" name="geolink" pattern="https://www\.geocaching\.com/geocache/.+" required>
-                <label for="location">Locatie <i>In GMD notatie, bv: N 34° 56.789 E 123° 45.678</i></label>
+                <label for="location">Locatie<br><i>In GMD notatie, bv: N 34° 56.789 E 123° 45.678</i></label>
                 <input v-model="currentlyEditingData.location" type="text" id="location" name="location" title="In GMD notatie, bv: N 34° 56.789 E 123° 45.678" pattern="^[NS]\s\d+°\s\d+\.\d+\s[EW]\s\d+°\s\d+\.\d+$">
-                <div>
-                    <label for="startDate">Start Datum & Tijd<span>*</span></label>
-                    <input v-model="currentlyEditingData.start_date" type="datetime-local" id="startDate" name="startDate" required>
-                    <label for="endDate">Eind Datum & Tijd<span>*</span></label>
-                    <input v-model="currentlyEditingData.end_date" type="datetime-local" id="endDate" name="endDate" required>
-                </div>
+                <label for="startDate">Start Datum & Tijd<span>*</span></label>
+                <input v-model="currentlyEditingData.start_date" type="datetime-local" id="startDate" name="startDate" required>
+                <label for="endDate">Eind Datum & Tijd<span>*</span></label>
+                <input v-model="currentlyEditingData.end_date" type="datetime-local" id="endDate" name="endDate" required>
             </section>
             <section class="image-upload">
                 <label for="imgUpload">Poster Foto</label>
                 <input type="file" ref="fileInput" accept="image/*" @change="previewFile" id="imgUpload" name="imgUpload" :required="validateImage">
                 <img :src="fiLePreviewURL">
             </section>
-            <section class="translations">
-                <h2>Beschrijving</h2>
-                <div v-for="translation in currentlyEditingData.translations">
-                    <p>{{ translation.lang_code }}</p>
-                    <TipTapEditor :content="translation.description" :langCode="translation.lang_code" :editable="true" ref="editors"/>
-                </div>
-            </section>
-            <button @click="remove()" type="button" v-if="currentlyEditing !== -2">Verwijderen</button>
-            <button @click="() => (currentlyEditing === -2) ? save('DRAFT') : update('DRAFT')" type="button" v-if="currentlyEditingData.state !== 'ONLINE'">Opslaan Als Concept</button>
-            <button @click="() => (currentlyEditing === -2) ? save('ONLINE') : update('ONLINE')" type="button">Publiceren</button>
-            <button @click="update('ARCHIVED')" type="button" v-if="currentlyEditingData.state === 'ONLINE'">Archiveren</button>
+            <div>
+                <section class="translations">
+                    <div v-for="translation in currentlyEditingData.translations">
+                        <p>{{ translation.lang_code }}</p>
+                        <TipTapEditor :content="translation.description" :langCode="translation.lang_code" :editable="true" ref="editors"/>
+                    </div>
+                </section>
+                <section class="buttons">
+                    <button class="btn-red" @click="remove()" type="button" v-if="currentlyEditing !== -2">Verwijderen</button>
+                    <button class="btn-orange" @click="update('ARCHIVED')" type="button" v-if="currentlyEditingData.state === 'ONLINE'">Archiveren</button>
+                    <button class="btn-orange" @click="() => (currentlyEditing === -2) ? save('DRAFT') : update('DRAFT')" type="button" v-if="currentlyEditingData.state !== 'ONLINE'">Opslaan Als Concept</button>
+                    <button @click="() => (currentlyEditing === -2) ? save('ONLINE') : update('ONLINE')" type="button">Publiceren</button>
+                </section>
+            </div>
         </form>
         <div id="overlay" v-show="saving"></div>
     </main>
@@ -511,7 +514,7 @@
     }
 
     td.DRAFT {
-        background-color: darkorange;
+        background-color: rgb(185, 104, 11);
         color: var(--color-text3);
     }
 
@@ -577,6 +580,108 @@
         cursor: auto;
     }
 
+    #eventEdit {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        padding: 1rem;
+    }
+
+    #eventEdit > div {
+        grid-column: span 2;
+    }
+
+    #eventEdit section.general, #eventEdit section.image-upload {
+        display: flex;
+        height: max-content;
+        flex-direction: column;
+    }
+
+    #eventEdit section.image-upload {
+        align-items: center;
+    }
+
+    #eventEdit label {
+        margin-bottom: 0.3rem;
+    }
+
+    #eventEdit label:not(:first-child) {
+        margin-top: 1.5rem;
+    }
+
+    #eventEdit label span {
+        color: red;
+    }
+
+    #eventEdit label i {
+        opacity: 60%;
+    }
+
+    #eventEdit input {
+        width: 80%;
+        font-size: 0.85rem;
+    }
+
+    #eventEdit section.general input:nth-of-type(4), #eventEdit section.general input:nth-of-type(5) {
+        text-align: center;
+        width: 12rem;
+    }
+
+    #eventEdit select {
+        width: 12rem;
+        height: 2rem;
+        font: inherit;
+        font-size: 0.9rem;
+        border-radius: 0.3rem;
+        border: solid 0.1rem var(--color-text);
+        padding: 0.2rem 0;
+        outline: none;
+        background-color: var(--color-background);
+        color: var(--color-text);
+    }
+
+    #eventEdit section.image-upload input[type="file"] {
+        width: 18rem;
+        padding-left: 0.5rem;
+    }
+
+    #eventEdit section.image-upload img {
+        margin-top: 3rem;
+        height: 30rem;
+        max-width: 80%;
+        object-fit: contain;
+        object-position: 0;
+    }
+
+    #eventEdit section.translations {
+        margin-top: 3rem;
+        display: flex;
+        justify-content: center;
+        gap: 3rem;
+        flex-wrap: wrap;
+    }
+
+    #eventEdit section.translations div {
+        width: 40rem;
+        border-radius: 0.3rem;
+    }
+
+    #eventEdit section.buttons {
+        margin: 1rem;
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+    }
+
+    #eventEdit button.btn-red {
+        background-color: rgb(255, 66, 66);
+        box-shadow: #e0b8aa 0.5rem 0.5rem;
+    }
+
+    #eventEdit button.btn-orange {
+        background-color: rgb(255, 138, 70);
+        box-shadow: #e9cdc2 0.5rem 0.5rem;
+    }
+
     #overlay {
         position: absolute;
         top: 0;
@@ -584,7 +689,7 @@
         bottom: 0;
         left: 0;
         z-index: 10;
-        background-color: rgba(0, 0, 0, 0.5)
+        background-color: rgba(0, 0, 0, 0.5);
     }
 
     @media (prefers-color-scheme: dark) {
@@ -602,6 +707,18 @@
 
         #overlay {
             background-color: rgba(60, 60, 60, 0.5);
+        }
+
+        #eventEdit button.btn-red {
+            background-color: rgb(255, 87, 57);
+            color: var(--color-text3);
+            box-shadow: #360f01 0.5rem 0.5rem;
+        }
+
+        #eventEdit button.btn-orange {
+            background-color: rgb(233, 177, 22);
+            color: var(--color-text3);
+            box-shadow: #362a01 0.5rem 0.5rem;
         }
     }
 </style>
