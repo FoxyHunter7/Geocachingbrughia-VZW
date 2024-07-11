@@ -26,5 +26,8 @@ class ContactFormResponseService extends Service
         $this->_errors = new MessageBag;
     }
 
-
+    protected function modelHiddenoverwrites($results, $isAdmin)
+    {
+        $results->makeVisible(['id']);
+    }
 }

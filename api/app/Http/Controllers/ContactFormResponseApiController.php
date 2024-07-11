@@ -19,8 +19,8 @@ class ContactFormResponseApiController
     {
         $search = $request->query('search', '');
         $perPage = $request->query('per_page', 10);
-        $sortBy = $request->query('sort_by', '');
-        $sortDirection = $request->query('desc');
+        $sortBy = $request->query('sort_by', 'created_at');
+        $sortDirection = $request->query('desc', 'desc');
 
         return response()->json($this->_service->all(perPage:$perPage, search: $search, sortBy: $sortBy, sortDirection: $sortDirection), Response::HTTP_OK);
     }

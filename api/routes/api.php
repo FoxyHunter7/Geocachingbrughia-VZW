@@ -105,7 +105,7 @@ Route::group([
         });
 
         Route::controller(ContactFormResponseApiController::class)->group(function () {
-            Route::get('contact/form/responses', 'all');
+            Route::get('formresponses', 'all');
         });
     });
 });
