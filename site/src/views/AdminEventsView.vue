@@ -127,6 +127,7 @@
 
     function stopEditing() {
         editors.value = [];
+        fiLePreviewURL.value = "";
         currentlyEditing.value = -1;
         currentlyEditingData.value = {};
     }
@@ -232,7 +233,7 @@
 
         for (let property in currentlyEditingData.value) {
             if (property !== "translations" && property !== "start_date" && property !== "end_date") {
-                if (currentlyEditingData.value[property]) {
+                if (currentlyEditingData.value[property] || property === "on_home") {
                     formData.append(property, currentlyEditingData.value[property]);
                 }
             }
@@ -514,7 +515,7 @@
     }
 
     td.DRAFT {
-        background-color: rgb(185, 104, 11);
+        background-color: rgb(255, 136, 0);
         color: var(--color-text3);
     }
 
