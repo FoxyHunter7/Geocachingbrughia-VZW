@@ -16,7 +16,7 @@ class SocialService extends Service
         'image' => 'required | images | mimes:jpeg,png,jpg,gif,svg|max:4096'
     ];
 
-    protected $_fields = ['name', 'url', 'imageUrl'];
+    protected $_fields = ['id', 'name', 'url', 'imageUrl'];
     protected $_fieldsAdminOnly = [];
     protected $_searchOn = 'name';
     protected $_defaultSortBy = 'name';
@@ -27,5 +27,12 @@ class SocialService extends Service
     {
         $this->_model = $model;
         $this->_errors = new MessageBag;
+    }
+
+    protected function modelHiddenoverwrites($results, $isAdmin)
+    {
+        if ($isAdmin) {
+            $results->makeVisible(['id']);
+        }
     }
 }
