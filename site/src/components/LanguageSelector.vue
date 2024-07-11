@@ -37,6 +37,8 @@
         mask: url(../assets/media/x.svg);
         mask-size: contain;
         cursor: pointer;
+        mask-repeat: no-repeat;
+        mask-position: center;
         align-self: flex-end;
         margin: 0.3rem 0.3rem 0 0;
     }

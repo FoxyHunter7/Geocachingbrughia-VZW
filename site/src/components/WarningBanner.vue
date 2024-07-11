@@ -31,6 +31,8 @@
         background-color: var(--color-text);
         mask: url(../assets/media/alert-triangle.svg);
         mask-size: contain;
+        mask-repeat: no-repeat;
+        mask-position: center;
     }
 
     p {

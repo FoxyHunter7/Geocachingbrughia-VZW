@@ -316,35 +316,49 @@
     div.icon-event {
         mask: url(../assets/media/calendar.svg);
         mask-size: contain;
+        mask-repeat: no-repeat;
+        mask-position: center;
     }
 
     div.icon-cache {
         mask: url(../assets/media/box.svg);
         mask-size: contain;
+        mask-repeat: no-repeat;
+        mask-position: center;
     }
 
     div.icon-social {
         mask: url(../assets/media/share-2.svg);
         mask-size: contain;
+        mask-repeat: no-repeat;
+        mask-position: center;
     }
 
     div.icon-msg {
         mask: url(../assets/media/message-square.svg);
         mask-size: contain;
+        mask-repeat: no-repeat;
+        mask-position: center;
     }
 
     div.icon-shop {
         mask: url(../assets/media/shopping-cart.svg);
         mask-size: contain;
+        mask-repeat: no-repeat;
+        mask-position: center;
     }
 
     div.icon-static {
         mask: url(../assets/media/file-text.svg);
         mask-size: contain;
+        mask-repeat: no-repeat;
+        mask-position: center;
     }
 
     div.icon-lang {
         mask: url(../assets/media/book-open.svg);
         mask-size: contain;
+        mask-repeat: no-repeat;
+        mask-position: center;
     }
 </style>
