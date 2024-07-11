@@ -8,7 +8,6 @@ async function postContact(email, subject, message) {
     });
 
     const result = await postToServer("contact/form/responses", json);
-    console.log(result);
 }
 
 export { postContact };
