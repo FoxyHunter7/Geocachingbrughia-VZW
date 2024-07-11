@@ -21,8 +21,8 @@ async function logout() {
 EVENTS
 ----- */
 
-async function fetchEvents() {
-    return fetchFromServer("admin/events", true);
+async function fetchEvents(curr_page) {
+    return fetchFromServer("admin/events", true, curr_page);
 }
 
 async function postEvent(formData) {
@@ -41,8 +41,8 @@ async function deleteEvent(id) {
 GEOCACHES
 ----- */
 
-async function fetchGeocaches() {
-    return fetchFromServer("admin/geocaches", true);
+async function fetchGeocaches(curr_page) {
+    return fetchFromServer("admin/geocaches", true, curr_page);
 }
 
 async function postGeocache(formData) {
@@ -61,8 +61,8 @@ async function deleteGeocache(id) {
 SOCIALS
 ----- */
 
-async function fetchSocials() {
-    return fetchFromServer("admin/socials", true);
+async function fetchSocials(curr_page) {
+    return fetchFromServer("admin/socials", true, curr_page);
 }
 
 async function postSocial(formData) {
@@ -81,8 +81,8 @@ async function deleteSocial(id) {
 MESSAGES
 ----- */
 
-async function fetchMessages() {
-    return fetchFromServer("admin/messages", true);
+async function fetchMessages(curr_page) {
+    return fetchFromServer("admin/messages", true, curr_page);
 }
 
 async function postMessage(formData) {
@@ -95,6 +95,14 @@ async function updateMessage(id, formData) {
 
 async function deleteMessage(id) {
     return deleteFromServer(`admin/messages/${id}`);
+}
+
+/* -----
+FORMRESPONSES
+----- */
+
+async function fetchContactFormResponses(curr_page) {
+    return fetchFromServer("admin/formresponses", true, curr_page);
 }
 
 export {
@@ -116,5 +124,6 @@ export {
     fetchMessages,
     postMessage,
     updateMessage,
-    deleteMessage
+    deleteMessage,
+    fetchContactFormResponses
 };

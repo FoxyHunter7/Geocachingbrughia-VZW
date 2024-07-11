@@ -6,7 +6,7 @@
     const router = useRouter();
 
     async function verifyLogin() {
-        const response = await getProfileData();
+        const response = await getProfileData(currPage.value);
 
         if (response.status) {
             fetchData();
@@ -289,7 +289,7 @@
 </template>
 
 <style scoped>
-header {
+    header {
         display: flex;
         justify-content: space-between;
     }

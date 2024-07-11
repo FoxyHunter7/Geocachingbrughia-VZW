@@ -9,7 +9,7 @@
     const router = useRouter();
 
     async function verifyLogin() {
-        const response = await getProfileData();
+        const response = await getProfileData(currPage.value);
 
         if (response.status) {
             fetchData();
@@ -55,7 +55,7 @@
     }
 
     function prevPage() {
-        if (currPage > 1) {
+        if (currPage.value > 1) {
             currPage.value--;
         }
     }
