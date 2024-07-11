@@ -55,6 +55,14 @@ FormSearch;EN;search
 FormSearch;NL;zoeken
 FormSearch;FR;rechercher
 FormSearch;DE;suchen
+FormSuccess;EN;"sent"
+FormSuccess;NL;"verzonden"
+FormSuccess;FR;"envoyé"
+FormSuccess;DE;"gesendet"
+FormFailed;EN;"something went wrong, couldn't submit"
+FormFailed;NL;"er liep iets mis, kon formulier niet verzenden"
+FormFailed;FR;"un problème est survenu, le formulaire n'a pas pu être envoyé"
+FormFailed;DE;"etwas ist schief gelaufen, das Formular konnte nicht gesendet werden"
 SplashTitle;EN;"GeocachingBrughia brings people together"
 SplashTitle;NL;"GeocachingBrughia brengt mensen samen"
 SplashTitle;FR;"GeocachingBrughia rassemble les gens"

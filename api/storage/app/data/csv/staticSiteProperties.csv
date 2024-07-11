@@ -13,6 +13,8 @@ FormSubject
 FormMessage
 FormSubmit
 FormSearch
+FormSuccess
+FormFailed
 SplashTitle
 SplashBody
 SplashImg

@@ -113,6 +113,18 @@
         "FR": "envoyer",
         "NL": "verzenden"
     },
+    "FormSuccess": {
+        "DE": "gesendet",
+        "EN": "sent",
+        "FR": "envoyé",
+        "NL": "verzonden"
+    },
+    "FormFailed": {
+        "DE": "etwas ist schief gelaufen, das Formular konnte nicht gesendet werden",
+        "EN": "omething went wrong, couldn't submit",
+        "FR": "un problème est survenu, le formulaire n'a pas pu être envoyé",
+        "NL": "er liep iets mis, kon formulier niet verzenden"
+    },
     "NavEvents": {
         "DE": "Veranstaltungen",
         "EN": "events",
