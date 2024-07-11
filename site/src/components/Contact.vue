@@ -39,11 +39,11 @@
                 </div>
                 <div>
                     <label for="subject">{{ dictionary.FormSubject[lang] }}</label>
-                    <input v-model="subject" type="text" id="subject" name="subject" autocomplete="off" required>
+                    <input v-model="subject" type="text" id="subject" name="subject" autocomplete="off" max="100" required>
                 </div>
                 <div>
                     <label for="message">{{ dictionary.FormMessage[lang] }}</label>
-                    <textarea v-model="message" id="message" name="message" autocomplete="off" required></textarea>
+                    <textarea v-model="message" id="message" name="message" autocomplete="off" max="5000" required></textarea>
                 </div>
                 <div>
                     <input type="submit" :value="dictionary.FormSubmit[lang]">
