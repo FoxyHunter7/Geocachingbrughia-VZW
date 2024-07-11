@@ -12,8 +12,6 @@ class MessageService extends Service
     protected $_errors;
     protected $_rules = [
         'state' => 'required | in:ONLLINE,DRAFT, ARCHIVED',
-        'title' => 'required | max:200 | string',
-        'body' => 'nullable | max:20000 | string'
     ];
 
     protected $_fields = ['id', 'updated_at'];
