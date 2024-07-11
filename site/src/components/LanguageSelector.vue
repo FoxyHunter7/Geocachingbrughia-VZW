@@ -14,7 +14,7 @@
         <ul>
             <li v-for="lang in SCP.LANGUAGES" :class="{selected: lang.code === language}">
                 <figure @click="LanguageProvider.CURR_LANG = lang.code; $emit('close')">
-                    <img :src="(lang.fallback) ? `/src/assets/media/${lang.imageUrl}` : `${config.apiUrl}images/${lang.imageUrl}`">
+                    <img :src="(lang.fallback) ? `/assets/media/${lang.imageUrl}` : `${config.apiUrl}images/${lang.imageUrl}`">
                     <p>{{ lang.name }}</p>
                 </figure>
             </li>

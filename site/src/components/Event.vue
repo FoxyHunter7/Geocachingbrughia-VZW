@@ -88,7 +88,7 @@
             <h2>{{ event.title }}</h2>
             <editor-content :editor="editor" />
             <ul>
-                <li><img :src="`/src/assets/media/eventtypes/${event.type}.png`"><p>{{ event.type }}</p></li>
+                <li><img :src="`/assets/media/eventtypes/${event.type}.png`"><p>{{ event.type }}</p></li>
                 <li><p><span>{{ formattedStartDate }}</span> - <span>{{ formattedEndDate }}</span></p></li>
                 <li><a :href="event.geolink" target="_blank">Geocaching.com</a></li>
             </ul>

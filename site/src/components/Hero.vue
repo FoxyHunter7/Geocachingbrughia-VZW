@@ -12,7 +12,7 @@
 <template>
     <section>
         <div>
-            <img :src="(dictOnFallback) ? `/src/assets/media/static/bertje.jpg` : `${config.apiUrl}images/${dictionary.SplashImg[lang]}`">
+            <img :src="(dictOnFallback) ? `/assets/media/static/bertje.jpg` : `${config.apiUrl}images/${dictionary.SplashImg[lang]}`">
         </div>
         <div>
             <h2>{{ dictionary.SplashTitle[lang] }}</h2>

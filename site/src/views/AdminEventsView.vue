@@ -304,7 +304,7 @@
             <tbody>
                 <tr v-for="event in filteredEvents">
                     <td>{{ event.id }}</td>
-                    <td><div><img :src="`/src/assets/media/eventtypes/${event.type}.png`" :alt="event.type" :title="event.type"></div></td>
+                    <td><div><img :src="`/assets/media/eventtypes/${event.type}.png`" :alt="event.type" :title="event.type"></div></td>
                     <td :class="event.state">{{ event.state }}</td>
                     <td :class="event.on_home">{{ event.on_home }}</td>
                     <td>{{ event.title }}</td>

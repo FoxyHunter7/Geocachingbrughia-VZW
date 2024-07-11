@@ -91,7 +91,7 @@
       </thead>
       <tbody>
         <tr v-for="geocache in filteredGeocaches">
-          <td><div><img :src="`/src/assets/media/cachetypes/${geocache.type}.png`"></div></td>
+          <td><div><img :src="`/assets/media/cachetypes/${geocache.type}.png`"></div></td>
           <td>{{ geocache.title }}</td>
           <td>{{ geocache.difficulty }}</td>
           <td>{{ geocache.terrain }}</td>
