@@ -1,4 +1,4 @@
-import { postToServer } from "./fetcher";
+import { fetchToServer } from "./fetcher";
 
 async function postContact(email, subject, message) {
     const json = JSON.stringify({
@@ -7,7 +7,7 @@ async function postContact(email, subject, message) {
         message: message
     });
 
-    const result = await postToServer("contact/form/responses", json);
+    const result = await fetchToServer("contact/form/responses", "POST", json);
 }
 
 export { postContact };
