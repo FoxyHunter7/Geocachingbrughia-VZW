@@ -1,7 +1,8 @@
 <script setup>
-    import { fetchEvents, getProfileData, postEvent } from '@/services/AdminService';
+    import { fetchEvents, getProfileData, postEvent, updateEvent } from '@/services/AdminService';
     import { onMounted, ref, computed, watch, toRaw } from 'vue';
     import { useRouter } from 'vue-router';
+    import config from '@/data/config.json'
     import TipTapEditor from '@/components/TipTapEditor.vue'
     import StaticContentProvider from '@/services/StaticContentService';
 
@@ -99,6 +100,7 @@
         currentlyEditing.value = event.id;
         currentlyEditingData.value = structuredClone(toRaw(event));
         delete currentlyEditingData.value.id;
+        fiLePreviewURL.value = `${config.apiUrl}images/${currentlyEditingData.value.imageUrl}`;
     }
 
     function createEvent() {
@@ -141,8 +143,89 @@
         const formData = setFormData();
 
         const response = await postEvent(formData);
-        console.log(response);
+        handleResponse(response);
+    }
 
+    async function update(state) {
+        if (!verifyInputs(false)) {
+            return;
+        }
+        saving.value = true;
+
+        currentlyEditingData.value.state = state;
+        const formData = setFormData();
+
+        const response = await updateEvent(currentlyEditing.value, formData);
+        handleResponse(response);
+    }
+
+    async function remove() {
+
+    }
+
+    const validateImage = ref(true);
+
+    function verifyInputs(imageValidation = true) {
+        const form = document.querySelector("#eventEdit");
+
+        validateImage.value = imageValidation;
+        if (!form.checkValidity()) {
+            form.reportValidity();
+            return false;
+        }
+
+        if (StaticContentProvider.LANGUAGES.length !== currentlyEditingData.value.translations.length) {
+            const translations = [];
+            StaticContentProvider.LANGUAGES.forEach(language => {
+                translations.push({lang_code: language.lang_code, description: '{"type":"doc","content":[]}'});
+            });
+            currentlyEditingData.value.translations = translations;
+
+            window.alert("Ontbrekende vertaling, talen zonder vertalingen gevonden, gelieve dit aan te vullen.");
+            return false;
+        }
+
+        if (imageValidation && fileInput.value.files[0].size / 1024 > 4096) {
+            window.alert("Afbeelding te groot: " + fileInput.value.files[0].size / (1024 * 1024) + "MB, max: 4MB");
+            return false;
+        }
+
+        return true;
+    }
+
+    function setFormData() {
+        const translations = [];
+
+        editors.value.forEach(editor => {
+            translations.push(editor.getContent());
+        });
+
+        const [startDate, endDate] = [currentlyEditingData.value.start_date, currentlyEditingData.value.end_date];
+        const formattedStartDate = (startDate.split("T").length > 1) ? `${startDate.split("T")[0]} ${startDate.split("T")[1]}:00` : startDate;
+        const formattedEndDate = (endDate.split("T").length > 1) ? `${endDate.split("T")[0]} ${endDate.split("T")[1]}:00` : endDate;
+
+        const formData = new FormData();
+
+        formData.append("translations", JSON.stringify(translations));
+        formData.append("start_date", formattedStartDate);
+        formData.append("end_date", formattedEndDate);
+
+        for (let property in currentlyEditingData.value) {
+            if (property !== "translations" && property !== "start_date" && property !== "end_date") {
+                if (currentlyEditingData.value[property]) {
+                    formData.append(property, currentlyEditingData.value[property]);
+                }
+            }
+        }
+
+        if (fileInput.value.files[0]) {
+            formData.append("image", fileInput.value.files[0]);
+        }
+
+        return formData;
+    }
+
+    function handleResponse(response) {
         if (!response.success) {
             window.alert(response.error);
             if (response.error.includes("Unautherized")) {
@@ -167,69 +250,6 @@
             window.alert("onbekende fout");
             saving.value = false;
         }
-    }
-
-    async function update(state) {
-
-    }
-
-    async function remove() {
-
-    }
-
-    function verifyInputs() {
-        const form = document.querySelector("#eventEdit");
-
-        if (!form.checkValidity()) {
-            form.reportValidity();
-            return false;
-        }
-
-        if (StaticContentProvider.LANGUAGES.length !== currentlyEditingData.value.translations.length) {
-            const translations = [];
-            StaticContentProvider.LANGUAGES.forEach(language => {
-                translations.push({lang_code: language.lang_code, description: '{"type":"doc","content":[]}'});
-            });
-            currentlyEditingData.value.translations = translations;
-
-            window.alert("Ontbrekende vertaling, er waren meer talen in het systeem dan vertalingen voor dit event. Het onbrekende vertalingsveld is nu toegevoegd, gelieve deze ook in te vullen.");
-            return false;
-        }
-
-        if (fileInput.value.files[0].size / 1024 > 4096) {
-            window.alert("Afbeelding te groot: " + fileInput.value.files[0].size / (1024 * 1024) + "MB, max: 4MB");
-            return false;
-        }
-
-        return true;
-    }
-
-    function setFormData() {
-        const translations = [];
-
-        editors.value.forEach(editor => {
-            translations.push(editor.getContent());
-        });
-
-        const [startDate, endDate] = [currentlyEditingData.value.start_date, currentlyEditingData.value.end_date];
-        const formattedStartDate = `${startDate.split("T")[0]} ${startDate.split("T")[1]}:00`;
-        const formattedEndDate = `${endDate.split("T")[0]} ${endDate.split("T")[1]}:00`;
-
-        const formData = new FormData();
-
-        formData.append("translations", JSON.stringify(translations));
-        formData.append("start_date", formattedStartDate);
-        formData.append("end_date", formattedEndDate);
-
-        for (let property in currentlyEditingData.value) {
-            if (property !== "translations" && property !== "start_date" && property !== "end_date") {
-                formData.append(property, currentlyEditingData.value[property]);
-            }
-        }
-
-        formData.append("image", fileInput.value.files[0]);
-
-        return formData;
     }
 
     onMounted(verifyLogin);
@@ -306,7 +326,7 @@
             </section>
             <section class="image-upload">
                 <label for="imgUpload">Poster Foto</label>
-                <input type="file" ref="fileInput" accept="image/*" @change="previewFile" id="imgUpload" name="imgUpload" required>
+                <input type="file" ref="fileInput" accept="image/*" @change="previewFile" id="imgUpload" name="imgUpload" :required="validateImage">
                 <img :src="fiLePreviewURL">
             </section>
             <section class="translations">
@@ -319,7 +339,7 @@
             <button @click="remove()" type="button">Verwijderen</button>
             <button @click="() => (currentlyEditing === -2) ? save('DRAFT') : update('DRAFT')" type="button" v-if="currentlyEditingData.state !== 'ONLINE'">Opslaan Als Concept</button>
             <button @click="() => (currentlyEditing === -2) ? save('ONLINE') : update('ONLINE')" type="button">Publiceren</button>
-            <button @click="update('archive')" type="button" v-if="currentlyEditing.state === 'ONLINE'">Archiveren</button>
+            <button @click="update('ARCHIVED')" type="button" v-if="currentlyEditingData.state === 'ONLINE'">Archiveren</button>
         </form>
         <div id="overlay" v-show="saving"></div>
     </main>
