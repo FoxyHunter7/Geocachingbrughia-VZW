@@ -12,7 +12,8 @@ import AdminSocialsView from "@/views/AdminSocialsView.vue";
 import AdminMessagesView from "@/views/AdminMessagesView.vue";
 import AdminStaticView from "@/views/AdminStaticView.vue";
 import AdminLanguagesView from "@/views/AdminLanguagesView.vue";
-import { StaticContentProvider } from '@/services/StaticContentService'
+import AdminContactFormView from "@/views/AdminContactFormView.vue";
+import { StaticContentProvider } from '@/services/StaticContentService';
 import { LanguageProvider } from '@/services/LanguageService';
 
 export default function setupRouter() {
@@ -102,6 +103,12 @@ export default function setupRouter() {
         name: "adminLanguages",
         props: false,
         component: AdminLanguagesView
+      },
+      {
+        path: '/admin/contact-form',
+        name: "adminContactForm",
+        props: false,
+        component: AdminContactFormView
       },
       {
         path: '/:pathMatch(.*)',

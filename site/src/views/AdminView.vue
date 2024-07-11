@@ -126,7 +126,7 @@
             </div>
         </section>
         <section>
-            <h2>Technisch</h2>
+            <h2>Technisch  & Andere</h2>
             <div>
                 <figure @click="() => router.push({ name: 'adminStatic' })">
                     <div class="icon icon-static"></div>
@@ -135,6 +135,10 @@
                 <figure @click="() => router.push({ name: 'adminLanguages' })">
                     <div class="icon icon-lang"></div>
                     <p>Talen</p>
+                </figure>
+                <figure @click="() => router.push({ name: 'adminContactForm' })">
+                    <div class="icon icon-mail"></div>
+                    <p>contact formulier</p>
                 </figure>
             </div>
         </section>
@@ -217,6 +221,10 @@
         bottom: 0.5rem;
         color: var(--color-text);
         opacity: 50%;
+    }
+
+    #errors {
+        margin-top: 1rem;
     }
 
     header {
@@ -357,6 +365,13 @@
 
     div.icon-lang {
         mask: url(../assets/media/book-open.svg);
+        mask-size: contain;
+        mask-repeat: no-repeat;
+        mask-position: center;
+    }
+
+    div.icon-mail {
+        mask: url(../assets/media/mail.svg);
         mask-size: contain;
         mask-repeat: no-repeat;
         mask-position: center;
