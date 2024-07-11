@@ -29,5 +29,6 @@ class ContactFormResponseService extends Service
     protected function modelHiddenoverwrites($results, $isAdmin)
     {
         $results->makeVisible(['id']);
+        $results->makeVisible(['created_at']);
     }
 }
