@@ -4,6 +4,7 @@ namespace App\Services;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\ItemNotFoundException;
 use Illuminate\Support\MessageBag;
@@ -51,6 +52,8 @@ abstract class Service
     {
         $model = $this->_model;
         $sortBy ??= $this->_defaultSortBy;
+
+        Log::debug($sortBy);
 
         if ($search) {
             $model = $model->where($this->_searchOn, "like", "%$search%");
