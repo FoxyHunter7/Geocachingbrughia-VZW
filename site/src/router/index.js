@@ -55,13 +55,13 @@ export default function setupRouter() {
         component: GeocachesView,
         alias: StaticContentProvider.ROUTES.navGeocaches.aliases
       },
-      /*{
+      {
         path: StaticContentProvider.ROUTES.navShop.path,
         name: "shop",
         props: true,
         component: ShopView,
         alias: StaticContentProvider.ROUTES.navShop.aliases
-      },*/
+      },
       {
         path: '/admin',
         name: "admin",
