@@ -87,9 +87,9 @@
     </section>
     <header v-show="loggedIn">
         <picture>
-            <source srcset="../assets/media/logo-full-black.webp" media="(prefers-color-scheme: light)" class="logo">
-            <source srcset="../assets/media/logo-full-white.webp" media="(prefers-color-scheme: dark)" class="logo">
-            <img src="../assets/media/logo-full-black.webp" class="logo">
+            <source srcset="/assets/media/logo-full-black.webp" media="(prefers-color-scheme: light)" class="logo">
+            <source srcset="/assets/media/logo-full-white.webp" media="(prefers-color-scheme: dark)" class="logo">
+            <img src="/assets/media/logo-full-black.webp" class="logo">
         </picture>
         <article id="userinfo">
             <div>

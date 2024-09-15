@@ -20,8 +20,8 @@
 
 <template>
     <header>
-        <img v-if="!isMobile" src="../assets/media/logo-full-black.webp" class="logo">
-        <img v-if="isMobile" src="../assets/media/logo-head-black.webp" class="logo">
+        <img v-if="!isMobile" src="/assets/media/logo-full-black.webp" class="logo">
+        <img v-if="isMobile" src="/assets/media/logo-head-black.webp" class="logo">
         <Teleport to="#side-menu" :disabled="!isMobile">
             <nav>
                 <RouterLink @click="if (isMobile) {isNavOpen = !isNavOpen; $emit('menuStateChange', isNavOpen)}" :to="{ path: SCP.constructRoute(lang, 'NavHome') }">{{ dictionary.NavHome[lang] }}</RouterLink>
