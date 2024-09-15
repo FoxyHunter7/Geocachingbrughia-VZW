@@ -2,7 +2,7 @@
     import { ref, computed } from 'vue';
     import { RouterLink } from 'vue-router';
     import LanguageProvider from '@/services/LanguageService';
-    import config from '../data/config.json';
+    import config from '../data/config.js';
     import { StaticContentProvider as SCP } from '@/services/StaticContentService';
 
     const props = defineProps(["isMobile"]);

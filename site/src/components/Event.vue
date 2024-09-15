@@ -1,7 +1,7 @@
 <script setup>
     import { computed, toRef, watch } from 'vue';
     import { useEditor, EditorContent, generateHTML } from '@tiptap/vue-3';
-    import config from '../data/config.json';
+    import config from '../data/config.js';
     import LanguageProvider from '@/services/LanguageService';
     import Document from '@tiptap/extension-document';
     import Paragraph from '@tiptap/extension-paragraph';

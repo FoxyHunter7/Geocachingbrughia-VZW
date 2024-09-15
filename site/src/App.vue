@@ -2,7 +2,7 @@
   import { onMounted, ref, computed } from 'vue';
   import { RouterView, useRoute } from 'vue-router';
   import { StaticContentProvider as SCP } from '@/services/StaticContentService';
-  import config from '@/data/config.json'
+  import config from '@/data/config.js'
   import TopHeader from '@/components/TopHeader.vue'
   import WarningBanner from './components/WarningBanner.vue';
   import LanguageSelector from './components/LanguageSelector.vue';

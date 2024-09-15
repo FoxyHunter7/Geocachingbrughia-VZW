@@ -1,5 +1,5 @@
 import { ref } from "vue";
-import config from "../data/config.json";
+import config from "../data/config.js";
 import fallbackLanguages from "../data/fallbackLanguages.json";
 import fallbackStaticContent from "../data/fallbackStaticContent.json";
 import warnings from "../data/warnings.json";

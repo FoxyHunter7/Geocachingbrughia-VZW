@@ -1,7 +1,7 @@
 <script setup>
     import { deleteSocial, fetchSocials, getProfileData, postSocial, updateSocial } from '@/services/AdminService';
     import { onMounted, ref, computed, toRaw } from 'vue';
-    import config from '@/data/config.json';
+    import config from '@/data/config.js';
     import { useRouter } from 'vue-router';
 
     const router = useRouter();

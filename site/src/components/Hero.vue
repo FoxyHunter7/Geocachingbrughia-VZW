@@ -2,7 +2,7 @@
     import { computed } from 'vue';
     import LanguageProvider from '@/services/LanguageService';
     import StaticContentProvider from '@/services/StaticContentService';
-    import config from '../data/config.json';
+    import config from '../data/config.js';
 
     const lang = computed(() => LanguageProvider.CURR_LANG.value);
     const dictOnFallback = computed(() => StaticContentProvider.DICT_ON_FALLBACK.value);

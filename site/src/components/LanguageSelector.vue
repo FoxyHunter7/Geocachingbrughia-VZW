@@ -2,7 +2,7 @@
     import { computed } from 'vue';
     import { StaticContentProvider as SCP } from '@/services/StaticContentService';
     import LanguageProvider from '@/services/LanguageService';
-    import config from '../data/config.json';
+    import config from '../data/config.js';
 
     const emits = defineEmits(['close']);
     const language = computed(() => LanguageProvider.CURR_LANG.value);

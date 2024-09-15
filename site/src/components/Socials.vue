@@ -2,7 +2,7 @@
     import { computed } from 'vue';
     import LanguageProvider from '@/services/LanguageService.js';
     import StaticContentProvider from '@/services/StaticContentService.js';
-    import config from '../data/config.json';
+    import config from '../data/config.js';
 
     const props = defineProps({
         socials: Array

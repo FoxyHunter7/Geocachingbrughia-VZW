@@ -2,7 +2,7 @@
     import { deleteEvent, fetchEvents, getProfileData, postEvent, updateEvent } from '@/services/AdminService';
     import { onMounted, ref, computed, watch, toRaw } from 'vue';
     import { useRouter } from 'vue-router';
-    import config from '@/data/config.json';
+    import config from '@/data/config.js';
     import TipTapEditor from '@/components/TipTapEditor.vue';
     import StaticContentProvider from '@/services/StaticContentService';
 

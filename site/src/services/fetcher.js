@@ -1,4 +1,4 @@
-import config from "../data/config.json";
+import config from "../data/config.js"
 import LanguageProvider from "./LanguageService";
 
 async function fetchFromServer(endpoint, includeCreds = false, page = null, search = "", perPage = null, sortBy = "", sortDirection = "") {
