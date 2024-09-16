@@ -53,8 +53,6 @@ abstract class Service
         $model = $this->_model;
         $sortBy ??= $this->_defaultSortBy;
 
-        Log::debug($sortBy);
-
         if ($search) {
             $model = $model->where($this->_searchOn, "like", "%$search%");
         }
