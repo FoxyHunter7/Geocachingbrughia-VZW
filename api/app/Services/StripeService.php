@@ -17,7 +17,7 @@ class StripeService
 
         $lang_filtered_products = collect($products->data)
         ->filter(function ($product) use ($language) {
-            return isset($product->metadata['lang']) && $product->metadata['lang'] === $language;
+            return isset($product->metadata['lang']) && ($product->metadata['lang'] === $language || $product->metadata['lang'] === '*');
         });
 
         return $lang_filtered_products->map(function ($product) {
