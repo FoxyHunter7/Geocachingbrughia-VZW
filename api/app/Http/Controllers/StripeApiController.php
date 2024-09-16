@@ -14,13 +14,15 @@ class StripeApiController
         $this->_service = $service;
     }
 
-    public function allProductsPublic()
+    public function allProductsPublic(Request $request)
     {
-        return $this->_service->allProducts(false);
+        $language = $request->get('lang');
+        return $this->_service->allProducts(false, $language);
     }
 
-    public function allProductsAdmin()
+    public function allProductsAdmin(Request $request)
     {
-        return $this->_service->allProducts(true);
+        $language = $request->get('lang');
+        return $this->_service->allProducts(true, $language);
     }
 }
