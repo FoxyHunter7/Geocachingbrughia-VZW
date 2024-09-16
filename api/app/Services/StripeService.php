@@ -20,7 +20,7 @@ class StripeService
             return isset($product->metadata['lang']) && ($product->metadata['lang'] === $language || $product->metadata['lang'] === '*');
         });
 
-        return $lang_filtered_products->map(function ($product) {
+        return ['data' => $lang_filtered_products->map(function ($product) {
             $price = $this->_stripe->prices->retrieve($product->default_price);
 
             return [
@@ -34,6 +34,6 @@ class StripeService
                 ],
                 'metadata' => $product->metadata
             ];
-        });
+        })->values()];
     }
 }
