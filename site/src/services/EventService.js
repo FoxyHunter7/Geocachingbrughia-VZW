@@ -1,6 +1,6 @@
 import { fetchFromServer } from "./fetcher"
 
-async function getAllEvents(admin = false, page = null, search= "", perPage = null, sortBy = "", sortDirection = "") {
+async function getAllEvents(admin = false, page = null, search= "", perPage = null, sortBy = "", sortDirection = "asc") {
     return fetchFromServer("events", admin, page, search, perPage, sortBy, sortDirection);
 }
 
