@@ -20,6 +20,20 @@ class StripeService
             return isset($product->metadata['lang']) && $product->metadata['lang'] === $language;
         });
 
-        return $lang_filtered_products;
+        return $lang_filtered_products->map(function ($product) {
+            $price = $this->_stripe->prices->retrieve($product->default_price);
+
+            return [
+                'id' => $product->id,
+                'name' => $product->name,
+                'description' => $product->description,
+                'images' => $product->images,
+                'price' => [
+                    'currency' => $price->currency,
+                    'amount' => $price->unit_amount
+                ],
+                'metadata' => $product->metadata
+            ];
+        });
     }
 }
