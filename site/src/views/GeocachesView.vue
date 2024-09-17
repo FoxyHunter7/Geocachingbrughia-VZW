@@ -118,13 +118,12 @@
   }
 
   a {
-    text-decoration: none;
-    color: var(--color-quaternary);
-    font-weight: bold;
+    text-decoration: underline;
+    color: var(--color-accent-dark);
   }
 
   a:hover {
-    text-decoration: underline;
+    font-weight: bold;
     cursor: pointer;
   }
 
@@ -212,21 +211,6 @@
     mask-position: center;
   }
 
-  form input, form textarea {
-    height: 2rem;
-    border-radius: 0.3rem;
-    border: solid 0.1rem var(--color-text);
-    outline: none;
-    font-family: inherit;
-    font-size: 1rem;
-    box-sizing: border-box;
-    padding: 0 0.5rem 0 2rem;
-    line-height: 2rem;
-    text-transform: capitalize;
-    background-color: var(--color-background);
-    color: var(--color-text)
-  }
-
   #no-geocaches {
     display: flex;
     flex-direction: column;
@@ -246,7 +230,7 @@
   }
 
   #no-geocaches a {
-    color: var(--color-quaternary);
+    color: var(--color-accent-dark);
     text-decoration: none;
   }
 
@@ -271,6 +255,7 @@
   thead {
     background-color: var(--color-primary);
     border: 0.1rem solid var(--color-text);
+    height: 1.75rem;
   }
 
   td > div {
@@ -297,7 +282,7 @@
   }
 
   th {
-    color: var(--color-text2);
+    color: var(--color-text);
     padding: 0 0.5rem;
     font-weight: bold;
     text-transform: capitalize;
@@ -313,7 +298,7 @@
   }
 
   tbody tr:nth-child(even) {
-    background-color: var(--color-background2);
+    background-color: var(--color-background-2);
   }
 
   @media screen and (max-width: 1000px) {

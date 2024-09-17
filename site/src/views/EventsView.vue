@@ -177,21 +177,6 @@
     mask-position: center;
   }
 
-  form input, form textarea {
-    height: 2rem;
-    border-radius: 0.3rem;
-    border: solid 0.1rem var(--color-text);
-    outline: none;
-    font-family: inherit;
-    font-size: 1rem;
-    box-sizing: border-box;
-    padding: 0 0.5rem 0 2rem;
-    line-height: 2rem;
-    text-transform: capitalize;
-    background-color: var(--color-background);
-    color: var(--color-text)
-  }
-
   #no-events {
     display: flex;
     flex-direction: column;

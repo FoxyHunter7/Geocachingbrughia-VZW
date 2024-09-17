@@ -52,13 +52,12 @@
         border-radius: 1rem;
         height: 10rem;
         width: 10rem;
-        background-color: var(--color-secondary);
+        background-color: var(--color-accent-light);
         transform: scale(100%);
         transition: transform 0.15s;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
-        box-shadow: var(--color-background2) 1rem 1rem;
     }
 
     figure:hover {
@@ -73,6 +72,8 @@
         object-fit: contain;
         max-height: 50%;
         margin-bottom: 0.5rem;
+        user-select: none;
+        pointer-events: none;
     }
 
     figure p {

@@ -159,20 +159,18 @@
 
     a {
         display: block;
-        background-color: var(--color-secondary);
+        background-color: var(--color-accent-light);
         color: var(--color-text);
-        font-weight: bold;
-        padding: 0.4rem 1.5rem;
+        padding: 0.5rem 1rem;
         text-decoration: none;
         border-radius: 0.4rem;
         transform: scale(100%);
-        box-shadow: var(--color-background2) 0.5rem 0.5rem;
         transition: transform 0.15s;
     }
 
     a:hover {
-        transform: scale(103%);
-        transition: transform 0.25s;
+        transform: scale(102%);
+        transition: transform 0.15s;
     }
 
     @media screen and (max-width: 1000px) {

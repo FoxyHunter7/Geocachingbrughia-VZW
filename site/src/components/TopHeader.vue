@@ -79,7 +79,7 @@
         margin: auto 0.5rem auto auto;
         height: 80%;
         aspect-ratio: 1 / 1;
-        background-color: var(--color-text3);
+        background-color: var(--color-text);
         mask: url(../assets/media/menu.svg);
         mask-size: contain;
     }
@@ -94,18 +94,18 @@
         text-transform: capitalize;
         font-size: 1rem;
         font-weight: normal;
-        color: var(--color-text3);
+        color: var(--color-text);
         border-bottom: 0.2rem solid rgba(0, 0, 0, 0);
         transition: border-bottom, font-weight 0.1s;
     }
 
     nav a:hover {
-        border-bottom: 0.2rem solid var(--color-secondary);
+        border-bottom: 0.2rem solid var(--color-accent-dark);
         transition: border-bottom, font-weight 0.1s;
     }
 
     nav a.router-link-active {
-        border-bottom: 0.2rem solid var(--color-text3);
+        border-bottom: 0.2rem solid var(--color-text);
         transition: border-bottom, font-weight 0.1s;
         font-weight: bold;
     }
@@ -135,7 +135,8 @@
     }
 
     figure p {
-        color: var(--color-text3);
+        color: var(--color-text);
+        opacity: 75%;
         line-height: 100%;
     }
 

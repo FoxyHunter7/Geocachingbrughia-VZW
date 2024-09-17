@@ -2,7 +2,6 @@
   import { onMounted, ref, computed } from 'vue';
   import { RouterView, useRoute } from 'vue-router';
   import { StaticContentProvider as SCP } from '@/services/StaticContentService';
-  import config from '@/data/config.js'
   import TopHeader from '@/components/TopHeader.vue'
   import WarningBanner from './components/WarningBanner.vue';
   import LanguageSelector from './components/LanguageSelector.vue';
@@ -87,7 +86,7 @@
   }
 
   #side-menu {
-    background-color: var(--color-secondary);
+    background-color: var(--color-background-3);
     position: absolute;
     top: 4.5rem;
     right: 0;
@@ -121,11 +120,10 @@
   }
 
   #messages {
-    background-color: var(--color-tertiary);
-    position: sticky;
+    background-color: var(--color-background-2);
     height: fit-content;
-    top: 4.5rem;
-    left: 0;
+    margin: 0.5rem 0.5rem 0 0.5rem;
+    border-radius: 0.5rem;
     display: flex;
     flex-direction: column;
     gap: 0.1rem;
@@ -144,7 +142,7 @@
       flex-direction: column;
       gap: 0.5rem;
       align-items: center;
-      background-color: var(--color-background);
+      background-color: var(--color-background-3);
       border-radius: 0.5rem;
       z-index: 20;
       max-width: 60vw;

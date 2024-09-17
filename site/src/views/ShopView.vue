@@ -57,23 +57,86 @@
         <input v-model="search" type="search" id="search" name="search" autocomplete="search" required :placeholder="dictionary.FormSearch[lang]">
       </div>
     </form>
+    <section id="store-items">
+      <article v-if="products.length > 0 && products[0] !== 'loading'" v-for="product in filteredProducts">
+        <div>
+          <img :src="product.images[0]" data-cookiescript="denied" data-category="functionality">
+        </div>
+        <p>{{ product.name }} <span>{{ product.price.amount / 100 }} {{ product.price.currency.toUpperCase() }}</span></p>
+      </article>
+    </section>
   </main>
 </template>
 
 <style scoped>
+  #store-items {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(15rem, 20rem));
+    justify-items: center;
+    align-items: center;
+    gap: 3rem;
+    padding: 3rem;
+  }
+
+  #store-items article {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 85vw;
+    width: 16rem;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    scale: 100%;
+    transition: scale 0.1s;
+  }
+
+  #store-items article:hover {
+    cursor: pointer;
+    scale: 101%;
+    transition: scale 0.1s;
+  }
+
+  #store-items article div {
+    height: 15rem;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 0.5rem;
+  }
+
+  #store-items article img {
+    object-fit: contain;
+    object-position: top;
+    border-radius: 0.5rem;
+    pointer-events: none;
+    user-select: none;
+    max-height: 100%;
+    max-width: 100%;
+  }
+
+  #store-items article p {
+    text-align: center;
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-top: 1.5rem;
+  }
+
+  #store-items article p span {
+    background-color: var(--color-accent-light);
+    padding: 0.1rem 0.5rem;
+    border-radius: 0.4rem;
+  }
+
   main {
     position: relative;
     flex: 1 1 auto;
     height: 100%;
     overflow-y: auto;
     padding-bottom: 1rem;
-  }
-
-  section {
-    height: 70vh;
-    max-height: 40rem;
-    max-width: 100rem;
-    margin: 0 auto;
   }
 
   #loading {
@@ -112,21 +175,6 @@
     mask-position: center;
   }
 
-  form input, form textarea {
-    height: 2rem;
-    border-radius: 0.3rem;
-    border: solid 0.1rem var(--color-text);
-    outline: none;
-    font-family: inherit;
-    font-size: 1rem;
-    box-sizing: border-box;
-    padding: 0 0.5rem 0 2rem;
-    line-height: 2rem;
-    text-transform: capitalize;
-    background-color: var(--color-background);
-    color: var(--color-text)
-  }
-
   #no-products {
     display: flex;
     flex-direction: column;
@@ -143,16 +191,6 @@
 
   #no-products p {
     text-align: center;
-  }
-
-  #no-products a {
-    color: var(--color-quaternary);
-    text-decoration: none;
-  }
-
-  #no-products a:hover {
-    text-decoration: underline;
-    cursor: pointer;
   }
 
   @media screen and (max-width: 1000px) {

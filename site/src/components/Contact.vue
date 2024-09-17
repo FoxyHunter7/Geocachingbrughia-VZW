@@ -150,13 +150,12 @@
     }
 
     form input[type="submit"] {
-        background-color: var(--color-secondary);
+        background-color: var(--color-accent-light);
         border: none;
         width: 9rem;
         height: 2rem;
         font-family: inherit;
         border-radius: 0.4rem;
-        box-shadow: var(--color-background2) 0.5rem 0.5rem;
         text-transform: capitalize;
         font-weight: bold;
         scale: 100%;
@@ -188,8 +187,13 @@
     li a {
         display: block;
         margin-top: 0.3rem;
-        text-decoration: none;
-        color: var(--color-quaternary);
+        text-decoration: underline;
+        color: var(--color-accent-dark);
+        font-weight: normal;
+    }
+
+    li a:hover {
+        font-weight: bold;
     }
 
     @media screen and (max-width: 80rem) {
