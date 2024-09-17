@@ -1,8 +1,10 @@
 <script setup>
-    import { computed, ref } from 'vue';
+    import { computed, ref, Static } from 'vue';
     import LanguageProvider from '@/services/LanguageService';
     import StaticContentProvider from '@/services/StaticContentService';
     import { postContact } from '@/services/ContactService';
+
+    const scsErrors = StaticContentProvider.ERRORS;
 
     const lang = computed(() => LanguageProvider.CURR_LANG.value);
     const dictionary = StaticContentProvider.DICTIONARY;
@@ -32,7 +34,7 @@
         <h2>{{ dictionary.ContactHelpQuestionTxt[lang] }}</h2>
         <p>{{ dictionary.ContactHelpTxt[lang] }}</p>
         <div>
-            <form method="post" @submit.prevent="handleFormSubmit">
+            <form method="post" @submit.prevent="handleFormSubmit" v-if="!scsErrors">
                 <div>
                     <label for="email">{{ dictionary.FormMail[lang] }}</label>
                     <input v-model="email" type="email" id="email" name="email" autocomplete="email" required>
@@ -50,7 +52,7 @@
                     <p>{{ lastSubmitResult }}</p>
                 </div>
             </form>
-            <ul>
+            <ul :class="{'alone': scsErrors}">
                 <li>
                     <p>{{ dictionary.ContactPostalMailTxt[lang] }}</p>
                     <a target="_blank" href="https://www.google.com/maps/place/Korte+Kwadeplasstraat+6,+8020+Oostkamp/@51.1593091,3.2333893,17z/data=!3m1!4b1!4m6!3m5!1s0x47c3506bbbd8d363:0xbed866c1f1258d86!8m2!3d51.1593091!4d3.2359696!16s%2Fg%2F11rcy98rq8?entry=ttu">Korte Kwadeplasstraat 6, 8020 Oostkamp</a>
@@ -176,6 +178,20 @@
         padding-inline-start: 0rem;
         list-style: none;
         text-transform: capitalize;
+    }
+
+    ul.alone {
+        flex-direction: row;
+        justify-content: space-between;
+        width: 60rem;
+        align-items: flex-start;
+    }
+
+    ul.alone li {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
     }
 
     li {
