@@ -47,6 +47,10 @@
     }
 
     h2 {
+        font-weight: bold;
+    }
+
+    h2::first-letter {
         text-transform: uppercase;
     }
 

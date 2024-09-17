@@ -122,8 +122,11 @@
     }
 
     h2 {
-        text-transform: uppercase;
         font-weight: bold;
+    }
+
+    h2::first-letter {
+        text-transform: uppercase;
     }
 
     ul {

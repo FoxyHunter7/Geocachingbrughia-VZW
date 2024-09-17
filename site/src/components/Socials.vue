@@ -41,10 +41,13 @@
     }
 
     h2 {
-        text-align: center;
-        text-transform: uppercase;
-        margin-bottom: 3rem;
+        text-align: center; 
         font-weight: bold;
+        margin-bottom: 3rem;
+    }
+
+    h2::first-letter {
+        text-transform: uppercase;
     }
 
     figure {

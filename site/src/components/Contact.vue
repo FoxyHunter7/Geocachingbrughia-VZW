@@ -80,9 +80,12 @@
     }
 
     h2 {
-        text-align: center;
-        text-transform: uppercase;
+        text-align: center; 
         font-weight: bold;
+    }
+
+    h2::first-letter {
+        text-transform: uppercase;
     }
 
     section > p {
