@@ -215,6 +215,18 @@
         "FR": "Les informations sur les géocaches n'ont pas pu être récupérées.",
         "NL": "De informatie over de geocaches kon niet worden opgehaald."
     },
+    "UINoStoreItems": {
+        "DE": "Artikel nicht verfügbar.",
+        "EN": "Items not available.",
+        "FR": "Articles non disponibles.",
+        "NL": "Artikelen niet beschikbaar."
+    },
+    "UINoStoreItemsSubTxt": {
+        "DE": "Die Artikelinformationen konnten nicht abgerufen werden.",
+        "EN": "The store item information could not be retrieved.",
+        "FR": "Les informations sur les articles n'ont pas pu être récupérées.",
+        "NL": "De informatie over de artikelen kon niet worden opgehaald."
+    },
     "UIPageNotFound": {
         "DE": "Seite nicht gefunden",
         "EN": "Page Not Found",
