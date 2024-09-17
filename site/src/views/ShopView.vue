@@ -33,7 +33,7 @@
   const loaderActive = ref(false);
 
   async function initLoaderOnDelay() {
-    await new Promise(r => setTimeout(r, 2500));
+    await new Promise(r => setTimeout(r, 0));
     loaderActive.value = true;
   }
 
@@ -69,6 +69,13 @@
 </template>
 
 <style scoped>
+  #loading {
+    height: 80vh;
+    max-height: 40rem;
+    max-width: 100rem;
+    margin: 0 auto;
+  }
+
   #store-items {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(15rem, 20rem));
