@@ -80,12 +80,12 @@
         height: 80%;
         aspect-ratio: 1 / 1;
         background-color: var(--color-text);
-        mask: url(../assets/media/menu.svg);
+        mask: url(/assets/media/menu.svg);
         mask-size: contain;
     }
 
     header > .nav.open {
-        mask: url(../assets/media/x.svg);
+        mask: url(/assets/media/x.svg);
         mask-size: contain;
     }
 
