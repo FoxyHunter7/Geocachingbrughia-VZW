@@ -76,7 +76,7 @@
       </div>
     </form>
     <Event v-if="events.length !== 0 && events[0] !== 'loading'" v-for="event in filteredEvents" :event="event" />
-    <div id="pager" v-show="events.length > 0 && events[0] !== 'loading'">
+    <div id="pager" v-show="events.length > 0 && events[0] !== 'loading'  && lastPage > 1">
       <div class="prev pagerNavBtn" :class="{ disabled: currPage === 1 }" @click="prevPage"></div>
       <p>{{ currPage }} / {{ lastPage }}</p>
       <div class="next pagerNavBtn" :class="{ disabled: currPage === lastPage}" @click="nextPage"></div>

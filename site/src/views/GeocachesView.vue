@@ -100,7 +100,7 @@
       </tbody>
     </table>
     </div>
-    <div id="pager" v-show="geocaches.length > 0 && geocaches[0] !== 'loading'">
+    <div id="pager" v-show="geocaches.length > 0 && geocaches[0] !== 'loading' && lastPage > 1">
       <div class="prev pagerNavBtn" :class="{ disabled: currPage === 1 }" @click="prevPage"></div>
       <p>{{ currPage }} / {{ lastPage }}</p>
       <div class="next pagerNavBtn" :class="{ disabled: currPage === lastPage}" @click="nextPage"></div>
