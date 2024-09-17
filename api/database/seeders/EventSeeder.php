@@ -2,9 +2,9 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\Event;
+use Illuminate\Support\Facades\DB;
 
 class EventSeeder extends Seeder
 {
@@ -13,6 +13,8 @@ class EventSeeder extends Seeder
      */
     public function run(): void
     {
+        DB::table('events')->truncate();
+
         $data = ReadFromCsv::getDataFromCsv(storage_path('app/data/csv/events.csv'), ';');
 
         $model = new Event();

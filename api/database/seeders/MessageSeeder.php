@@ -3,8 +3,8 @@
 namespace Database\Seeders;
 
 use App\Models\Message;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class MessageSeeder extends Seeder
 {
@@ -13,6 +13,8 @@ class MessageSeeder extends Seeder
      */
     public function run(): void
     {
+        DB::table('messages')->truncate();
+
         $data = ReadFromCsv::getDataFromCsv(storage_path('app/data/csv/messages.csv'), ';');
 
         $model = new Message();

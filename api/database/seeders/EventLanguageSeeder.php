@@ -3,8 +3,8 @@
 namespace Database\Seeders;
 
 use App\Models\EventLanguage;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class EventLanguageSeeder extends Seeder
 {
@@ -13,6 +13,8 @@ class EventLanguageSeeder extends Seeder
      */
     public function run(): void
     {
+        DB::table('event_languages')->truncate();
+
         $data = ReadFromCsv::getDataFromCsv(storage_path('app/data/csv/eventsLanguage.csv'), ';', '/');
 
         $model = new EventLanguage();

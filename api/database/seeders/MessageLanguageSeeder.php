@@ -3,8 +3,8 @@
 namespace Database\Seeders;
 
 use App\Models\MessageLanguage;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class MessageLanguageSeeder extends Seeder
 {
@@ -13,6 +13,8 @@ class MessageLanguageSeeder extends Seeder
      */
     public function run(): void
     {
+        DB::table('message_languages')->truncate();
+
         $data = ReadFromCsv::getDataFromCsv(storage_path('app/data/csv/messagesLanguage.csv'), ';');
 
         $model = new MessageLanguage();
