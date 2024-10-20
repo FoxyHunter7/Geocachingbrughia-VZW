@@ -94,7 +94,7 @@
             <ul>
                 <li><img :src="`/assets/media/eventtypes/${event.type}.png`"><p>{{ event.type }}</p></li>
                 <li><p><span>{{ formattedStartDate }}</span> - <span>{{ formattedEndDate }}</span></p></li>
-                <li v-if="event.ticket_purchase_url"><a class="capitalize" :href="event.ticket_purchase_url" target="_blank">{{ dictionary.ButtonPurchase[lang] }}</a></li>
+                <li v-if="event.ticket_purchase_url"><a :href="event.ticket_purchase_url" target="_blank">{{ dictionary.ButtonPurchase[lang] }}</a></li>
                 <li><a :href="event.geolink" target="_blank">Geocaching.com</a></li>
             </ul>
         </div>
@@ -176,12 +176,11 @@
         transition: transform 0.15s;
     }
 
-    a.capitalize {
+    a::first-letter {
         text-transform: capitalize;
     }
 
-    a:hover, a.capitalize:hover {
-        cursor: pointer;
+    a:hover {
         transform: scale(102%);
         transition: transform 0.15s;
     }
