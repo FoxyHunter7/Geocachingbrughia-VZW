@@ -131,10 +131,11 @@
     function verifyInputs(imageValidation = true) {
         const form = document.querySelector("#socialEdit");
 
-        validateImage.value = imageValidation;
-        if (!form.checkValidity()) {
-            form.reportValidity();
-            return false;
+        for (let element of form.elements) {
+            if (!element.checkValidity()) {
+                element.reportValidity();
+                return false;
+            }
         }
 
         if (imageValidation && fileInput.value.files[0].size / 1024 > 4096) {

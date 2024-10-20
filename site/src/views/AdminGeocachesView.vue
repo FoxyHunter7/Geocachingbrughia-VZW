@@ -157,9 +157,11 @@
     function verifyInputs() {
         const form = document.querySelector("#geocacheEdit");
 
-        if (!form.checkValidity()) {
-            form.reportValidity();
-            return false;
+        for (let element of form.elements) {
+            if (!element.checkValidity()) {
+                element.reportValidity();
+                return false;
+            }
         }
 
         return true;
