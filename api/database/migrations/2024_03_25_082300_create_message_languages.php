@@ -15,11 +15,12 @@ return new class extends Migration
             $table->bigIncrements('id');
 
             $table->foreignId('message_id')->constrained()->onUpdate('cascade')->onDelete('cascade');
-            $table->foreignId('lang_code')->constrained(table: 'languages', column: 'code')->onUpdate('cascade')->onDelete('cascade');
+            $table->string('lang_code');
+            $table->foreign('lang_code')->references('code')->on('languages')->onUpdate('cascade')->onDelete('cascade');
             $table->unique(['message_id','lang_code']);
 
             $table->string('title');
-            $table->string('body')->nullable();
+            $table->text('body')->nullable();
 
             $table->timestamps();
         });
