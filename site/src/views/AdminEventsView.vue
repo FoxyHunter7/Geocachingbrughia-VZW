@@ -190,9 +190,12 @@
         const form = document.querySelector("#eventEdit");
 
         validateImage.value = imageValidation;
-        if (!form.checkValidity()) {
-            form.reportValidity();
-            return false;
+
+        for (let element of form.elements) {
+            if (!element.checkValidity()) {
+                element.reportValidity();
+                return false;
+            }
         }
 
         if (StaticContentProvider.LANGUAGES.length !== currentlyEditingData.value.translations.length) {
@@ -344,6 +347,8 @@
                 <input v-model="currentlyEditingData.start_date" type="datetime-local" id="startDate" name="startDate" required>
                 <label for="endDate">Eind Datum & Tijd<span>*</span></label>
                 <input v-model="currentlyEditingData.end_date" type="datetime-local" id="endDate" name="endDate" required>
+                <label for="ticketPurchaseURL">Ticket verkoop URL<br><i>Moet beginnen met: https://ticketing.geocachingbrughia.be/geocachingbrughia/</i></label>
+                <input v-model="currentlyEditingData.ticket_purchase_url" type="string" name="ticketPurchaseURL" id="ticketPurchaseURL" pattern="https://ticketing\.geocachingbrughia\.be/geocachingbrughia/.+">
             </section>
             <section class="image-upload">
                 <label for="imgUpload">Poster Foto</label>
