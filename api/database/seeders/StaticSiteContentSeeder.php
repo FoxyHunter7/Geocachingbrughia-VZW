@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\staticSiteContent;
+use App\Models\StaticSiteContent;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -17,7 +17,7 @@ class StaticSiteContentSeeder extends Seeder
 
         $data = ReadFromCsv::getDataFromCsv(storage_path('app/data/csv/staticSiteContents.csv'), ';');
 
-        $model = new staticSiteContent();
+        $model = new StaticSiteContent();
         foreach ($data as $row) {
             $model->create($row);
         }
