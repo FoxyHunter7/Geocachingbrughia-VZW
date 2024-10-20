@@ -1,7 +1,4 @@
-GNU nano 7.2                        ../geocachingbrughia-vzw-old/database/migrations/2024_03_25_082200_create_event_languages_table.php                                 <?php
-
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;                                                                                                                             use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
