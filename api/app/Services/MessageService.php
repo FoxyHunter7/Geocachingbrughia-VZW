@@ -11,7 +11,7 @@ class MessageService extends Service
     protected $_model;
     protected $_errors;
     protected $_rules = [
-        'state' => 'required | in:ONLLINE,DRAFT, ARCHIVED',
+        'state' => 'required | in:ONLINE,DRAFT, ARCHIVED',
     ];
 
     protected $_fields = ['id', 'updated_at'];
