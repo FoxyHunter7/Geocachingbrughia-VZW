@@ -23,6 +23,12 @@
         "FR": "suivant",
         "NL": "volgende"
     },
+    "ButtonPurchase": {
+        "DE": "ticket(s) kaufen",
+        "EN": "purchase ticket(s)",
+        "FR": "acheter le(s) billet(s)",
+        "NL": "ticket(s) kopen"
+    },
     "ContactCallTxt": {
         "DE": "rufen Sie uns an",
         "EN": "give us a call",

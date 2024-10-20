@@ -159,6 +159,10 @@ ButtonCancel;EN;cancel
 ButtonCancel;NL;annuleren
 ButtonCancel;FR;annuler
 ButtonCancel;DE;abbrechen
+ButtonPurchase;EN;"purchase ticket(s)"
+ButtonPurchase;NL;"ticket(s) kopen"
+ButtonPurchase;FR;"acheter le(s) billet(s)"
+ButtonPurchase;DE;"ticket(s) kaufen"
 GeocacheTitle;EN;title
 GeocacheTitle;NL;titel
 GeocacheTitle;FR;titre
