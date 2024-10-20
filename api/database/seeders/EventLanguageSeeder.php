@@ -13,7 +13,7 @@ class EventLanguageSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::table('event_languages')->truncate();
+        DB::table('event_languages')->delete();
 
         $data = ReadFromCsv::getDataFromCsv(storage_path('app/data/csv/eventsLanguage.csv'), ';', '/');
 

@@ -13,7 +13,7 @@ class MessageSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::table('messages')->truncate();
+        DB::table('messages')->delete();
 
         $data = ReadFromCsv::getDataFromCsv(storage_path('app/data/csv/messages.csv'), ';');
 

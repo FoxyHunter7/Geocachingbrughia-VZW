@@ -13,7 +13,7 @@ class StaticSitePropertiesSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::table('static_site_properties')->truncate();
+        DB::table('static_site_properties')->delet();
 
         $data = ReadFromCsv::getDataFromCsv(storage_path('app/data/csv/staticSiteProperties.csv'), ';');
 

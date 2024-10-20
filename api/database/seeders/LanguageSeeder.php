@@ -13,7 +13,7 @@ class LanguageSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::table('languages')->truncate();
+        DB::table('languages')->delete();
 
         $data = ReadFromCsv::getDataFromCsv(storage_path('app/data/csv/languages.csv'), ';');
 

@@ -13,7 +13,7 @@ class MessageLanguageSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::table('message_languages')->truncate();
+        DB::table('message_languages')->delete();
 
         $data = ReadFromCsv::getDataFromCsv(storage_path('app/data/csv/messagesLanguage.csv'), ';');
 

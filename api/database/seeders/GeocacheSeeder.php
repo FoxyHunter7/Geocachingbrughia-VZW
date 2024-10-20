@@ -13,7 +13,7 @@ class GeocacheSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::table('geocaches')->truncate();
+        DB::table('geocaches')->delete();
 
         $data = ReadFromCsv::getDataFromCsv(storage_path('app/data/csv/geocaches.csv'), ';');
 

@@ -13,7 +13,7 @@ class SocialsSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::table('socials')->truncate();
+        DB::table('socials')->delete();
 
         $data = ReadFromCsv::getDataFromCsv(storage_path('app/data/csv/socials.csv'), ';');
 

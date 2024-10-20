@@ -13,7 +13,7 @@ class StaticSiteContentSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::table('static_site_contents')->truncate();
+        DB::table('static_site_contents')->delete();
 
         $data = ReadFromCsv::getDataFromCsv(storage_path('app/data/csv/staticSiteContents.csv'), ';');
 

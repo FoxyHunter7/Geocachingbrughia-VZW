@@ -13,7 +13,7 @@ class EventSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::table('events')->truncate();
+        DB::table('events')->delete();
 
         $data = ReadFromCsv::getDataFromCsv(storage_path('app/data/csv/events.csv'), ';');
 
