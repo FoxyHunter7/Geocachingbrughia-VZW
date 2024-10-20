@@ -12,10 +12,14 @@
     import Link from '@tiptap/extension-link';
     import BulletList from '@tiptap/extension-bullet-list';
     import ListItem from '@tiptap/extension-list-item';
+    import { StaticContentProvider as SCP } from '@/services/StaticContentService.js';
 
     const props = defineProps({
         event: Object
     });
+
+    const dictionary = SCP.DICTIONARY;
+    const lang = computed(() => LanguageProvider.CURR_LANG.value);
 
     const event = toRef(props, 'event');
 
@@ -90,6 +94,7 @@
             <ul>
                 <li><img :src="`/assets/media/eventtypes/${event.type}.png`"><p>{{ event.type }}</p></li>
                 <li><p><span>{{ formattedStartDate }}</span> - <span>{{ formattedEndDate }}</span></p></li>
+                <li v-if="event.ticket_purchase_url"><a class="capitalize" :href="event.ticket_purchase_url" target="_blank">{{ dictionary.ButtonPurchase[lang] }}</a></li>
                 <li><a :href="event.geolink" target="_blank">Geocaching.com</a></li>
             </ul>
         </div>
@@ -171,7 +176,12 @@
         transition: transform 0.15s;
     }
 
-    a:hover {
+    a.capitalize {
+        text-transform: capitalize;
+    }
+
+    a:hover, a.capitalize:hover {
+        cursor: pointer;
         transform: scale(102%);
         transition: transform 0.15s;
     }
@@ -214,7 +224,6 @@
 
         h2 {
             margin-top: auto;
-            text-align: center;
         }
 
         section > div:first-child {
