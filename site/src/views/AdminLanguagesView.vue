@@ -4,7 +4,7 @@
 <template>
     <div>
         <h1>Nog niet beschikbaar</h1>
-        <p>Wordt verwacht begin Augustus</p>
+        <p>Wordt verwacht ooit ergens in de toekomst</p>
     </div>
 </template>
 
