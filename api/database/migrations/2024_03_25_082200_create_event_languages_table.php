@@ -1,4 +1,4 @@
-<?php
+GNU nano 7.2                        ../geocachingbrughia-vzw-old/database/migrations/2024_03_25_082200_create_event_languages_table.php                                 <?php
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -15,10 +15,11 @@ return new class extends Migration
             $table->bigIncrements('id');
 
             $table->foreignId('event_id')->constrained()->onUpdate('cascade')->onDelete('cascade');
-            $table->foreignId('lang_code')->constrained(table: 'languages', column: 'code')->onUpdate('cascade')->onDelete('cascade');
+            $table->string('lang_code');
+            $table->foreign('lang_code')->references('code')->on('languages')->onUpdate('cascade')->onDelete('cascade');
             $table->unique(['event_id','lang_code']);
 
-            $table->string('description');
+            $table->text('description');
             $table->timestamps();
         });
     }
