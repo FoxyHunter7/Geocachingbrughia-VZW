@@ -38,7 +38,6 @@ Route::group([
     Route::get('languages', [LanguageApiController::class, 'allPublic']);
     Route::get('static',[StaticSiteContentController::class, 'allPublic']);
     Route::get('socials', [SocialApiController::class, 'allPublic']);
-    Route::get('products', [StripeApiController::class, 'allProductsPublic']);
 
     Route::get('images/{p1}/{filename}', [ImageController::class, 'get'])->name('images');
 
@@ -108,10 +107,6 @@ Route::group([
 
         Route::controller(ContactFormResponseApiController::class)->group(function () {
             Route::get('formresponses', 'all');
-        });
-
-        Route::controller(StripeApiController::class)->group(function() {
-            Route::get('products', 'allProductsAdmin');
         });
     });
 });
