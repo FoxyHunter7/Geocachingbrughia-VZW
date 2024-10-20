@@ -15,7 +15,7 @@ return new class extends Migration
             $table->bigIncrements('id');
 
             $table->string('state');
-            $table->boolean('on_home');
+            $table->string('on_home');
             $table->string('title');
             $table->string('geolink');
             $table->string('type');
