@@ -18,7 +18,7 @@ class LanguageApiController
     public function all(Request $request, $isAdmin)
     {
         $search = $request->query('search', '');
-        $sortBy = $request->query('sort_by', 'code');
+        $sortBy = $request->query('sort_by');
         $sortDirection = $request->query('sort_direction', 'desc');
 
         return $this->_service->all(search: $search, sortBy: $sortBy, sortDirection: $sortDirection, isAdmin: $isAdmin);

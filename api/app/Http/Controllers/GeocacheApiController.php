@@ -19,7 +19,7 @@ class GeocacheApiController
     {
         $search = $request->query('search', '');
         $perPage = $request->query('per_page', 10);
-        $sortBy = $request->query('sort_by', '');
+        $sortBy = $request->query('sort_by');
         $sortDirection = $request->query('sort_direction', 'desc');
 
         return $this->_service->all(perPage: $perPage, search: $search, sortBy: $sortBy, sortDirection: $sortDirection, isAdmin: $isAdmin);
