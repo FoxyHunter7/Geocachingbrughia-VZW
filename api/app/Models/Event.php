@@ -24,7 +24,8 @@ class Event extends Model
         'location',
         'start_date',
         'end_date',
-        'imageUrl'
+        'imageUrl',
+        'ticket_purchase_url'
     ];
 
     public function translations()
