@@ -23,6 +23,7 @@ return new class extends Migration
             $table->dateTime('start_date');
             $table->dateTime('end_date');
             $table->string('imageUrl');
+            $table->string('ticket_purchase_url')->nullable();
 
             $table->timestamps();
         });

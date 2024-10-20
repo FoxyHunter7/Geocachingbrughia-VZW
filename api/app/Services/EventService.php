@@ -16,7 +16,8 @@ class EventService extends Service
         'location' => 'nullable | regex:/^[NS]\s\d+°\s\d+\.\d+\s[EW]\s\d+°\s\d+\.\d+$/',
         'start_date' => 'required|date_format:Y-m-d H:i:s',
         'end_date' => 'required|date_format:Y-m-d H:i:s',
-        'image' => 'image | mimes:jpeg,png,jpg,gif,svg|max:4096'
+        'image' => 'image | mimes:jpeg,png,jpg,gif,svg|max:4096',
+        'ticket_purchase_url' => 'required | regex:^https:\/\/ticketing\.geocachingbrughia\.be\/geocachingbrughia\/[a-zA-Z0-9_-]*\/?$| string'
     ];
 
     protected $_fields = ['id', "on_home", 'title', 'geolink', 'type', 'location', 'start_date', 'end_date', 'imageUrl'];
