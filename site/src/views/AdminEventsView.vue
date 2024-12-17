@@ -443,15 +443,15 @@
 
     form input, form textarea {
         height: 2rem;
-        border-radius: 0.3rem;
         border: solid 0.1rem var(--color-text);
         outline: none;
         font-family: inherit;
         font-size: 1rem;
         box-sizing: border-box;
         line-height: 2rem;
-        background-color: var(--color-background);
-        color: var(--color-text)
+        background-color: var(--color-background-2);
+        color: var(--color-text);
+        border-radius: 0.2rem;
     }
 
     table {
@@ -471,7 +471,7 @@
     }
 
     tbody tr:nth-child(even) {
-        background-color: var(--color-background2);
+        background-color: var(--color-background-2);
     }
 
     th:nth-child(5), td:nth-child(5) {
@@ -637,11 +637,11 @@
         height: 2rem;
         font: inherit;
         font-size: 0.9rem;
-        border-radius: 0.3rem;
+        border-radius: 0.2rem;
         border: solid 0.1rem var(--color-text);
         padding: 0.2rem 0;
         outline: none;
-        background-color: var(--color-background);
+        background-color: var(--color-background-2);
         color: var(--color-text);
     }
 
