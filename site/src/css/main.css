@@ -32,6 +32,11 @@ div.ProseMirror {
     position: static !important;
 }
 
+div.ProseMirror-focused {
+    outline: none !important;
+    border: none !important;
+}
+
 .tiptap {
     z-index: 0;
 }
