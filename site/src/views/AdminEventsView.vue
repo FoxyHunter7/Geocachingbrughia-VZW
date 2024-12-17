@@ -339,8 +339,8 @@
                 </select>
                 <label for="title">Titel<span>*</span></label>
                 <input v-model="currentlyEditingData.title" type="text" max="100" id="title" name="title" required>
-                <label for="geolink">Geocaching Link<span>*</span><br><i>Moet beginnen met: https://www.geocaching.com/geocache/</i></label>
-                <input v-model="currentlyEditingData.geolink" type="text" id="geolink" title="Moet beginnen met: https://www.geocaching.com/geocache/" name="geolink" pattern="https://www\.geocaching\.com/geocache/.+" required>
+                <label for="geolink">Geocaching Link<br><i>Moet beginnen met: https://www.geocaching.com/geocache/</i></label>
+                <input v-model="currentlyEditingData.geolink" type="text" id="geolink" title="Moet beginnen met: https://www.geocaching.com/geocache/" name="geolink" pattern="https://www\.geocaching\.com/geocache/.+">
                 <label for="location">Locatie<br><i>In GMD notatie, bv: N 34° 56.789 E 123° 45.678</i></label>
                 <input v-model="currentlyEditingData.location" type="text" id="location" name="location" title="In GMD notatie, bv: N 34° 56.789 E 123° 45.678" pattern="^[NS]\s\d+°\s\d+\.\d+\s[EW]\s\d+°\s\d+\.\d+$">
                 <label for="startDate">Start Datum & Tijd<span>*</span></label>
