@@ -13,7 +13,7 @@ class GeocacheService extends Service
     protected $_rules = [
         'state' => 'required | in:ONLINE,DRAFT, ARCHIVED',
         'title' => 'required | max:100 | string',
-        'geolink' => 'required | url:https | starts_with:https://www.geocaching.com/geocache/| string',
+        'geolink' => 'nullable | url:https | starts_with:https://www.geocaching.com/geocache/| string',
         'type' => 'required | in:TRADITIONAL,MULTI,MYSTERY,EARTH,LETTERBOX,WHEREIGO,VIRTUAL,LAB,WEBCAM',
         'difficulty' => 'required | numeric | between:1,5',
         'terrain' => 'required | numeric | between:1,5',

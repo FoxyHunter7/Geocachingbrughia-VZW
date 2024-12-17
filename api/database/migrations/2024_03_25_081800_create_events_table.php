@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('state');
             $table->string('on_home');
             $table->string('title');
-            $table->string('geolink');
+            $table->string('geolink')->nullable();
             $table->string('type');
             $table->string('location')->nullable();
             $table->dateTime('start_date');
