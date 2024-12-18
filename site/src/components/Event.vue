@@ -12,6 +12,11 @@
     import Link from '@tiptap/extension-link';
     import BulletList from '@tiptap/extension-bullet-list';
     import ListItem from '@tiptap/extension-list-item';
+    import Gapcursor from '@tiptap/extension-gapcursor';
+    import Table from '@tiptap/extension-table';
+    import TableCell from '@tiptap/extension-table-cell';
+    import TableHeader from '@tiptap/extension-table-header';
+    import TableRow from '@tiptap/extension-table-row';
     import { StaticContentProvider as SCP } from '@/services/StaticContentService.js';
 
     const props = defineProps({
@@ -33,7 +38,14 @@
             Underline,
             Link,
             BulletList,
-            ListItem
+            ListItem,
+            Gapcursor,
+            Table.configure({
+                resizable: false,
+            }),
+            TableRow,
+            TableHeader,
+            TableCell
         ]);
     };
 
@@ -51,7 +63,14 @@
             Underline,
             Link,
             BulletList,
-            ListItem
+            ListItem,
+            Gapcursor,
+            Table.configure({
+                resizable: false,
+            }),
+            TableRow,
+            TableHeader,
+            TableCell
         ],
         editable: false,
         content: eventDescription.value

@@ -358,7 +358,7 @@
             <div>
                 <section class="translations">
                     <div v-for="translation in currentlyEditingData.translations">
-                        <p>{{ translation.lang_code }}</p>
+                        <h3>{{ translation.lang_code }}</h3>
                         <TipTapEditor :content="translation.description" :langCode="translation.lang_code" :editable="true" ref="editors"/>
                     </div>
                 </section>
@@ -662,13 +662,17 @@
     #eventEdit section.translations {
         margin-top: 3rem;
         display: flex;
+        flex-direction: column;
         justify-content: center;
         gap: 3rem;
         flex-wrap: wrap;
     }
 
+    #eventEdit section.translations h3 {
+        font-weight: bold;
+    }
+
     #eventEdit section.translations div {
-        width: 40rem;
         border-radius: 0.3rem;
     }
 
