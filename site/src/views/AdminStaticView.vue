@@ -4,7 +4,8 @@
 <template>
     <div>
         <h1>Nog niet beschikbaar</h1>
-        <p>Wordt verwacht ergens ooit in de toekomst</p>
+        <p>Enkel mogelijk via directe API communicatie.</p>
+        <p>De grafische implimentatie hiervan is nog niet ingeplanned</p>
     </div>
 </template>
 

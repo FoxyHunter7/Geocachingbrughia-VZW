@@ -302,13 +302,13 @@
 
     button {
         color: var(--color-text);
-        background-color: var(--color-secondary);
+        background-color: var(--color-primary);
         border: none;
         width: 9rem;
         height: 2rem;
         font-family: inherit;
         border-radius: 0.4rem;
-        box-shadow: var(--color-background2) 0.5rem 0.5rem;
+        box-shadow: var(--color-accent-dark) 0.5rem 0.5rem;
         text-transform: capitalize;
         font-weight: bold;
         scale: 100%;
@@ -388,7 +388,7 @@
     }
 
     tbody tr:nth-child(even) {
-        background-color: var(--color-background2);
+        background-color: var(--color-background-2);
     }
 
     th:nth-child(4), td:nth-child(4) {
@@ -438,12 +438,11 @@
 
     td.DRAFT {
         background-color: rgb(255, 136, 0);
-        color: var(--color-text3);
     }
 
     td.ARCHIVED, td.false {
         background-color: red;
-        color: var(--color-text4);
+        color: var(--color-background-2);
     }
 
     div.icon-edit {
@@ -554,7 +553,7 @@
         border: solid 0.1rem var(--color-text);
         padding: 0.2rem 0;
         outline: none;
-        background-color: var(--color-background);
+        background-color: var(--color-background-2);
         color: var(--color-text);
     }
 

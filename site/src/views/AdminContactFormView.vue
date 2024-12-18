@@ -131,13 +131,13 @@
 
     button {
         color: var(--color-text);
-        background-color: var(--color-secondary);
+        background-color: var(--color-primary);
         border: none;
         width: 9rem;
         height: 2rem;
         font-family: inherit;
         border-radius: 0.4rem;
-        box-shadow: var(--color-background2) 0.5rem 0.5rem;
+        box-shadow: var(--color-background-2) 0.5rem 0.5rem;
         text-transform: capitalize;
         font-weight: bold;
         scale: 100%;
@@ -217,7 +217,7 @@
     }
 
     tbody tr:nth-child(even) {
-        background-color: var(--color-background2);
+        background-color: var(--color-background-2);
     }
 
     th:nth-child(3), th:nth-child(4), td:nth-child(3), td:nth-child(4) {
@@ -276,7 +276,7 @@
     #pager .pagerNavBtn {
         width: 2rem;
         height: 2rem;
-        background-color: var(--color-text);
+        background-color: var(--color-primary);
         cursor: pointer;
     }
 

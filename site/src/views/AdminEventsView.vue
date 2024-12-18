@@ -522,12 +522,11 @@
 
     td.DRAFT {
         background-color: rgb(255, 136, 0);
-        color: var(--color-text3);
     }
 
     td.ARCHIVED, td.false {
         background-color: red;
-        color: var(--color-text4);
+        color: var(--color-background-2);
     }
 
     div.icon-edit {
