@@ -23,7 +23,7 @@
     });
 
     function parseContent(content) {
-        return generateHTML(content, [
+        return generateHTML(JSON.parse(content), [
             Document,
             Paragraph,
             Text,
@@ -95,88 +95,88 @@
 <template>
     <article>
         <div v-if="editor" class="menu">
-        <div class="button-group">
-            <button type="button" @click="editor.chain().focus().toggleBold().run()" :class="{ 'is-active': editor.isActive('bold') }">
-                Bold
-            </button>
-            <button type="button" @click="editor.chain().focus().toggleItalic().run()" :class="{ 'is-active': editor.isActive('italic') }">
-                Italic
-            </button>
-            <button type="button" @click="editor.chain().focus().toggleStrike().run()" :class="{ 'is-active': editor.isActive('strike') }">
-                Strike
-            </button>
-            <button type="button" @click="setLink" :class="{ 'is-active': editor.isActive('link') }">
-                Set link
-            </button>
-            <button type="button" @click="editor.chain().focus().unsetLink().run()" :disabled="!editor.isActive('link')">
-                Unset link
-            </button>
-        </div>
-        <br>
-        <div>
             <div class="button-group">
-                <button @click="editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()">
-                    Insert table
+                <button type="button" @click="editor.chain().focus().toggleBold().run()" :class="{ 'is-active': editor.isActive('bold') }">
+                    Bold
                 </button>
-                <button @click="editor.chain().focus().deleteTable().run()" class="btn-red">
-                    Delete table
+                <button type="button" @click="editor.chain().focus().toggleItalic().run()" :class="{ 'is-active': editor.isActive('italic') }">
+                    Italic
                 </button>
-            </div>
-            <div class="button-group">
-                <button @click="editor.chain().focus().addColumnBefore().run()">
-                  Add column before
+                <button type="button" @click="editor.chain().focus().toggleStrike().run()" :class="{ 'is-active': editor.isActive('strike') }">
+                    Strike
                 </button>
-                <button @click="editor.chain().focus().addColumnAfter().run()">
-                  Add column after
+                <button type="button" @click="setLink" :class="{ 'is-active': editor.isActive('link') }">
+                    Set link
                 </button>
-                <button @click="editor.chain().focus().deleteColumn().run()" class="btn-red">
-                  Delete column
-                </button>
-            </div>
-            <div class="button-group">
-                <button @click="editor.chain().focus().addRowBefore().run()">
-                  Add row before
-                </button>
-                <button @click="editor.chain().focus().addRowAfter().run()">
-                  Add row after
-                </button>
-                <button @click="editor.chain().focus().deleteRow().run()" class="btn-red">
-                  Delete row
+                <button type="button" @click="editor.chain().focus().unsetLink().run()" :disabled="!editor.isActive('link')">
+                    Unset link
                 </button>
             </div>
             <br>
-            <div class="button-group">
-                <button @click="editor.chain().focus().mergeCells().run()">
-                  Merge cells
-                </button>
-                <button @click="editor.chain().focus().splitCell().run()">
-                  Split cell
-                </button>
-                <button @click="editor.chain().focus().toggleHeaderColumn().run()">
-                  Toggle header column
-                </button>
-                <button @click="editor.chain().focus().toggleHeaderRow().run()">
-                  Toggle header row
-                </button>
-                <button @click="editor.chain().focus().toggleHeaderCell().run()">
-                  Toggle header cell
-                </button>
-                <button @click="editor.chain().focus().mergeOrSplit().run()">
-                  Merge or split
-                </button>
-                <button @click="editor.chain().focus().setCellAttribute('colspan', 2).run()">
-                  Set cell attribute
-                </button>
-                <button @click="editor.chain().focus().fixTables().run()">
-                  Fix tables
-                </button>
-                <button @click="editor.chain().focus().goToNextCell().run()">
-                  Go to next cell
-                </button>
-                <button @click="editor.chain().focus().goToPreviousCell().run()">
-                  Go to previous cell
-                </button>
-                    </div>
+            <div>
+                <div class="button-group">
+                    <button @click="editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()">
+                        Insert table
+                    </button>
+                    <button @click="editor.chain().focus().deleteTable().run()" class="btn-red">
+                        Delete table
+                    </button>
+                </div>
+                <div class="button-group">
+                    <button @click="editor.chain().focus().addColumnBefore().run()">
+                      Add column before
+                    </button>
+                    <button @click="editor.chain().focus().addColumnAfter().run()">
+                      Add column after
+                    </button>
+                    <button @click="editor.chain().focus().deleteColumn().run()" class="btn-red">
+                      Delete column
+                    </button>
+                </div>
+                <div class="button-group">
+                    <button @click="editor.chain().focus().addRowBefore().run()">
+                      Add row before
+                    </button>
+                    <button @click="editor.chain().focus().addRowAfter().run()">
+                      Add row after
+                    </button>
+                    <button @click="editor.chain().focus().deleteRow().run()" class="btn-red">
+                      Delete row
+                    </button>
+                </div>
+                <br>
+                <div class="button-group">
+                    <button @click="editor.chain().focus().mergeCells().run()">
+                      Merge cells
+                    </button>
+                    <button @click="editor.chain().focus().splitCell().run()">
+                      Split cell
+                    </button>
+                    <button @click="editor.chain().focus().toggleHeaderColumn().run()">
+                      Toggle header column
+                    </button>
+                    <button @click="editor.chain().focus().toggleHeaderRow().run()">
+                      Toggle header row
+                    </button>
+                    <button @click="editor.chain().focus().toggleHeaderCell().run()">
+                      Toggle header cell
+                    </button>
+                    <button @click="editor.chain().focus().mergeOrSplit().run()">
+                      Merge or split
+                    </button>
+                    <button @click="editor.chain().focus().setCellAttribute('colspan', 2).run()">
+                      Set cell attribute
+                    </button>
+                    <button @click="editor.chain().focus().fixTables().run()">
+                      Fix tables
+                    </button>
+                    <button @click="editor.chain().focus().goToNextCell().run()">
+                      Go to next cell
+                    </button>
+                    <button @click="editor.chain().focus().goToPreviousCell().run()">
+                      Go to previous cell
+                    </button>
+                </div>
             </div>
         </div>
         <editor-content class="editor" :editor="editor"/>
