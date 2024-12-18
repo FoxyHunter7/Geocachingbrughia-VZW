@@ -34,7 +34,7 @@
         width: 1.5rem;
         aspect-ratio: 1 / 1;
         background-color: var(--color-text);
-        mask: url(../assets/media/x.svg);
+        mask: url(@/assets/media/x.svg);
         mask-size: contain;
         cursor: pointer;
         mask-repeat: no-repeat;

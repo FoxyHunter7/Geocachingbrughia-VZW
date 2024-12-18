@@ -87,9 +87,9 @@
     </section>
     <header v-show="loggedIn">
         <picture>
-            <source srcset="/assets/media/logo-full-black.webp" media="(prefers-color-scheme: light)" class="logo">
-            <source srcset="/assets/media/logo-full-white.webp" media="(prefers-color-scheme: dark)" class="logo">
-            <img src="/assets/media/logo-full-black.webp" class="logo">
+            <source srcset="@/assets/media/logo-full-black.webp" media="(prefers-color-scheme: light)" class="logo">
+            <source srcset="@/assets/media/logo-full-white.webp" media="(prefers-color-scheme: dark)" class="logo">
+            <img src="@/assets/media/logo-full-black.webp" class="logo">
         </picture>
         <article id="userinfo">
             <div>
@@ -322,56 +322,56 @@
     }
 
     div.icon-event {
-        mask: url(../assets/media/calendar.svg);
+        mask: url(@/assets/media/calendar.svg);
         mask-size: contain;
         mask-repeat: no-repeat;
         mask-position: center;
     }
 
     div.icon-cache {
-        mask: url(../assets/media/box.svg);
+        mask: url(@/assets/media/box.svg);
         mask-size: contain;
         mask-repeat: no-repeat;
         mask-position: center;
     }
 
     div.icon-social {
-        mask: url(../assets/media/share-2.svg);
+        mask: url(@/assets/media/share-2.svg);
         mask-size: contain;
         mask-repeat: no-repeat;
         mask-position: center;
     }
 
     div.icon-msg {
-        mask: url(../assets/media/message-square.svg);
+        mask: url(@/assets/media/message-square.svg);
         mask-size: contain;
         mask-repeat: no-repeat;
         mask-position: center;
     }
 
     div.icon-shop {
-        mask: url(../assets/media/shopping-cart.svg);
+        mask: url(@/assets/media/shopping-cart.svg);
         mask-size: contain;
         mask-repeat: no-repeat;
         mask-position: center;
     }
 
     div.icon-static {
-        mask: url(../assets/media/file-text.svg);
+        mask: url(@/assets/media/file-text.svg);
         mask-size: contain;
         mask-repeat: no-repeat;
         mask-position: center;
     }
 
     div.icon-lang {
-        mask: url(../assets/media/book-open.svg);
+        mask: url(@/assets/media/book-open.svg);
         mask-size: contain;
         mask-repeat: no-repeat;
         mask-position: center;
     }
 
     div.icon-mail {
-        mask: url(../assets/media/mail.svg);
+        mask: url(@/assets/media/mail.svg);
         mask-size: contain;
         mask-repeat: no-repeat;
         mask-position: center;

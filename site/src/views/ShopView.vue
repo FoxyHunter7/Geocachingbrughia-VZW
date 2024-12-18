@@ -228,7 +228,7 @@
     left: 0.5rem;
     top: 0.3rem;
     background-color: var(--color-text);
-    mask: url(../assets/media/search.svg);
+    mask: url(@/assets/media/search.svg);
     mask-size: contain;
     mask-repeat: no-repeat;
     mask-position: center;

@@ -309,7 +309,7 @@ header {
         left: 0.5rem;
         top: 0.3rem;
         background-color: var(--color-text);
-        mask: url(../assets/media/search.svg);
+        mask: url(@/assets/media/search.svg);
         mask-size: contain;
         mask-repeat: no-repeat;
         mask-position: center;
@@ -404,7 +404,7 @@ header {
         margin: auto;
         height: 60%;
         aspect-ratio: 1 / 1;
-        mask: url(../assets/media/edit.svg);
+        mask: url(@/assets/media/edit.svg);
         mask-size: contain;
         background-color: var(--color-text);
         mask-repeat: no-repeat;
