@@ -86,11 +86,7 @@
         <p id="login-cookie-notice">Door in te loggen in het admin-paneel gaat u ermee akkoord dat er cookies, essentieel voor de login-functionaliteit, gebruikt zullen worden.</p>
     </section>
     <header v-show="loggedIn">
-        <picture>
-            <source srcset="@/assets/media/logo-full-black.webp" media="(prefers-color-scheme: light)" class="logo">
-            <source srcset="@/assets/media/logo-full-white.webp" media="(prefers-color-scheme: dark)" class="logo">
-            <img src="@/assets/media/logo-full-black.webp" class="logo">
-        </picture>
+        <img src="@/assets/media/logo-full-black.webp" class="logo">
         <article id="userinfo">
             <div>
                 <p>{{ userProfile.name }}</p>

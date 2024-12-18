@@ -156,6 +156,7 @@
         justify-content: flex-end;
         padding: 1rem;
         gap: 1rem;
+        background: none !important;
     }
 
     #search > div input {

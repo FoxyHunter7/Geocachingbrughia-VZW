@@ -386,13 +386,13 @@
 
     button {
         color: var(--color-text);
-        background-color: var(--color-secondary);
+        background-color: var(--color-primary);
         border: none;
         width: 9rem;
         height: 2rem;
         font-family: inherit;
         border-radius: 0.4rem;
-        box-shadow: var(--color-background2) 0.5rem 0.5rem;
+        box-shadow: var(--color-accent-dark) 0.5rem 0.5rem;
         text-transform: capitalize;
         font-weight: bold;
         scale: 100%;
@@ -411,6 +411,7 @@
         justify-content: flex-end;
         padding: 1rem;
         gap: 1rem;
+        background: none !important;
     }
 
     #search > div input {
@@ -717,13 +718,13 @@
 
         #eventEdit button.btn-red {
             background-color: rgb(255, 87, 57);
-            color: var(--color-text3);
+            color: var(--color-text);
             box-shadow: #360f01 0.5rem 0.5rem;
         }
 
         #eventEdit button.btn-orange {
             background-color: rgb(233, 177, 22);
-            color: var(--color-text3);
+            color: var(--color-text);
             box-shadow: #362a01 0.5rem 0.5rem;
         }
     }
