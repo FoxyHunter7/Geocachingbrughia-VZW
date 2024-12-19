@@ -306,4 +306,30 @@
       justify-content: center;
     }
   }
+
+  @media screen and (max-device-width: 800px) {
+    table {
+      table-layout: auto !important;
+      width: auto !important;
+      min-width: auto;
+      max-width: 90vw;
+      font-size: 0.7rem;
+    }
+
+    table tr th:first-child, table tr td:first-child {
+      width: 0.3rem;
+      min-width: 0.3rem;
+    }
+
+    table tr th:nth-child(3), table tr td:nth-child(3), 
+    table tr th:nth-child(4), table tr td:nth-child(4) {
+      word-break: break-all;
+      min-width: 1rem;
+      width: 4.5rem;
+    }
+
+    table tr th:last-child, table tr td:last-child {
+      width: min-content;
+    }
+}
 </style>

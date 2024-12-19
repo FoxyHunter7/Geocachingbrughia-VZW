@@ -51,6 +51,7 @@ div.ProseMirror-focused {
     overflow: hidden;
     table-layout: fixed;
     width: 100%;
+    max-width: 100%;
 }
 .tiptap table td,
 .tiptap table th {
@@ -112,3 +113,13 @@ p u {
     text-decoration: underline;
 }
 
+@media screen and (max-device-width: 1500px) {
+    .tiptap table {
+        table-layout: auto !important;
+        width: auto !important;
+    }
+
+    .tiptap table colgroup col {
+        width: auto !important;
+    }
+}
