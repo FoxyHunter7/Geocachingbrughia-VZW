@@ -113,7 +113,7 @@ p u {
     text-decoration: underline;
 }
 
-@media screen and (max-device-width: 1500px) {
+@media screen and (max-width: 1500px) {
     .tiptap table {
         table-layout: auto !important;
         width: auto !important;
