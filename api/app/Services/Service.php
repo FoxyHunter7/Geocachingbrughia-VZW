@@ -162,7 +162,11 @@ abstract class Service
             }
         });
 
-        return $this->_model->with('translations')->find($id);
+        if (!empty($translations)) {
+            return $this->_model->with('translations')->find($id);
+        }
+
+        return $this->_model->find($id);
     }
 
     public function delete($id)

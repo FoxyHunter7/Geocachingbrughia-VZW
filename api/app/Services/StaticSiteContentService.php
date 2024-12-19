@@ -14,7 +14,7 @@ class StaticSiteContentService extends Service
         'content' => 'required'
     ];
 
-    protected $_fields = ['property'];
+    protected $_fields = ['property', 'content'];
     protected $_searchOn = 'property';
     protected $_defaultSortBy = 'property';
     protected $_paginate = false;
