@@ -247,5 +247,9 @@
         section > div:first-child {
             align-items: center;
         }
+
+        section > div:last-child {
+            text-align: center;
+        }
     }
 </style>
