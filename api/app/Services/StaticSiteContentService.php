@@ -11,7 +11,7 @@ class StaticSiteContentService extends Service
     protected $_rules = [
         'property' => 'required',
         'langcode' => 'required',
-        'content' => 'requried'
+        'content' => 'required'
     ];
 
     protected $_fields = ['property'];
