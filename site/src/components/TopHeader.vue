@@ -27,7 +27,7 @@
                 <RouterLink @click="if (isMobile) {isNavOpen = !isNavOpen; $emit('menuStateChange', isNavOpen)}" :to="{ path: SCP.constructRoute(lang, 'NavHome') }">{{ dictionary.NavHome[lang] }}</RouterLink>
                 <RouterLink @click="if (isMobile) {isNavOpen = !isNavOpen; $emit('menuStateChange', isNavOpen)}" :to="{ path: SCP.constructRoute(lang, 'NavEvents') }">{{ dictionary.NavEvents[lang] }}</RouterLink>
                 <RouterLink @click="if (isMobile) {isNavOpen = !isNavOpen; $emit('menuStateChange', isNavOpen)}" :to="{ path: SCP.constructRoute(lang, 'NavGeocaches') }">{{ dictionary.NavGeocaches[lang] }}</RouterLink>
-                <RouterLink @click="if (isMobile) {isNavOpen = !isNavOpen; $emit('menuStateChange', isNavOpen)}" :to="{ path: SCP.constructRoute(lang, 'NavShop') }">{{ dictionary.NavShop[lang] }}</RouterLink>
+                <RouterLink class="icon-external-link" @click="if (isMobile) {isNavOpen = !isNavOpen; $emit('menuStateChange', isNavOpen)}" :to="{ path: SCP.constructRoute(lang, 'NavShop') }">{{ dictionary.NavShop[lang] }}</RouterLink>
             </nav>
             <figure @click="$emit('langSelector')" id="lang-selector">
                 <img :src="(langInfo.fallback) ? `/assets/media/${langInfo.imageUrl}` : `${config.apiUrl}images/${langInfo.imageUrl}`">
@@ -35,7 +35,7 @@
             </figure>
         </Teleport>
         <div v-if="isMobile"></div>
-        <div v-if="isMobile" class="nav" :class="{open: isNavOpen}" @click="isNavOpen = !isNavOpen; $emit('menuStateChange', isNavOpen)"></div>
+        <div v-if="isMobile" class="icon-external-link" :class="{open: isNavOpen}" @click="isNavOpen = !isNavOpen; $emit('menuStateChange', isNavOpen)"></div>
     </header>
 </template>
 
@@ -108,6 +108,20 @@
         border-bottom: 0.2rem solid var(--color-text);
         transition: border-bottom, font-weight 0.1s;
         font-weight: bold;
+    }
+
+    nav a.icon-external-link::after {
+        display: inline-block;
+        content: '';
+        
+        width: 1rem;
+        height: 1rem;
+        margin-left: 0.2rem;
+        transform: translateY(0.115rem);
+        background-color: var(--color-text);
+        mask: url(@/assets/media/external-link.svg);
+        mask-size: contain;
+        mask-repeat: no-repeat;
     }
 
     figure {
