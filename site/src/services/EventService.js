@@ -5,7 +5,7 @@ async function getAllEvents(admin = false, page = null, search= "", perPage = nu
 }
 
 async function getHomePageEvents() {
-    return fetchFromServer("home_events", false, null, "", null, "", "asc");
+    return fetchFromServer("home_events");
 }
 
 export { getAllEvents, getHomePageEvents };

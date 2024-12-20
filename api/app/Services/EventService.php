@@ -35,7 +35,7 @@ class EventService extends Service
     public function getHomePageEvents($language)
     {
         $model = $this->_model;
-        $model = $model->where("on_home", "true");
+        $model = $model->where("on_home", "true")->orderBy('start_date', 'asc');
 
         $results = $model
         ->select($this->_fields)
