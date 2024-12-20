@@ -97,10 +97,10 @@ class StaticContentProvider {
                 StaticContentProvider.ROUTES.navShop.aliases.push(StaticContentProvider.constructRoute(lang.code, "NavShop"));
             }
 
-            StaticContentProvider.ROUTES.navHome.path = StaticContentProvider.constructRoute(lang.code, "NavHome", lang.code);
-            StaticContentProvider.ROUTES.navEvents.path = StaticContentProvider.constructRoute(lang.code, "NavEvents", lang.code);
-            StaticContentProvider.ROUTES.navGeocaches.path = StaticContentProvider.constructRoute(lang.code, "NavGeocaches", lang.code);
-            StaticContentProvider.ROUTES.navShop.path = StaticContentProvider.constructRoute(lang.code, "NavShop", lang.code);
+            StaticContentProvider.ROUTES.navHome.aliases.push(StaticContentProvider.constructRoute(lang.code, "NavHome", lang.code));
+            StaticContentProvider.ROUTES.navEvents.aliases.push(StaticContentProvider.constructRoute(lang.code, "NavEvents", lang.code));
+            StaticContentProvider.ROUTES.navGeocaches.aliases.push(StaticContentProvider.constructRoute(lang.code, "NavGeocaches", lang.code));
+            StaticContentProvider.ROUTES.navShop.aliases.push(StaticContentProvider.constructRoute(lang.code, "NavShop", lang.code));
         });
     }
 
