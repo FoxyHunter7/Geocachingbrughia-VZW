@@ -96,11 +96,16 @@ class StaticContentProvider {
                 StaticContentProvider.ROUTES.navGeocaches.aliases.push(StaticContentProvider.constructRoute(lang.code, "NavGeocaches"));
                 StaticContentProvider.ROUTES.navShop.aliases.push(StaticContentProvider.constructRoute(lang.code, "NavShop"));
             }
+
+            StaticContentProvider.ROUTES.navHome.path = StaticContentProvider.constructRoute(lang.code, "NavHome", lang.code);
+            StaticContentProvider.ROUTES.navEvents.path = StaticContentProvider.constructRoute(lang.code, "NavEvents", lang.code);
+            StaticContentProvider.ROUTES.navGeocaches.path = StaticContentProvider.constructRoute(lang.code, "NavGeocaches", lang.code);
+            StaticContentProvider.ROUTES.navShop.path = StaticContentProvider.constructRoute(lang.code, "NavShop", lang.code);
         });
     }
 
-    static constructRoute(langCode, routeName) {
-        return `/${langCode.toLocaleLowerCase()}/${StaticContentProvider.DICTIONARY[routeName][langCode]}`
+    static constructRoute(langFromDict, routeName, langCode = "none") {
+        return `/${(langCode == "none") ? "" : langCode.toLocaleLowerCase() + "/"}${StaticContentProvider.DICTIONARY[routeName][langFromDict]}`
     }
 
     #setErrors(err) {
