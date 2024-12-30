@@ -35,7 +35,7 @@
             </figure>
         </Teleport>
         <div v-if="isMobile"></div>
-        <div v-if="isMobile" class="icon-external-link" :class="{open: isNavOpen}" @click="isNavOpen = !isNavOpen; $emit('menuStateChange', isNavOpen)"></div>
+        <div v-if="isMobile" class="nav" :class="{open: isNavOpen}" @click="isNavOpen = !isNavOpen; $emit('menuStateChange', isNavOpen)"></div>
     </header>
 </template>
 
