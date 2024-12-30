@@ -56,9 +56,8 @@
   }
 
   section {
-    height: 100%;
     max-width: 100rem;
-    margin: 0 auto 3rem auto;
+    margin: 0 auto;
   }
 
   #loading {

@@ -94,8 +94,6 @@
   }
 
   section {
-    height: 70vh;
-    max-height: 40rem;
     max-width: 100rem;
     margin: 0 auto;
   }

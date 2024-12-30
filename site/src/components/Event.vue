@@ -103,7 +103,7 @@
 </script>
 
 <template>
-    <section>
+    <section :id="event.title">
         <div>
             <img :src="`${config.apiUrl}images/${event.imageUrl}`">
         </div>
@@ -126,12 +126,12 @@
         grid-template-columns: 1fr 2fr;
         gap: 3rem;
         padding: 3rem;
-        max-height: 40rem;
+        height: min-content;
     }
 
     section > div:first-child {
         height: 100%;
-        max-height: 40rem;
+        max-height: 35rem;
         display: flex;
         justify-content: center;
         align-items: flex-start;
@@ -140,7 +140,7 @@
 
     section > div > img {
         max-width: 100%;
-        max-height: 100%;
+        max-height: 90%;
         object-fit: contain;
         border-radius: 0.5rem;
     }
@@ -213,6 +213,8 @@
             justify-content: center;
             align-items: center;
             padding: 1rem;
+            border-bottom: solid 0.1rem var(--color-text);
+            gap: 1rem;
         }
 
         section > div:first-child {
@@ -226,7 +228,8 @@
 
         ul {
             height: auto;
-            flex-direction: column;
+            flex-wrap: wrap;
+            justify-content: center;
         }
 
         ul li:first-child {
