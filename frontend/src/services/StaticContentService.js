@@ -3,8 +3,8 @@ import config from "../data/config.js";
 import fallbackLanguages from "../data/fallbackLanguages.json";
 import fallbackStaticContent from "../data/fallbackStaticContent.json";
 import warnings from "../data/warnings.json";
-import { showConsoleDangerWarning } from "./ConsoleService";
-import { LanguageProvider } from "./LanguageService";
+import { showConsoleDangerWarning } from "./ConsoleService.js";
+import { LanguageProvider } from "./LanguageService.js";
 
 class StaticContentProvider {
     static DICTIONARY = {};

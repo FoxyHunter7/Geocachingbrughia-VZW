@@ -1,5 +1,5 @@
 import config from "../data/config.js"
-import LanguageProvider from "./LanguageService";
+import LanguageProvider from "./LanguageService.js";
 
 async function fetchFromServer(endpoint, includeCreds = false, page = null, search = "", perPage = null, sortBy = "", sortDirection = "") {
     const queryParams = {
