@@ -1,203 +1,178 @@
 <script setup>
-  import { getAllGeocaches } from '@/services/GeocacheService';
-  import LanguageProvider from '@/services/LanguageService';
-  import StaticContentProvider from '@/services/StaticContentService';
-  import { computed, onMounted, ref, watch } from 'vue';
+import { getAllGeocaches } from '@/services/GeocacheService';
+import LanguageProvider from '@/services/LanguageService';
+import StaticContentProvider from '@/services/StaticContentService';
+import { computed, onMounted, ref, watch } from 'vue';
 
-  const lang = computed(() => LanguageProvider.CURR_LANG.value);
-  const dictionary = StaticContentProvider.DICTIONARY;
+const lang = computed(() => LanguageProvider.CURR_LANG.value);
+const dictionary = StaticContentProvider.DICTIONARY;
 
-  const geocaches = ref(["loading"]);
-  const currPage = ref(1);
-  const lastPage = ref(1);
+const geocaches = ref([]);
+const loading = ref(true);
+const currPage = ref(1);
+const lastPage = ref(1);
 
-  async function fetchData() {
+async function fetchData() {
+    loading.value = true;
     const pagedResponse = await getAllGeocaches(false, currPage.value);
     if (pagedResponse.data) {
-      geocaches.value = pagedResponse.data;
-      currPage.value = pagedResponse.current_page;
-      lastPage.value = pagedResponse.last_page;
-    } else {
-      geocaches.value = pagedResponse;
+        geocaches.value = pagedResponse.data;
+        currPage.value = pagedResponse.current_page;
+        lastPage.value = pagedResponse.last_page;
+    } else if (Array.isArray(pagedResponse)) {
+        geocaches.value = pagedResponse;
     }
-  }
+    loading.value = false;
+}
 
-  const search = ref("");
+const search = ref("");
 
-  const filteredGeocaches = computed(() => {
-    if (!search.value) {
-      return geocaches.value;
-    }
-
+const filteredGeocaches = computed(() => {
+    if (!search.value) return geocaches.value;
     return geocaches.value.filter(geocache =>
-      geocache.title.toLowerCase().includes(search.value.toLowerCase())
+        (geocache.title || geocache.name)?.toLowerCase().includes(search.value.toLowerCase())
     );
-  });
+});
 
-  function nextPage() {
-    if (currPage.value < lastPage.value) {
-      currPage.value++;
-    }
-  }
+function nextPage() {
+    if (currPage.value < lastPage.value) currPage.value++;
+}
 
-  function prevPage() {
-    if (currPage.value > 1) {
-      currPage.value--;
-    }
-  }
+function prevPage() {
+    if (currPage.value > 1) currPage.value--;
+}
 
-  const loaderActive = ref(false);
-
-  async function initLoaderOnDelay() {
-    await new Promise(r => setTimeout(r, 2500));
-    loaderActive.value = true;
-  }
-
-  onMounted(fetchData);
-  watch(lang, async () => await fetchData());
-  watch(currPage, async () => await fetchData());
-
-  initLoaderOnDelay();
-
-  function extractGeocode(url) {
+function extractGeocode(url) {
+    if (!url) return '';
     return url.split("/").pop();
-  }
+}
+
+// Map cache type to image filename
+function getCacheTypeImage(type) {
+    const typeMap = {
+        'traditional': 'TRADITIONAL',
+        'multi': 'MULTI',
+        'mystery': 'MYSTERY',
+        'letterbox': 'LETTERBOX',
+        'wherigo': 'WHEREIGO',
+        'earthcache': 'EARTH',
+        'virtual': 'VIRTUAL',
+        'event': 'TRADITIONAL',
+        'cito': 'TRADITIONAL',
+        'mega': 'TRADITIONAL',
+        'giga': 'TRADITIONAL',
+        'lab': 'LAB',
+        'webcam': 'WEBCAM'
+    };
+    return typeMap[type?.toLowerCase()] || 'TRADITIONAL';
+}
+
+onMounted(fetchData);
+watch(lang, fetchData);
+watch(currPage, fetchData);
 </script>
 
 <template>
-  <main>
-    <section v-show="geocaches.length !== 0 && geocaches[0] === 'loading'" id=loading>
-      <div v-show="loaderActive" class="initial-loader"></div>
-    </section>
-    <section id="no-geocaches" v-show="geocaches.length === 0">
-      <h2>{{ dictionary.UINoGeocaches[lang] }}</h2>
-      <p>{{ dictionary.UINoGeocachesSubTxt[lang] }}</p>
-    </section>
-    <form v-show="geocaches.length > 0 && geocaches[0] !== 'loading'" method="post" @submit.prevent="" >
-      <div>
-        <input v-model="search" type="search" id="search" name="search" autocomplete="search" required :placeholder="dictionary.FormSearch[lang]">
-      </div>
-    </form>
-    <div id="geocaches" v-if="geocaches.length !== 0 && geocaches[0] !== 'loading'">
-      <table>
-      <thead>
-        <tr>
-          <th scope="col"> </th>
-          <th scope="col">{{ dictionary.GeocacheTitle[lang] }}</th>
-          <th scope="col">{{ dictionary.GeocacheDifficulty[lang] }}</th>
-          <th scope="col">{{ dictionary.GeocacheTerrain[lang] }}</th>
-          <th scope="col">{{ dictionary.GeocacheGeoLink[lang] }}</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="geocache in filteredGeocaches">
-          <td><div><img :src="`/assets/media/cachetypes/${geocache.type}.png`"></div></td>
-          <td>{{ geocache.title }}</td>
-          <td>{{ geocache.difficulty }}</td>
-          <td>{{ geocache.terrain }}</td>
-          <td><a :href="geocache.geolink">{{ extractGeocode(geocache.geolink) }}</a></td>
-        </tr>
-      </tbody>
-    </table>
-    </div>
-    <div id="pager" v-show="geocaches.length > 0 && geocaches[0] !== 'loading' && lastPage > 1">
-      <div class="prev pagerNavBtn" :class="{ disabled: currPage === 1 }" @click="prevPage"></div>
-      <p>{{ currPage }} / {{ lastPage }}</p>
-      <div class="next pagerNavBtn" :class="{ disabled: currPage === lastPage}" @click="nextPage"></div>
-    </div>
-  </main>
+    <main>
+        <section v-if="loading" id="loading">
+            <div class="initial-loader"></div>
+        </section>
+
+        <section v-else-if="geocaches.length === 0" id="no-geocaches">
+            <h2>{{ dictionary.UINoGeocaches?.[lang] }}</h2>
+            <p>{{ dictionary.UINoGeocachesSubTxt?.[lang] }}</p>
+        </section>
+
+        <template v-else>
+            <form method="post" @submit.prevent="">
+                <div>
+                    <input v-model="search" type="search" id="search" name="search" autocomplete="off" :placeholder="dictionary.FormSearch?.[lang]">
+                </div>
+            </form>
+
+            <div id="geocaches">
+                <article v-for="geocache in filteredGeocaches" :key="geocache.id" class="geocache-card">
+                    <div class="card-header">
+                        <img :src="`/assets/media/cachetypes/${getCacheTypeImage(geocache.type)}.png`" :alt="geocache.type" class="cache-icon" />
+                        <h3>{{ geocache.title || geocache.name }}</h3>
+                    </div>
+                    
+                    <div class="rating-row">
+                        <div class="rating-item">
+                            <span class="rating-label">{{ dictionary.GeocacheDifficulty?.[lang] }}</span>
+                            <span class="rating-value">{{ geocache.difficulty }}</span>
+                        </div>
+                        <div class="rating-item">
+                            <span class="rating-label">{{ dictionary.GeocacheTerrain?.[lang] }}</span>
+                            <span class="rating-value">{{ geocache.terrain }}</span>
+                        </div>
+                    </div>
+
+                    <a v-if="geocache.geolink" :href="geocache.geolink" target="_blank" class="geocache-link">
+                        {{ extractGeocode(geocache.geolink) }}
+                    </a>
+                </article>
+            </div>
+
+            <div v-if="filteredGeocaches.length === 0" id="no-results">
+                <p>{{ dictionary.UINoGeocachesSearchResults?.[lang] }}</p>
+            </div>
+
+            <div id="pager" v-if="lastPage > 1">
+                <div class="prev pagerNavBtn" :class="{ disabled: currPage === 1 }" @click="prevPage"></div>
+                <p>{{ currPage }} / {{ lastPage }}</p>
+                <div class="next pagerNavBtn" :class="{ disabled: currPage === lastPage }" @click="nextPage"></div>
+            </div>
+        </template>
+    </main>
 </template>
 
 <style scoped>
-  main {
+main {
     position: relative;
     flex: 1 1 auto;
     height: 100%;
     overflow-y: auto;
-    padding-bottom: 1rem;
-  }
+    padding: 1rem;
+}
 
-  a {
-    text-decoration: underline;
-    color: var(--color-accent-dark);
-  }
-
-  a:hover {
-    font-weight: bold;
-    cursor: pointer;
-  }
-
-  section {
+section {
     height: 70vh;
     max-height: 40rem;
-    max-width: 100rem;
-    margin: 0 auto;
-  }
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
 
-  #loading {
+#loading {
     display: flex;
     justify-content: center;
     align-items: center;
-  }
+}
 
-  #pager {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 2rem;
-    margin-top: 1rem;
-  }
-
-  #pager p {
+#no-geocaches h2, #no-results p {
     text-align: center;
-    font-size: 1rem;
     font-weight: bold;
-    letter-spacing: 0.5rem;
-  }
+    font-size: 1.2rem;
+}
 
-  #pager .pagerNavBtn {
-    width: 2rem;
-    height: 2rem;
-    background-color: var(--color-text);
-    cursor: pointer;
-  }
+#no-geocaches p {
+    text-align: center;
+    margin-top: 0.5rem;
+}
 
-  #pager .pagerNavBtn.next {
-    mask: url(@/assets/media/chevron-right.svg);
-    mask-size: contain;
-    mask-repeat: no-repeat;
-    mask-position: center;
-  }
-
-  #pager .pagerNavBtn.prev {
-    mask: url(@/assets/media/chevron-left.svg);
-    mask-size: contain;
-    mask-repeat: no-repeat;
-    mask-position: center;
-  }
-
-  #pager .pagerNavBtn.disabled {
-    filter: opacity(30%);
-    cursor: auto;
-  }
-
-  form {
+form {
     display: flex;
     justify-content: flex-end;
     padding: 1rem;
-    gap: 1rem;
-  }
+}
 
-  form > div input {
-    width: 20rem;
-    max-width: 95vw;
-  }
-
-  form > div {
+form > div {
     position: relative;
-  }
+}
 
-  form > div::before {
+form > div::before {
     content: '';
     height: 1.3rem;
     width: 1.3rem;
@@ -209,127 +184,137 @@
     mask-size: contain;
     mask-repeat: no-repeat;
     mask-position: center;
-  }
+}
 
-  #no-geocaches {
+form > div input {
+    width: 20rem;
+    max-width: 95vw;
+    padding-left: 2.2rem;
+}
+
+#geocaches {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+    padding: 1rem;
+    max-width: 80rem;
+    margin: 0 auto;
+}
+
+.geocache-card {
+    background: var(--color-background);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.cache-icon {
+    width: 2rem;
+    height: 2rem;
+    flex-shrink: 0;
+}
+
+.card-header h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-text);
+    margin: 0;
+}
+
+.rating-row {
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.rating-item {
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    height: 100%;
-    padding: 0 1rem;
-  }
+    gap: 0.25rem;
+}
 
-  #no-geocaches h2 {
-    text-align: center;
-    font-weight: bold;
-    font-size: 1.2rem;
-  }
+.rating-label {
+    font-size: 0.75rem;
+    color: var(--color-text);
+    opacity: 0.6;
+}
 
-  #no-geocaches p {
-    text-align: center;
-  }
+.rating-value {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-text);
+}
 
-  #no-geocaches a {
+.geocache-link {
+    display: inline-block;
     color: var(--color-accent-dark);
-    text-decoration: none;
-  }
-
-  #no-geocaches a:hover {
     text-decoration: underline;
-    cursor: pointer;
-  }
+    font-size: 0.875rem;
+}
 
-  #geocaches {
-    overflow-x: auto;
-  }
+.geocache-link:hover {
+    font-weight: bold;
+}
 
-  table {
-    min-width: 40rem;
-    width: 70vw;
-    max-width: 80rem;
-    margin: 4rem auto;
-    border: 0.1rem solid var(--color-text);
-    border-collapse: collapse;
-  }
+#no-results {
+    text-align: center;
+    padding: 2rem;
+}
 
-  thead {
-    background-color: var(--color-primary);
-    border: 0.1rem solid var(--color-text);
-    height: 1.75rem;
-  }
-
-  td > div {
+#pager {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 0.2rem;
-  }
+    gap: 2rem;
+    margin-top: 2rem;
+}
 
-  th:first-child {
-    width: 3rem;
-  }
-
-  th:last-child {
-    width: 10rem;
-  }
-
-  th:nth-child(3) {
-    width: 6rem;
-  }
-
-  th:nth-child(4) {
-    width: 6rem;
-  }
-
-  th {
-    color: var(--color-text);
-    padding: 0 0.5rem;
+#pager p {
+    font-size: 1rem;
     font-weight: bold;
-    text-transform: capitalize;
-  }
+    letter-spacing: 0.5rem;
+}
 
-  th, td, tr {
-    border: 0.1rem solid var(--color-text);
-    text-align: center;
-  }
+#pager .pagerNavBtn {
+    width: 2rem;
+    height: 2rem;
+    background-color: var(--color-text);
+    cursor: pointer;
+}
 
-  tr img {
-    max-height: 1.8rem;
-  }
+#pager .pagerNavBtn.next {
+    mask: url(@/assets/media/chevron-right.svg);
+    mask-size: contain;
+    mask-repeat: no-repeat;
+    mask-position: center;
+}
 
-  tbody tr:nth-child(even) {
-    background-color: var(--color-background-2);
-  }
+#pager .pagerNavBtn.prev {
+    mask: url(@/assets/media/chevron-left.svg);
+    mask-size: contain;
+    mask-repeat: no-repeat;
+    mask-position: center;
+}
 
-  @media screen and (max-width: 1000px) {
+#pager .pagerNavBtn.disabled {
+    filter: opacity(30%);
+    cursor: auto;
+}
+
+@media screen and (max-width: 600px) {
     form {
-      justify-content: center;
+        justify-content: center;
     }
-  }
-
-  @media screen and (max-device-width: 800px) {
-    table {
-      table-layout: auto !important;
-      width: auto !important;
-      min-width: auto;
-      max-width: 90vw;
-      font-size: 0.7rem;
-    }
-
-    table tr th:first-child, table tr td:first-child {
-      width: 0.3rem;
-      min-width: 0.3rem;
-    }
-
-    table tr th:nth-child(3), table tr td:nth-child(3), 
-    table tr th:nth-child(4), table tr td:nth-child(4) {
-      word-break: break-all;
-      min-width: 1rem;
-      width: 4.5rem;
-    }
-
-    table tr th:last-child, table tr td:last-child {
-      width: min-content;
+    
+    #geocaches {
+        grid-template-columns: 1fr;
     }
 }
 </style>

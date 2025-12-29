@@ -6,7 +6,7 @@ async function getAllMessages() {
         .sort((a, b) => new Date(a.updated_at) - new Date(b.updated_at))
         .flatMap(message => message.translations.map(translation => ({
             title: translation.title,
-            body: translation.body
+            body: translation.content
         })));
 }
 

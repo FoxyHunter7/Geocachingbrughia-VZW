@@ -1,5 +1,6 @@
 import { StaticContentProvider } from "./StaticContentService";
 import { ref } from 'vue';
+import config from '../data/config';
 
 class LanguageProvider {
     static #CURR_LANG = ref('');

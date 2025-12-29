@@ -1,6 +1,11 @@
 import config from "../data/config.js"
 import LanguageProvider from "./LanguageService.js";
 
+// Helper to get JWT token from localStorage
+function getAuthToken() {
+    return localStorage.getItem('admin_token');
+}
+
 async function fetchFromServer(endpoint, includeCreds = false, page = null, search = "", perPage = null, sortBy = "", sortDirection = "") {
     const queryParams = {
         lang: (includeCreds) ? "" : `?lang=${LanguageProvider.CURR_LANG.value}`,
@@ -17,19 +22,28 @@ async function fetchFromServer(endpoint, includeCreds = false, page = null, sear
         "Accept": "application/json"
     };
 
+    // Add JWT token for authenticated requests
     if (includeCreds) {
-        headers.credentials = "include";
+        const token = getAuthToken();
+        if (token) {
+            headers["Authorization"] = `Bearer ${token}`;
+        }
     }
 
     try {
         const response = await fetch(`${config.apiUrl}${endpoint}${queryParams.all}`, {
             method: "GET",
-            headers: headers,
-            credentials: (includeCreds) ? "include" : "omit"
+            headers: headers
         });
 
+        // Handle auth failures specifically
+        if (response.status === 401 || response.status === 403) {
+            console.error(`Auth failed for endpoint: ${endpoint}`);
+            return { access_denied: true };
+        }
+
         if (!response.ok) {
-            throw new error("Bad fetch response", response);
+            throw new Error("Bad fetch response", response);
         }
 
         return await response.json();
@@ -45,8 +59,12 @@ async function fetchToServer(endpoint, method = "POST", body = "", includeCreds 
             "Accept": "application/json"
         };
 
+        // Add JWT token for authenticated requests
         if (includeCreds) {
-            headers.credentials = "include";
+            const token = getAuthToken();
+            if (token) {
+                headers["Authorization"] = `Bearer ${token}`;
+            }
         }
 
         if (headerContentType) {
@@ -56,12 +74,32 @@ async function fetchToServer(endpoint, method = "POST", body = "", includeCreds 
         const response = await fetch(`${config.apiUrl}${endpoint}`, {
             method: method,
             headers: headers,
-            credentials: (includeCreds) ? "include" : "omit",
             body: body
         });
 
+        // Handle auth failures specifically
+        if (response.status === 401 || response.status === 403) {
+            console.error(`Auth failed for ${method} ${endpoint}`);
+            return {
+                success: false,
+                error: "Unauthorized",
+                access_denied: true
+            };
+        }
+
         if (!response.ok) {
-            throw new Error(`Bad ${method} response: ${response.statusText}`);
+            // Try to get error message from response body
+            let errorData;
+            try {
+                errorData = await response.json();
+            } catch {
+                errorData = null;
+            }
+            return {
+                success: false,
+                error: `Bad ${method} response: ${response.statusText}`,
+                data: errorData
+            };
         }
 
         return {
@@ -69,7 +107,7 @@ async function fetchToServer(endpoint, method = "POST", body = "", includeCreds 
             data: await response.json()
         };
     } catch (err) {
-        console.error(`Failed to ${method} (endpoint: ${endpoint})`);
+        console.error(`Failed to ${method} (endpoint: ${endpoint})`, err);
         return {
             success: false,
             error: err.message
@@ -79,13 +117,44 @@ async function fetchToServer(endpoint, method = "POST", body = "", includeCreds 
 
 async function deleteFromServer(endpoint) {
     try {
+        const headers = {
+            "Accept": "application/json"
+        };
+
+        // Add JWT token for authenticated requests
+        const token = getAuthToken();
+        if (token) {
+            headers["Authorization"] = `Bearer ${token}`;
+        }
+
         const response = await fetch(`${config.apiUrl}${endpoint}`, {
             method: "DELETE",
-            credentials: "include"
+            headers: headers
         });
 
+        // Handle auth failures specifically
+        if (response.status === 401 || response.status === 403) {
+            console.error(`Auth failed for DELETE ${endpoint}`);
+            return {
+                success: false,
+                error: "Unauthorized",
+                access_denied: true
+            };
+        }
+
         if (!response.ok) {
-            throw new Error(`Bad response: ${response.statusText}`);
+            // Try to get error message from response body
+            let errorData;
+            try {
+                errorData = await response.json();
+            } catch {
+                errorData = null;
+            }
+            return {
+                success: false,
+                error: `Bad response: ${response.statusText}`,
+                data: errorData
+            };
         }
 
         return {
@@ -93,7 +162,7 @@ async function deleteFromServer(endpoint) {
             data: await response.json()
         };
     } catch (err) {
-        console.error(`Failed to delete (endpoint: ${endpoint})`);
+        console.error(`Failed to delete (endpoint: ${endpoint})`, err);
         return {
             success: false,
             error: err.message

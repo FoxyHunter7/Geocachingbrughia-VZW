@@ -28,6 +28,8 @@
     "@tiptap/pm": "^2.4.0",
     "@tiptap/starter-kit": "^2.4.0",
     "@tiptap/vue-3": "^2.4.0",
+    "jszip": "^3.10.1",
+    "qrcode": "^1.5.4",
     "vite-plugin-mkcert": "^1.17.5",
     "vue": "^3.4.21",
     "vue-router": "^4.3.0"

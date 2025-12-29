@@ -6,15 +6,33 @@
 
     const emits = defineEmits(['close']);
     const language = computed(() => LanguageProvider.CURR_LANG.value);
+
+    function getFlagUrl(lang) {
+        // Check if API returned a flag_url
+        if (lang.flag_url) {
+            // Local asset paths - use directly
+            if (lang.flag_url.includes('/assets/') || lang.flag_url.includes('fallbackLangFlags')) {
+                return lang.flag_url;
+            }
+            // Otherwise it's an uploaded image
+            return `${config.apiUrl}images/${lang.flag_url}`;
+        }
+        // Check if fallback data has imageUrl  
+        if (lang.imageUrl) {
+            return `/assets/media/${lang.imageUrl}`;
+        }
+        // Default: use local flag based on language code
+        return `/assets/media/fallbackLangFlags/${lang.code}.svg`;
+    }
 </script>
 
 <template>
     <section>
         <div @click="$emit('close')" class="cross-btn"></div>
         <ul>
-            <li v-for="lang in SCP.LANGUAGES" :class="{selected: lang.code === language}">
+            <li v-for="lang in SCP.LANGUAGES" :key="lang.code" :class="{selected: lang.code === language}">
                 <figure @click="LanguageProvider.CURR_LANG = lang.code; $emit('close')">
-                    <img :src="(lang.fallback) ? `/assets/media/${lang.imageUrl}` : `${config.apiUrl}images/${lang.imageUrl}`">
+                    <img :src="getFlagUrl(lang)">
                     <p>{{ lang.name }}</p>
                 </figure>
             </li>

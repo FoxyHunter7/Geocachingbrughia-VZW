@@ -29,6 +29,12 @@
         "FR": "acheter le(s) billet(s)",
         "NL": "ticket(s) kopen"
     },
+    "ButtonViewOnGC": {
+        "DE": "Auf Geocaching.com ansehen",
+        "EN": "View on Geocaching.com",
+        "FR": "Voir sur Geocaching.com",
+        "NL": "Bekijk op Geocaching.com"
+    },
     "ContactCallTxt": {
         "DE": "rufen Sie uns an",
         "EN": "give us a call",
@@ -197,29 +203,77 @@
         "FR": "chargement du contenu du site",
         "NL": "website-inhoud laden"
     },
+    "UILoading": {
+        "DE": "Laden...",
+        "EN": "Loading...",
+        "FR": "Chargement...",
+        "NL": "Laden..."
+    },
+    "UIError": {
+        "DE": "Hoppla!",
+        "EN": "Oops!",
+        "FR": "Oups!",
+        "NL": "Oeps!"
+    },
+    "UIBack": {
+        "DE": "Zurück",
+        "EN": "Back",
+        "FR": "Retour",
+        "NL": "Terug"
+    },
+    "UIStart": {
+        "DE": "Start",
+        "EN": "Start",
+        "FR": "Début",
+        "NL": "Start"
+    },
+    "UIEnd": {
+        "DE": "Ende",
+        "EN": "End",
+        "FR": "Fin",
+        "NL": "Einde"
+    },
+    "UILocation": {
+        "DE": "Ort",
+        "EN": "Location",
+        "FR": "Lieu",
+        "NL": "Locatie"
+    },
     "UINoEvents": {
-        "DE": "Veranstaltungen können im Moment nicht angezeigt werden.",
-        "EN": "Events can not be shown at the moment.",
-        "FR": "Les événements ne peuvent pas être affichés pour le moment.",
-        "NL": "Evenementen kunnen op dit ogenblik niet worden getoond."
+        "DE": "Momentan sind keine Veranstaltungen geplant.",
+        "EN": "There are no events planned at the moment.",
+        "FR": "Il n'y a pas d'événements prévus pour le moment.",
+        "NL": "Er zijn momenteel geen evenementen gepland."
     },
     "UINoEventsSubTxt": {
-        "DE": "Die Veranstaltungsinformationen konnten nicht abgerufen werden.",
-        "EN": "The event information could not be retrieved.",
-        "FR": "Les informations sur les événements n'ont pas pu être récupérées.",
-        "NL": "De informatie over de evenementen kon niet worden opgehaald."
+        "DE": "Schauen Sie später noch einmal vorbei!",
+        "EN": "Check back later!",
+        "FR": "Revenez plus tard!",
+        "NL": "Kijk later nog eens!"
     },
     "UINoGeocaches": {
-        "DE": "Geocaches können im Moment nicht angezeigt werden.",
-        "EN": "Geocaches can not be shown at the moment",
-        "FR": "Les géocaches ne peuvent pas être affichés pour le moment.",
-        "NL": "Geocaches kunnen op dit ogebblik niet worden getoond."
+        "DE": "Momentan gibt es keine Geocaches.",
+        "EN": "There are no geocaches at the moment.",
+        "FR": "Il n'y a pas de géocaches pour le moment.",
+        "NL": "Er zijn momenteel geen geocaches."
     },
     "UINoGeocachesSubTxt": {
-        "DE": "Die Geocache-Informationen konnten nicht abgerufen werden.",
-        "EN": "The geocache information could not be retrieved.",
-        "FR": "Les informations sur les géocaches n'ont pas pu être récupérées.",
-        "NL": "De informatie over de geocaches kon niet worden opgehaald."
+        "DE": "Schauen Sie später noch einmal vorbei!",
+        "EN": "Check back later!",
+        "FR": "Revenez plus tard!",
+        "NL": "Kijk later nog eens!"
+    },
+    "UINoGeocachesSearchResults": {
+        "DE": "Keine Geocaches gefunden",
+        "EN": "No geocaches found",
+        "FR": "Aucune géocache trouvée",
+        "NL": "Geen geocaches gevonden"
+    },
+    "UINoEventsSearchResults": {
+        "DE": "Keine Veranstaltungen gefunden",
+        "EN": "No events found",
+        "FR": "Aucun événement trouvé",
+        "NL": "Geen evenementen gevonden"
     },
     "UINoStoreItems": {
         "DE": "Artikel nicht verfügbar.",
@@ -268,5 +322,35 @@
         "NL": "terrein",
         "FR": "terrain",
         "DE": "Gelände"
+    },
+    "ContactAddress": {
+        "EN": "Korte Kwadeplasstraat 6, 8020 Oostkamp",
+        "NL": "Korte Kwadeplasstraat 6, 8020 Oostkamp",
+        "FR": "Korte Kwadeplasstraat 6, 8020 Oostkamp",
+        "DE": "Korte Kwadeplasstraat 6, 8020 Oostkamp"
+    },
+    "ContactAddressUrl": {
+        "EN": "https://www.google.com/maps/place/Korte+Kwadeplasstraat+6,+8020+Oostkamp",
+        "NL": "https://www.google.com/maps/place/Korte+Kwadeplasstraat+6,+8020+Oostkamp",
+        "FR": "https://www.google.com/maps/place/Korte+Kwadeplasstraat+6,+8020+Oostkamp",
+        "DE": "https://www.google.com/maps/place/Korte+Kwadeplasstraat+6,+8020+Oostkamp"
+    },
+    "ContactPhone1": {
+        "EN": "+32 50 841 331",
+        "NL": "+32 50 841 331",
+        "FR": "+32 50 841 331",
+        "DE": "+32 50 841 331"
+    },
+    "ContactPhone2": {
+        "EN": "+32 487 906 431",
+        "NL": "+32 487 906 431",
+        "FR": "+32 487 906 431",
+        "DE": "+32 487 906 431"
+    },
+    "ContactEmail": {
+        "EN": "info@geocachingbrughia.be",
+        "NL": "info@geocachingbrughia.be",
+        "FR": "info@geocachingbrughia.be",
+        "DE": "info@geocachingbrughia.be"
     }
 }

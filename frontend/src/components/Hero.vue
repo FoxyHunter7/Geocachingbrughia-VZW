@@ -7,12 +7,21 @@
     const lang = computed(() => LanguageProvider.CURR_LANG.value);
     const dictOnFallback = computed(() => StaticContentProvider.DICT_ON_FALLBACK.value);
     const dictionary = StaticContentProvider.DICTIONARY;
+
+    const imageUrl = computed(() => {
+        const imgPath = dictionary.SplashImg?.[lang.value] || '';
+        // If on fallback OR if the image path starts with "static/" (local asset), use local path
+        if (dictOnFallback.value || imgPath.startsWith('static/')) {
+            return `/assets/media/${imgPath || 'static/bertje.jpg'}`;
+        }
+        return `${config.apiUrl}images/${imgPath}`;
+    });
 </script>
 
 <template>
     <section>
         <div>
-            <img :src="(dictOnFallback) ? `/assets/media/static/bertje.jpg` : `${config.apiUrl}images/${dictionary.SplashImg[lang]}`">
+            <img :src="imageUrl">
         </div>
         <div>
             <h2>{{ dictionary.SplashTitle[lang] }}</h2>

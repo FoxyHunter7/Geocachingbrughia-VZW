@@ -29,8 +29,8 @@
                 <RouterLink @click="if (isMobile) {isNavOpen = !isNavOpen; $emit('menuStateChange', isNavOpen)}" :to="{ path: SCP.constructRoute(lang, 'NavGeocaches') }">{{ dictionary.NavGeocaches[lang] }}</RouterLink>
                 <RouterLink class="icon-external-link" @click="if (isMobile) {isNavOpen = !isNavOpen; $emit('menuStateChange', isNavOpen)}" :to="{ path: SCP.constructRoute(lang, 'NavShop') }">{{ dictionary.NavShop[lang] }}</RouterLink>
             </nav>
-            <figure @click="$emit('langSelector')" id="lang-selector">
-                <img :src="(langInfo.fallback) ? `/assets/media/${langInfo.imageUrl}` : `${config.apiUrl}images/${langInfo.imageUrl}`">
+            <figure v-if="langInfo" @click="$emit('langSelector')" id="lang-selector">
+                <img :src="(langInfo.fallback || !langInfo.imageUrl) ? `/assets/media/${langInfo.imageUrl || 'fallbackLangFlags/EN.svg'}` : `${config.apiUrl}images/${langInfo.imageUrl}`">
                 <p>{{ langInfo.name }}</p>
             </figure>
         </Teleport>

@@ -21,7 +21,7 @@
         subject.value = "";
         message.value = "";
 
-        if (response.success && response.data && response.data.data) {
+        if (response.success && response.data && response.data.status) {
             lastSubmitResult.value = dictionary.FormSuccess[lang.value];
         } else {
             lastSubmitResult.value = dictionary.FormFailed[lang.value];
@@ -53,18 +53,18 @@
                 </div>
             </form>
             <ul :class="{'alone': scsErrors}">
-                <li>
+                <li v-if="dictionary.ContactAddress?.[lang]">
                     <p>{{ dictionary.ContactPostalMailTxt[lang] }}</p>
-                    <a target="_blank" href="https://www.google.com/maps/place/Korte+Kwadeplasstraat+6,+8020+Oostkamp/@51.1593091,3.2333893,17z/data=!3m1!4b1!4m6!3m5!1s0x47c3506bbbd8d363:0xbed866c1f1258d86!8m2!3d51.1593091!4d3.2359696!16s%2Fg%2F11rcy98rq8?entry=ttu">Korte Kwadeplasstraat 6, 8020 Oostkamp</a>
+                    <a target="_blank" :href="dictionary.ContactAddressUrl?.[lang] || '#'">{{ dictionary.ContactAddress[lang] }}</a>
                 </li>
-                <li>
+                <li v-if="dictionary.ContactPhone1?.[lang] || dictionary.ContactPhone2?.[lang]">
                     <p>{{ dictionary.ContactCallTxt[lang] }}</p>
-                    <a href="tel:+32 50 841 331">+32 50 841 331</a>
-                    <a href="tel:+32 487 906 431">+32 487 906 431</a>
+                    <a v-if="dictionary.ContactPhone1?.[lang]" :href="`tel:${dictionary.ContactPhone1[lang]}`">{{ dictionary.ContactPhone1[lang] }}</a>
+                    <a v-if="dictionary.ContactPhone2?.[lang]" :href="`tel:${dictionary.ContactPhone2[lang]}`">{{ dictionary.ContactPhone2[lang] }}</a>
                 </li>
-                <li>
+                <li v-if="dictionary.ContactEmail?.[lang]">
                     <p>{{ dictionary.ContactMailTxt[lang] }}</p>
-                    <a href="mailto:info@geocachingbrughia.be">info@geocachingbrughia.be</a>
+                    <a :href="`mailto:${dictionary.ContactEmail[lang]}`">{{ dictionary.ContactEmail[lang] }}</a>
                 </li>
             </ul>
         </div>

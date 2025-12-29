@@ -47,10 +47,17 @@ class StaticContentProvider {
             const response = await fetch(`${config.apiUrl}languages`);
 
             if (!response.ok) {
-                throw new error("Bad fetch response", response);
+                throw new Error("Bad fetch response", response);
             }
 
-            StaticContentProvider.LANGUAGES = await response.json();
+            const languages = await response.json();
+
+            // If API returns empty array, use fallback
+            if (!languages || languages.length === 0) {
+                throw new Error("Empty languages from API");
+            }
+
+            StaticContentProvider.LANGUAGES = languages;
         } catch (err) {
             console.error("Failed to fetch (site languages)");
             this.#setErrors(err);
@@ -63,10 +70,15 @@ class StaticContentProvider {
             const response = await fetch(`${config.apiUrl}static`);
 
             if (!response.ok) {
-                throw new error("Bad fetch response", response);
+                throw new Error("Bad fetch response", response);
             }
 
             const unformattedDictionary = await response.json();
+
+            // If API returns empty array, use fallback
+            if (!unformattedDictionary || unformattedDictionary.length === 0) {
+                throw new Error("Empty static content from API");
+            }
 
             unformattedDictionary.forEach(item => {
                 StaticContentProvider.DICTIONARY[item.property] = {}

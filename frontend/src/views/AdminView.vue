@@ -1,5 +1,5 @@
 <script setup>
-    import { getProfileData, login, logout} from '@/services/AdminService';
+    import { getProfileData, login, logout, changePassword } from '@/services/AdminService';
     import { onMounted, ref } from 'vue';
     import { useRouter } from 'vue-router';
 
@@ -7,19 +7,29 @@
 
     const doneChecking = ref(false);
     const loggedIn = ref(false);
+    const needsPasswordUpdate = ref(false);
     const userProfile = ref({});
 
     async function setProfileData() {
         const response = await getProfileData();
 
-        if (response.status) {
+        if (response && response.status) {
             userProfile.value = response.data;
             loggedIn.value = true;
+            
+            // Check if password update is required
+            if (response.data.needs_password_update) {
+                needsPasswordUpdate.value = true;
+            } else {
+                // Redirect to new dashboard when logged in and no password change needed
+                router.push({ name: 'adminDashboard' });
+            }
         }
 
         doneChecking.value = true;
     }
 
+    // Login form fields
     const email = ref("");
     const password = ref("");
     const emailErrors = ref([]);
@@ -27,10 +37,25 @@
     const loginFailedMessage = ref("");
 
     async function tryToLogin() {
+        emailErrors.value = [];
+        passwordErrors.value = [];
+        loginFailedMessage.value = "";
+
         const response = await login(email.value, password.value);
 
-        if (response.data.status) {
-            setProfileData();
+        if (response.data && response.data.status && response.data.token) {
+            // Store the JWT token
+            localStorage.setItem('admin_token', response.data.token);
+            userProfile.value = response.data.user;
+            loggedIn.value = true;
+            
+            // Check if password update is required
+            if (response.data.needs_password_update) {
+                needsPasswordUpdate.value = true;
+            } else {
+                // Redirect to dashboard
+                router.push({ name: 'adminDashboard' });
+            }
         } else if (response.data && response.data.errors) {
             if (response.data.errors.email) {
                 emailErrors.value = response.data.errors.email;
@@ -38,19 +63,67 @@
             if (response.data.errors.password) {
                 passwordErrors.value = response.data.errors.password;
             }
-        } else if (response.data.message) {
+        } else if (response.data && response.data.message) {
             loginFailedMessage.value = response.data.message;
+        } else {
+            loginFailedMessage.value = "Er ging iets mis bij het inloggen.";
+        }
+    }
+
+    // Password change form fields
+    const currentPassword = ref("");
+    const newPassword = ref("");
+    const newPasswordConfirm = ref("");
+    const passwordChangeErrors = ref({});
+    const passwordChangeMessage = ref("");
+
+    async function tryChangePassword() {
+        passwordChangeErrors.value = {};
+        passwordChangeMessage.value = "";
+
+        // Validate
+        if (!currentPassword.value) {
+            passwordChangeErrors.value.current = ["Huidig wachtwoord is verplicht"];
+        }
+        if (newPassword.value.length < 8) {
+            passwordChangeErrors.value.new = ["Nieuw wachtwoord moet minimaal 8 tekens zijn"];
+        }
+        if (newPassword.value !== newPasswordConfirm.value) {
+            passwordChangeErrors.value.confirm = ["Wachtwoorden komen niet overeen"];
+        }
+
+        if (Object.keys(passwordChangeErrors.value).length > 0) {
+            return;
+        }
+
+        const response = await changePassword(currentPassword.value, newPassword.value);
+
+        if (response.data && response.data.status && response.data.token) {
+            // Update the token with the new one (without needs_password_update)
+            localStorage.setItem('admin_token', response.data.token);
+            needsPasswordUpdate.value = false;
+            // Redirect to dashboard
+            router.push({ name: 'adminDashboard' });
+        } else if (response.data && response.data.errors) {
+            passwordChangeErrors.value = response.data.errors;
+        } else if (response.data && response.data.message) {
+            passwordChangeMessage.value = response.data.message;
+        } else {
+            passwordChangeMessage.value = "Er ging iets mis bij het wijzigen van het wachtwoord.";
         }
     }
 
     async function tryToLogout() {
         const response = await logout();
 
-        if (response.status) {
-            userProfile.value = {};
-            loggedIn.value = false;
-        } else {
-            window.alert("Er is iets foutgelopen bij het uitloggen (geen antwoord teruggekregen van de server). \n Refresh de pagina.");
+        // Clear token regardless of response
+        localStorage.removeItem('admin_token');
+        userProfile.value = {};
+        loggedIn.value = false;
+        needsPasswordUpdate.value = false;
+        
+        if (!response.success) {
+            console.warn("Logout request failed, but token cleared locally");
         }
     }
 
@@ -61,31 +134,62 @@
     <section v-if="!loggedIn && !doneChecking" id="loader">
         <p>Even geduld, we kijken of u al ingelogd bent...</p>
     </section>
+    
+    <!-- Password change required form -->
+    <section v-if="loggedIn && needsPasswordUpdate" id="password-change">
+        <h1>Wachtwoord Wijzigen Vereist</h1>
+        <p class="password-intro">U moet uw wachtwoord wijzigen voordat u verder kunt.</p>
+        <form method="post" @submit.prevent="tryChangePassword">
+            <div>
+                <label for="current-password">Huidig Wachtwoord</label>
+                <input v-model="currentPassword" type="password" id="current-password" name="current-password" autocomplete="current-password" placeholder="Tijdelijk wachtwoord uit logs">
+            </div>
+            <div>
+                <label for="new-password">Nieuw Wachtwoord</label>
+                <input v-model="newPassword" type="password" id="new-password" name="new-password" autocomplete="new-password" placeholder="Minimaal 8 tekens">
+            </div>
+            <div>
+                <label for="new-password-confirm">Bevestig Nieuw Wachtwoord</label>
+                <input v-model="newPasswordConfirm" type="password" id="new-password-confirm" name="new-password-confirm" autocomplete="new-password" placeholder="Herhaal nieuw wachtwoord">
+            </div>
+            <input type="submit" value="Wachtwoord Wijzigen">
+        </form>
+        <div v-if="passwordChangeMessage || Object.keys(passwordChangeErrors).length > 0" id="errors">
+            <p v-if="passwordChangeMessage">{{ passwordChangeMessage }}</p>
+            <ul v-for="(errors, field) in passwordChangeErrors" :key="field">
+                <li v-for="error in errors" :key="error">{{ error }}</li>
+            </ul>
+        </div>
+        <button type="button" @click="tryToLogout" class="logout-btn">Uitloggen</button>
+    </section>
+
+    <!-- Regular login form -->
     <section v-if="!loggedIn && doneChecking" id="login">
         <h1>Admin Login</h1>
         <form method="post" @submit.prevent="tryToLogin">
             <div>
-                <label for="email">Email</label>
-                <input v-model="email" type="email" id="email" name="email" autocomplete="email">
+                <label for="email">Email / Gebruikersnaam</label>
+                <input v-model="email" type="text" id="email" name="email" autocomplete="username">
             </div>
             <div>
-                <label for="password">Password</label>
+                <label for="password">Wachtwoord</label>
                 <input v-model="password" type="password" id="password" name="password" autocomplete="current-password">
             </div>
             <input type="submit" value="Inloggen">
         </form>
-        <div id="errors">
-            <p v-show="loginFailedMessage">{{ loginFailedMessage }}</p>
-            <ul v-show="emailErrors.length > 0">
-                <li v-for="error in emailErrors">{{ error }}</li>
+        <div v-if="loginFailedMessage || emailErrors.length > 0 || passwordErrors.length > 0" id="errors">
+            <p v-if="loginFailedMessage">{{ loginFailedMessage }}</p>
+            <ul v-if="emailErrors.length > 0">
+                <li v-for="error in emailErrors" :key="error">{{ error }}</li>
             </ul>
-            <ul v-show="passwordErrors.length> 0">
-                <li v-for="error in passwordErrors">{{ error }}</li>
+            <ul v-if="passwordErrors.length > 0">
+                <li v-for="error in passwordErrors" :key="error">{{ error }}</li>
             </ul>
         </div>
         <p id="login-cookie-notice">Door in te loggen in het admin-paneel gaat u ermee akkoord dat er cookies, essentieel voor de login-functionaliteit, gebruikt zullen worden.</p>
     </section>
-    <header v-show="loggedIn">
+    
+    <header v-show="loggedIn && !needsPasswordUpdate">
         <img src="@/assets/media/logo-full-black.webp" class="logo">
         <article id="userinfo">
             <div>
@@ -95,7 +199,7 @@
             <button type="button" @click="tryToLogout">Uitloggen</button>
         </article>
     </header>
-    <main v-show="loggedIn" id="admin-dash">
+    <main v-show="loggedIn && !needsPasswordUpdate" id="admin-dash">
         <section>
             <h2>website inhoud</h2>
             <div>
@@ -115,14 +219,10 @@
                     <div class="icon icon-msg"></div>
                     <p>Berichten</p>
                 </figure>
-                <!--<figure @click="() => router.push('adminShop')">
-                    <div class="icon icon-shop"></div>
-                    <p>Webshop</p>
-                </figure>-->
             </div>
         </section>
         <section>
-            <h2>Technisch  & Andere</h2>
+            <h2>Technisch & Andere</h2>
             <div>
                 <figure @click="() => router.push({ name: 'adminStatic' })">
                     <div class="icon icon-static"></div>
@@ -142,234 +242,293 @@
 </template>
 
 <style scoped>
-    #loader, #login {
-        height: 100vh;
-        width: 100vw;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-    }
+#loader {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: var(--admin-bg, #f8fafc);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    color: var(--admin-text-secondary, #64748b);
+}
 
-    h1 {
-        font-weight: bold;
-        text-transform: capitalize;
-        margin-bottom: 2dvh;
-    }
+#loader::before {
+    content: '';
+    width: 2rem;
+    height: 2rem;
+    border: 3px solid var(--admin-border, #e2e8f0);
+    border-top-color: var(--admin-primary, #0d9488);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 1rem;
+}
 
-    form {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 1rem;
-    }
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
 
-    form div {
-        display: flex;
-        flex-direction: column;
-        gap: 0.2rem;
-    }
+#login, #password-change {
+    max-width: 420px;
+    margin: 0 auto;
+    padding: 2.5rem;
+    background: var(--admin-surface, #ffffff);
+    border-radius: var(--admin-radius-lg, 0.75rem);
+    box-shadow: var(--admin-shadow-lg, 0 10px 15px -3px rgb(0 0 0 / 0.1));
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
 
-    form label {
-        text-transform: capitalize;
-    }
+#login h1, #password-change h1 {
+    text-align: center;
+    margin-bottom: 2rem;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--admin-text, #1e293b);
+}
 
-    form > div input {
-        width: 20rem;
-        max-width: 90vw;
-    }
+#password-change h1 {
+    font-size: 1.25rem;
+}
 
-    form input {
-        height: 2rem;
-        border-radius: 0.3rem;
-        border: solid 0.1rem var(--color-text);
-        outline: none;
-        font-family: inherit;
-        font-size: 0.85rem;
-        box-sizing: border-box;
-        background-color: var(--color-background);
-        color: var(--color-text)
-    }
+.password-intro {
+    text-align: center;
+    margin-bottom: 1rem;
+    color: var(--admin-text-secondary, #64748b);
+    font-size: 0.9375rem;
+}
 
-    form input[type="submit"] {
-        background-color: var(--color-secondary);
-        border: none;
-        width: 9rem;
-        height: 2rem;
-        font-family: inherit;
-        border-radius: 0.4rem;
-        box-shadow: var(--color-background2) 0.5rem 0.5rem;
-        text-transform: capitalize;
-        font-weight: bold;
-        scale: 100%;
-        transition: scale 0.15s;
-        margin-top: 2rem;
-    }
+.password-hint {
+    font-size: 0.8125rem;
+    color: var(--admin-text-secondary, #64748b);
+    background: var(--admin-warning-bg, #fffbeb);
+    padding: 0.75rem 1rem;
+    border-radius: var(--admin-radius, 0.5rem);
+    margin-bottom: 1.5rem;
+    text-align: center;
+    border: 1px solid rgba(245, 158, 11, 0.2);
+}
 
-    form input[type="submit"]:hover {
-        cursor: pointer;
-        scale: 103%;
-        transition: scale 0.25s;
-    }
+form div {
+    margin-bottom: 1.25rem;
+}
 
-    #login-cookie-notice {
-        position: absolute;
-        bottom: 0.5rem;
-        color: var(--color-text);
-        opacity: 50%;
-    }
+form label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    font-size: 0.875rem;
+    color: var(--admin-text, #1e293b);
+}
 
-    #errors {
-        margin-top: 1rem;
-    }
+form input[type="text"],
+form input[type="email"],
+form input[type="password"] {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--admin-border, #e2e8f0);
+    border-radius: var(--admin-radius, 0.5rem);
+    font-size: 0.9375rem;
+    background: var(--admin-surface, #ffffff);
+    color: var(--admin-text, #1e293b);
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
 
-    header {
-        padding: 0.5rem;
-        display: flex;
-        justify-content: space-between
-    }
+form input[type="text"]:focus,
+form input[type="email"]:focus,
+form input[type="password"]:focus {
+    outline: none;
+    border-color: var(--admin-primary, #0d9488);
+    box-shadow: 0 0 0 3px var(--admin-primary-bg, rgba(13, 148, 136, 0.1));
+}
 
-    header .logo {
-        height: 3rem;
-    }
+form input[type="text"]::placeholder,
+form input[type="email"]::placeholder,
+form input[type="password"]::placeholder {
+    color: var(--admin-text-muted, #94a3b8);
+}
 
-    header #userinfo {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-    }
+form input[type="submit"] {
+    width: 100%;
+    padding: 0.875rem 1rem;
+    background: var(--admin-primary, #0d9488);
+    color: white;
+    border: none;
+    border-radius: var(--admin-radius, 0.5rem);
+    font-size: 0.9375rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.15s ease;
+    margin-top: 0.5rem;
+}
 
-    header #userinfo p {
-        text-align: end;
-    }
+form input[type="submit"]:hover {
+    background: var(--admin-primary-dark, #0f766e);
+}
 
-    header button {
-        background-color: var(--color-primary);
-        color: var(--color-text3);
-        font-weight: bold;
-        padding: 0.4rem 1.5rem;
-        text-decoration: none;
-        border-radius: 0.4rem;
-        transform: scale(100%);
-        transition: transform 0.15s;
-    }
+#errors {
+    margin-top: 1rem;
+    padding: 0.75rem 1rem;
+    background: var(--admin-danger-bg, #fef2f2);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    border-radius: var(--admin-radius, 0.5rem);
+    color: var(--admin-danger, #ef4444);
+    font-size: 0.875rem;
+}
 
-    header button:hover {
-        cursor: pointer;
-        transform: scale(103%);
-        transition: transform 0.25s;
-    }
+#errors:empty {
+    display: none;
+}
 
-    #admin-dash {
-        height: 100%;
-        margin: 2rem auto;
-        width: fit-content;
-        max-width: 90vw;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-    }
+#errors ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
 
-    #admin-dash section {
-        margin: 0 1rem 3rem 1rem;
-    }
+#errors ul li {
+    padding: 0.25rem 0;
+}
 
-    #admin-dash section h2 {
-        text-transform: capitalize;
-        font-size: 1.5rem;
-        font-weight: bold;
-        margin-bottom: 0.5rem;
-    }
+#login-cookie-notice {
+    margin-top: 1.5rem;
+    font-size: 0.75rem;
+    color: var(--admin-text-muted, #94a3b8);
+    text-align: center;
+    line-height: 1.5;
+}
 
-    #admin-dash section div {
-        display: flex;
-        align-items: center;
-        justify-content: flex-start;
-        flex-wrap: wrap;
-        gap: 2rem;
-    }
+.logout-btn {
+    width: 100%;
+    margin-top: 1.5rem;
+    padding: 0.75rem 1rem;
+    background: var(--admin-surface, #ffffff);
+    color: var(--admin-text-secondary, #64748b);
+    border: 1px solid var(--admin-border, #e2e8f0);
+    border-radius: var(--admin-radius, 0.5rem);
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
 
-    #admin-dash section figure {
-        width: 10rem;
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-        align-items: center;
-        padding: 1rem;
-        text-align: center;
-    }
+.logout-btn:hover {
+    background: var(--admin-surface-hover, #f1f5f9);
+    border-color: var(--admin-text-muted, #94a3b8);
+}
 
-    #admin-dash section figure:hover {
-        cursor: pointer;
-    }
+/* Background for auth pages */
+#login, #password-change {
+    background: var(--admin-surface, #ffffff);
+}
 
-    #admin-dash section figure:hover div.icon {
-        background-color: var(--color-primary);
-        transform: scale(105%);
-        transition: transform 0.2s;
-    }
+body:has(#login), body:has(#password-change) {
+    background: var(--admin-bg, #f8fafc);
+}
 
-    #admin-dash div.icon {
-        width: 3rem;
-        height: 3rem;
-        background-color: var(--color-text);
-        transform: scale(100%);
-        transition: transform 0.2s;
-    }
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+    background: var(--admin-surface, #ffffff);
+    box-shadow: var(--admin-shadow, 0 1px 3px 0 rgb(0 0 0 / 0.1));
+    border-bottom: 1px solid var(--admin-border, #e2e8f0);
+}
 
-    div.icon-event {
-        mask: url(@/assets/media/calendar.svg);
-        mask-size: contain;
-        mask-repeat: no-repeat;
-        mask-position: center;
-    }
+header .logo {
+    height: 50px;
+}
 
-    div.icon-cache {
-        mask: url(@/assets/media/box.svg);
-        mask-size: contain;
-        mask-repeat: no-repeat;
-        mask-position: center;
-    }
+#userinfo {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
 
-    div.icon-social {
-        mask: url(@/assets/media/share-2.svg);
-        mask-size: contain;
-        mask-repeat: no-repeat;
-        mask-position: center;
-    }
+#userinfo div p {
+    margin: 0;
+    color: var(--admin-text, #1e293b);
+}
 
-    div.icon-msg {
-        mask: url(@/assets/media/message-square.svg);
-        mask-size: contain;
-        mask-repeat: no-repeat;
-        mask-position: center;
-    }
+#userinfo div p:last-child {
+    font-size: 0.875rem;
+    color: var(--admin-text-muted, #94a3b8);
+}
 
-    div.icon-shop {
-        mask: url(@/assets/media/shopping-cart.svg);
-        mask-size: contain;
-        mask-repeat: no-repeat;
-        mask-position: center;
-    }
+#userinfo button {
+    padding: 0.5rem 1rem;
+    background: var(--admin-danger, #ef4444);
+    color: white;
+    border: none;
+    border-radius: var(--admin-radius, 0.5rem);
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
 
-    div.icon-static {
-        mask: url(@/assets/media/file-text.svg);
-        mask-size: contain;
-        mask-repeat: no-repeat;
-        mask-position: center;
-    }
+#userinfo button:hover {
+    background: #dc2626;
+}
 
-    div.icon-lang {
-        mask: url(@/assets/media/book-open.svg);
-        mask-size: contain;
-        mask-repeat: no-repeat;
-        mask-position: center;
-    }
+#admin-dash {
+    padding: 2rem;
+    background: var(--admin-bg, #f8fafc);
+    min-height: calc(100vh - 82px);
+}
 
-    div.icon-mail {
-        mask: url(@/assets/media/mail.svg);
-        mask-size: contain;
-        mask-repeat: no-repeat;
-        mask-position: center;
-    }
+#admin-dash section {
+    margin-bottom: 2rem;
+}
+
+#admin-dash h2 {
+    text-transform: uppercase;
+    color: var(--admin-text-secondary, #64748b);
+    margin-bottom: 1rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+}
+
+#admin-dash section > div {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+#admin-dash figure {
+    width: 150px;
+    padding: 1.5rem;
+    background: var(--admin-surface, #ffffff);
+    border-radius: var(--admin-radius-lg, 0.75rem);
+    box-shadow: var(--admin-shadow, 0 1px 3px 0 rgb(0 0 0 / 0.1));
+    border: 1px solid var(--admin-border, #e2e8f0);
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+    margin: 0;
+}
+
+#admin-dash figure:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--admin-shadow-md, 0 4px 6px -1px rgb(0 0 0 / 0.1));
+    border-color: var(--admin-primary, #0d9488);
+}
+
+#admin-dash figure .icon {
+    width: 50px;
+    height: 50px;
+    margin: 0 auto 1rem;
+    background: var(--admin-primary, #0d9488);
+    border-radius: var(--admin-radius, 0.5rem);
+}
+
+#admin-dash figure p {
+    margin: 0;
+    font-size: 0.875rem;
+    color: var(--admin-text, #1e293b);
+    font-weight: 500;
+}
 </style>

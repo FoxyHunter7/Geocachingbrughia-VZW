@@ -3,6 +3,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import HomeView from '@/views/HomeView.vue';
 import NotFoundView from '@/views/NotFoundView.vue';
 import EventsView from '@/views/EventsView.vue';
+import EventDetailView from '@/views/EventDetailView.vue';
 import GeocachesView from '@/views/GeocachesView.vue';
 import ShopView from '@/views/ShopView.vue';
 import AdminView from '@/views/AdminView.vue';
@@ -12,7 +13,9 @@ import AdminSocialsView from "@/views/AdminSocialsView.vue";
 import AdminMessagesView from "@/views/AdminMessagesView.vue";
 import AdminStaticView from "@/views/AdminStaticView.vue";
 import AdminLanguagesView from "@/views/AdminLanguagesView.vue";
-import AdminContactFormView from "@/views/AdminContactFormView.vue";
+import AdminContactsView from "@/views/AdminContactsView.vue";
+import AdminDashboardView from "@/views/AdminDashboardView.vue";
+import AdminUsersView from "@/views/AdminUsersView.vue";
 import { StaticContentProvider } from '@/services/StaticContentService';
 import { LanguageProvider } from '@/services/LanguageService';
 
@@ -49,6 +52,12 @@ export default function setupRouter() {
         alias: StaticContentProvider.ROUTES.navEvents.aliases
       },
       {
+        path: '/event/:uuid',
+        name: "eventDetail",
+        props: true,
+        component: EventDetailView
+      },
+      {
         path: StaticContentProvider.ROUTES.navGeocaches.path,
         name: "geocaches",
         props: true,
@@ -67,6 +76,12 @@ export default function setupRouter() {
         name: "admin",
         props: false,
         component: AdminView
+      },
+      {
+        path: '/admin/dashboard',
+        name: "adminDashboard",
+        props: false,
+        component: AdminDashboardView
       },
       {
         path: '/admin/events',
@@ -105,10 +120,16 @@ export default function setupRouter() {
         component: AdminLanguagesView
       },
       {
-        path: '/admin/contact-form',
-        name: "adminContactForm",
+        path: '/admin/contacts',
+        name: "adminContacts",
         props: false,
-        component: AdminContactFormView
+        component: AdminContactsView
+      },
+      {
+        path: '/admin/users',
+        name: "adminUsers",
+        props: false,
+        component: AdminUsersView
       },
       {
         path: '/:pathMatch(.*)',

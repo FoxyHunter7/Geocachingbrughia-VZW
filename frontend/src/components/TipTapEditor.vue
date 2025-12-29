@@ -1,5 +1,6 @@
 <script setup>
     import { useEditor, EditorContent, generateHTML } from '@tiptap/vue-3';
+    import { watch } from 'vue';
     import Document from '@tiptap/extension-document';
     import Paragraph from '@tiptap/extension-paragraph';
     import Text from '@tiptap/extension-text';
@@ -16,6 +17,28 @@
     import TableHeader from '@tiptap/extension-table-header';
     import TableRow from '@tiptap/extension-table-row';
 
+    const extensions = [
+        Document,
+        Paragraph,
+        Text,
+        Bold,
+        Italic,
+        Underline,
+        Link.configure({
+            openOnClick: false,
+        }),
+        BulletList,
+        ListItem,
+        Strike,
+        Gapcursor,
+        Table.configure({
+            resizable: true,
+        }),
+        TableRow,
+        TableHeader,
+        TableCell
+    ];
+
     const props = defineProps({
         content: String,
         editable: Boolean,
@@ -23,52 +46,36 @@
     });
 
     function parseContent(content) {
-        return generateHTML(JSON.parse(content), [
-            Document,
-            Paragraph,
-            Text,
-            Bold,
-            Italic,
-            Underline,
-            Link,
-            BulletList,
-            ListItem,
-            Strike,
-            Gapcursor,
-            Table.configure({
-                resizable: false,
-            }),
-            TableRow,
-            TableHeader,
-            TableCell
-        ]);
-    };
+        if (!content) return '<p></p>';
+        
+        try {
+            const parsed = JSON.parse(content);
+            return generateHTML(parsed, extensions);
+        } catch (e) {
+            // If JSON parsing fails, return content as-is or empty
+            return content || '<p></p>';
+        }
+    }
 
     const editor = useEditor({
-        extensions: [
-            Document,
-            Paragraph,
-            Text,
-            Bold,
-            Italic,
-            Underline,
-            Link,
-            BulletList,
-            ListItem,
-            Strike,
-            Gapcursor,
-            Table.configure({
-                resizable: true,
-            }),
-            TableRow,
-            TableHeader,
-            TableCell
-        ],
+        extensions,
         editable: props.editable,
         content: parseContent(props.content)
     });
 
+    // Watch for content changes from parent
+    watch(() => props.content, (newContent) => {
+        if (editor.value && newContent !== undefined) {
+            const currentContent = JSON.stringify(editor.value.getJSON());
+            // Only update if content is different to avoid cursor reset
+            if (newContent !== currentContent) {
+                editor.value.commands.setContent(parseContent(newContent));
+            }
+        }
+    });
+
     const getContent = () => {
+        if (!editor.value) return { lang_code: props.langCode, description: '' };
         return {
             lang_code: props.langCode,
             description: JSON.stringify(editor.value.getJSON())
@@ -97,86 +104,54 @@
         <div v-if="editor" class="menu">
             <div class="button-group">
                 <button type="button" @click="editor.chain().focus().toggleBold().run()" :class="{ 'is-active': editor.isActive('bold') }">
-                    Bold
+                    Vet
                 </button>
                 <button type="button" @click="editor.chain().focus().toggleItalic().run()" :class="{ 'is-active': editor.isActive('italic') }">
-                    Italic
+                    Cursief
                 </button>
                 <button type="button" @click="editor.chain().focus().toggleStrike().run()" :class="{ 'is-active': editor.isActive('strike') }">
-                    Strike
+                    Doorhalen
                 </button>
                 <button type="button" @click="setLink" :class="{ 'is-active': editor.isActive('link') }">
-                    Set link
+                    Link toevoegen
                 </button>
                 <button type="button" @click="editor.chain().focus().unsetLink().run()" :disabled="!editor.isActive('link')">
-                    Unset link
+                    Link verwijderen
                 </button>
             </div>
-            <br>
-            <div>
-                <div class="button-group">
-                    <button @click="editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()">
-                        Insert table
-                    </button>
-                    <button @click="editor.chain().focus().deleteTable().run()" class="btn-red">
-                        Delete table
-                    </button>
-                </div>
-                <div class="button-group">
-                    <button @click="editor.chain().focus().addColumnBefore().run()">
-                      Add column before
-                    </button>
-                    <button @click="editor.chain().focus().addColumnAfter().run()">
-                      Add column after
-                    </button>
-                    <button @click="editor.chain().focus().deleteColumn().run()" class="btn-red">
-                      Delete column
-                    </button>
-                </div>
-                <div class="button-group">
-                    <button @click="editor.chain().focus().addRowBefore().run()">
-                      Add row before
-                    </button>
-                    <button @click="editor.chain().focus().addRowAfter().run()">
-                      Add row after
-                    </button>
-                    <button @click="editor.chain().focus().deleteRow().run()" class="btn-red">
-                      Delete row
-                    </button>
-                </div>
-                <br>
-                <div class="button-group">
-                    <button @click="editor.chain().focus().mergeCells().run()">
-                      Merge cells
-                    </button>
-                    <button @click="editor.chain().focus().splitCell().run()">
-                      Split cell
-                    </button>
-                    <button @click="editor.chain().focus().toggleHeaderColumn().run()">
-                      Toggle header column
-                    </button>
-                    <button @click="editor.chain().focus().toggleHeaderRow().run()">
-                      Toggle header row
-                    </button>
-                    <button @click="editor.chain().focus().toggleHeaderCell().run()">
-                      Toggle header cell
-                    </button>
-                    <button @click="editor.chain().focus().mergeOrSplit().run()">
-                      Merge or split
-                    </button>
-                    <button @click="editor.chain().focus().setCellAttribute('colspan', 2).run()">
-                      Set cell attribute
-                    </button>
-                    <button @click="editor.chain().focus().fixTables().run()">
-                      Fix tables
-                    </button>
-                    <button @click="editor.chain().focus().goToNextCell().run()">
-                      Go to next cell
-                    </button>
-                    <button @click="editor.chain().focus().goToPreviousCell().run()">
-                      Go to previous cell
-                    </button>
-                </div>
+            <div class="button-group">
+                <button @click="editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()">
+                    Tabel invoegen
+                </button>
+                <button @click="editor.chain().focus().deleteTable().run()" class="btn-red">
+                    Tabel verwijderen
+                </button>
+                <button @click="editor.chain().focus().addColumnBefore().run()">
+                    Kolom voor
+                </button>
+                <button @click="editor.chain().focus().addColumnAfter().run()">
+                    Kolom na
+                </button>
+                <button @click="editor.chain().focus().deleteColumn().run()" class="btn-red">
+                    Kolom weg
+                </button>
+            </div>
+            <div class="button-group">
+                <button @click="editor.chain().focus().addRowBefore().run()">
+                    Rij boven
+                </button>
+                <button @click="editor.chain().focus().addRowAfter().run()">
+                    Rij onder
+                </button>
+                <button @click="editor.chain().focus().deleteRow().run()" class="btn-red">
+                    Rij weg
+                </button>
+                <button @click="editor.chain().focus().mergeCells().run()">
+                    Cellen samenvoegen
+                </button>
+                <button @click="editor.chain().focus().splitCell().run()">
+                    Cel splitsen
+                </button>
             </div>
         </div>
         <editor-content class="editor" :editor="editor"/>
@@ -186,22 +161,38 @@
 <style scoped>
     article {
         display: flex;
-        flex-direction: row-reverse;
-        gap: 2rem;
+        flex-direction: column;
+        gap: 1rem;
+        width: 100%;
     }
 
     .editor {
         border-radius: 0.3rem;
         border: solid 0.1rem var(--color-text);
-        padding: 0.3rem 0.5rem;
-        width: 50%;
+        padding: 0.75rem 1rem;
+        width: 100%;
+        min-height: 200px;
+        max-height: 500px;
+        overflow-y: auto;
+    }
+
+    .editor :deep(.ProseMirror) {
+        min-height: 180px;
+        outline: none;
+    }
+
+    .editor :deep(.ProseMirror p) {
+        margin: 0.5em 0;
     }
 
     .menu {
         display: flex;
         flex-direction: column;
-        gap: 1rem;
-        width: 50%;
+        gap: 0.5rem;
+        width: 100%;
+        padding: 0.5rem;
+        background: var(--color-background-2);
+        border-radius: 0.3rem;
     }
 
     .menu button {

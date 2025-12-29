@@ -6,15 +6,24 @@ async function login(email, password) {
         password: password
     });
     
-    return fetchToServer("login", "POST", json, true);
+    return fetchToServer("login", "POST", json, false);
+}
+
+async function changePassword(currentPassword, newPassword) {
+    const json = JSON.stringify({
+        current_password: currentPassword,
+        new_password: newPassword
+    });
+    
+    return fetchToServer("admin/change-password", "POST", json, true);
 }
 
 async function getProfileData() {
-    return fetchFromServer("profile", true);
+    return fetchFromServer("admin/profile", true);
 }
 
 async function logout() {
-    return fetchFromServer("logout", true);
+    return fetchToServer("admin/logout", "POST", "", true);
 }
 
 /* -----
@@ -30,7 +39,7 @@ async function postEvent(formData) {
 }
 
 async function updateEvent(id, formData) {
-    return fetchToServer(`admin/events/${id}?_method=PUT`, "POST", formData, true, "");
+    return fetchToServer(`admin/events/${id}`, "PUT", formData, true, "");
 }
 
 async function deleteEvent(id) {
@@ -50,7 +59,7 @@ async function postGeocache(formData) {
 }
 
 async function updateGeocache(id, formData) {
-    return fetchToServer(`admin/geocaches/${id}?_method=PUT`, "POST", formData, true, "");
+    return fetchToServer(`admin/geocaches/${id}`, "PUT", formData, true, "");
 }
 
 async function deleteGeocache(id) {
@@ -70,7 +79,7 @@ async function postSocial(formData) {
 }
 
 async function updateSocial(id, formData) {
-    return fetchToServer(`admin/socials/${id}?_method=PUT`, "POST", formData, true, "");
+    return fetchToServer(`admin/socials/${id}`, "PUT", formData, true, "");
 }
 
 async function deleteSocial(id) {
@@ -90,7 +99,7 @@ async function postMessage(formData) {
 }
 
 async function updateMessage(id, formData) {
-    return fetchToServer(`admin/messages/${id}?_method=PUT`, "POST", formData, true, "");
+    return fetchToServer(`admin/messages/${id}`, "PUT", formData, true, "");
 }
 
 async function deleteMessage(id) {
@@ -98,15 +107,51 @@ async function deleteMessage(id) {
 }
 
 /* -----
-FORMRESPONSES
+CONTACTS (formerly FORMRESPONSES)
 ----- */
 
 async function fetchContactFormResponses(curr_page) {
-    return fetchFromServer("admin/formresponses", true, curr_page);
+    return fetchFromServer("admin/contacts", true, curr_page);
+}
+
+async function fetchContact(id) {
+    return fetchFromServer(`admin/contacts/${id}`, true);
+}
+
+async function updateContact(id, data) {
+    const json = JSON.stringify(data);
+    return fetchToServer(`admin/contacts/${id}`, "PUT", json, true);
+}
+
+async function addContactNote(contactId, note) {
+    const json = JSON.stringify({ content: note });
+    return fetchToServer(`admin/contacts/${contactId}/notes`, "POST", json, true);
+}
+
+/* -----
+USERS
+----- */
+
+async function fetchUsers() {
+    return fetchFromServer("admin/users", true);
+}
+
+async function createUser(name, email) {
+    const json = JSON.stringify({ name, email });
+    return fetchToServer("admin/users", "POST", json, true);
+}
+
+async function deleteUser(id) {
+    return deleteFromServer(`admin/users/${id}`);
+}
+
+async function resendInvitation(id) {
+    return fetchToServer(`admin/users/${id}/resend-invitation`, "POST", "", true);
 }
 
 export {
-    login, 
+    login,
+    changePassword,
     getProfileData, 
     logout, 
     fetchEvents, 
@@ -125,5 +170,12 @@ export {
     postMessage,
     updateMessage,
     deleteMessage,
-    fetchContactFormResponses
+    fetchContactFormResponses,
+    fetchContact,
+    updateContact,
+    addContactNote,
+    fetchUsers,
+    createUser,
+    deleteUser,
+    resendInvitation
 };

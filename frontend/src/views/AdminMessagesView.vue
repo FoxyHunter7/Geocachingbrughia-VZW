@@ -1,575 +1,455 @@
 <script setup>
-    import { deleteMessage, fetchMessages, getProfileData, postMessage, updateMessage } from '@/services/AdminService';
-    import { onMounted, ref, computed, toRaw } from 'vue';
-    import { useRouter } from 'vue-router';
-    import StaticContentProvider from '@/services/StaticContentService';
+import { ref, computed, onMounted } from 'vue';
+import AdminLayout from '@/components/admin/AdminLayout.vue';
+import config from '@/data/config.js';
 
-    const router = useRouter();
+// State
+const loading = ref(true);
+const messages = ref([]);
+const languages = ref([]);
+const search = ref('');
+const statusFilter = ref('');
 
-    async function verifyLogin() {
-        const response = await getProfileData();
+// Modal state
+const showModal = ref(false);
+const modalMode = ref('create');
+const saving = ref(false);
+const editingMessage = ref(null);
 
-        if (response.status) {
-            fetchData();
-        } else {
-            router.push({ name: "admin" });
-        }
+// Form data
+const formData = ref({
+    state: 'draft',
+    translations: []
+});
+
+// API helpers
+function getToken() {
+    return localStorage.getItem('admin_token');
+}
+
+async function apiRequest(endpoint, options = {}) {
+    const token = getToken();
+    const headers = {
+        'Accept': 'application/json',
+        ...(!(options.body instanceof FormData) && { 'Content-Type': 'application/json' }),
+        ...(token && { 'Authorization': `Bearer ${token}` }),
+        ...options.headers
+    };
+
+    try {
+        const response = await fetch(`${config.apiUrl}${endpoint}`, {
+            ...options,
+            headers
+        });
+        return response;
+    } catch (err) {
+        console.error('API request failed:', err);
+        return null;
     }
+}
 
-    const messages = ref([]);
-    const search = ref("");
-
-    async function fetchData() {
-        const response = await fetchMessages();
-        if (response.access_denied) {
-            window.alert(response.access_denied);
-        } else {
-            messages.value = response;
+// Fetch data
+async function fetchMessages() {
+    loading.value = true;
+    try {
+        const response = await apiRequest('admin/messages');
+        if (response?.ok) {
+            const data = await response.json();
+            messages.value = data.data || data || [];
         }
+    } catch (err) {
+        console.error('Failed to fetch messages:', err);
     }
+    loading.value = false;
+}
 
-    const filteredMessages = computed(() => {
-        if (!search.value) {
-            return messages.value;
+async function fetchLanguages() {
+    try {
+        const response = await apiRequest('admin/languages');
+        if (response?.ok) {
+            const data = await response.json();
+            languages.value = data.data || data || [];
         }
+    } catch (err) {
+        console.error('Failed to fetch languages:', err);
+    }
+}
 
-        return messages.value.filter(message =>
-            message.translations.find(translation => translation.lang_code === "NL").title.toLowerCase().includes(search.value.toLowerCase())
+// Computed
+const filteredMessages = computed(() => {
+    let filtered = messages.value;
+    
+    if (statusFilter.value) {
+        filtered = filtered.filter(m => 
+            m.state?.toLowerCase() === statusFilter.value.toLowerCase()
         );
-    });
-
-    function dateTimeFormatter(dateTimeString) {
-        if (!dateTimeString) {
-            "n/a";
-        }
-
-        const date = new Date(dateTimeString);
-        if (isNaN(date)) {
-            return "parsing error";
-        }
-
-        return date.toLocaleString("nl-be", {
-            year: "numeric",
-            month: "short",
-            day: "2-digit",
-            hour: "2-digit",
-            minute: "2-digit"
+    }
+    
+    if (search.value) {
+        const q = search.value.toLowerCase();
+        filtered = filtered.filter(m => {
+            const nlTranslation = m.translations?.find(t => t.lang_code === 'NL');
+            return nlTranslation?.title?.toLowerCase().includes(q);
         });
     }
+    
+    return filtered;
+});
 
-    const currentlyEditing = ref(-1);
-    const currentlyEditingData = ref({});
+// Modal handlers
+function openCreateModal() {
+    modalMode.value = 'create';
+    editingMessage.value = null;
+    
+    formData.value = {
+        state: 'draft',
+        priority: 0,
+        translations: languages.value.map(l => ({
+            lang_code: l.code,
+            title: '',
+            content: ''
+        }))
+    };
+    
+    showModal.value = true;
+}
 
-    function editMessage(message) {
-        currentlyEditing.value = message.id;
-        currentlyEditingData.value = structuredClone(toRaw(message));
-        delete currentlyEditingData.value.id;
-    }
+function openEditModal(message) {
+    modalMode.value = 'edit';
+    editingMessage.value = message;
+    
+    formData.value = {
+        state: message.state || 'draft',
+        priority: message.priority || 0,
+        translations: message.translations?.length 
+            ? message.translations.map(t => ({ ...t }))
+            : languages.value.map(l => ({ lang_code: l.code, title: '', content: '' }))
+    };
+    
+    showModal.value = true;
+}
 
-    function createMessage() {
-        const translations = [];
+function closeModal() {
+    showModal.value = false;
+    editingMessage.value = null;
+}
 
-        StaticContentProvider.LANGUAGES.forEach(language => {
-            translations.push({lang_code: language.code, title: "", body: ""});
+async function handleSave(publish = false) {
+    saving.value = true;
+    
+    try {
+        // Determine state:
+        // - If publish=true -> always 'published'
+        // - If editing and publish=false -> keep current state
+        // - If creating and publish=false -> 'draft'
+        let messageState = 'draft';
+        if (publish) {
+            messageState = 'published';
+        } else if (modalMode.value === 'edit' && editingMessage.value?.state) {
+            messageState = editingMessage.value.state;
+        }
+        
+        // Build JSON payload (backend expects JSON, not FormData)
+        const payload = {
+            state: messageState,
+            priority: formData.value.priority || 0,
+            translations: formData.value.translations
+        };
+        
+        const endpoint = modalMode.value === 'create' 
+            ? 'admin/messages'
+            : `admin/messages/${editingMessage.value.id}`;
+        
+        const method = modalMode.value === 'create' ? 'POST' : 'PUT';
+        
+        const response = await apiRequest(endpoint, {
+            method,
+            body: JSON.stringify(payload)
         });
-
-        currentlyEditingData.value = {
-            state: "DRAFT",
-            translations: translations
-        }
-
-        currentlyEditing.value = -2;
-    }
-
-    function stopEditing() {
-        currentlyEditing.value = -1;
-        currentlyEditingData.value = {};
-    }
-
-    const saving = ref(false);
-
-    async function save(state) {
-        if (!verifyInputs()) {
-            return;
-        }
-        saving.value = true;
-
-        currentlyEditingData.value.state = state;        
-        const formData = setFormData();
-
-        const response = await postMessage(formData);
-        handleResponse(response);
-    }
-
-    async function update(state) {
-        if (!verifyInputs()) {
-            return;
-        }
-        saving.value = true;
-
-        currentlyEditingData.value.state = state;
-        const formData = setFormData();
-
-        const response = await updateMessage(currentlyEditing.value, formData);
-        handleResponse(response);
-    }
-
-    async function remove() {
-        if (window.confirm(`Zeker dat je bericht: "${currentlyEditingData.value.translations.find(translation => translation.lang_code === "NL").title}" wilt verwijderen?`)) {
-            saving.value = true;
-            
-            const response = await deleteMessage(currentlyEditing.value);
-
-            if (!response.success) {
-                window.alert(response.error);
-                if (response.error.includes("Unautherized")) {
-                    router.push({ name: "admin" });
-                }
-                saving.value = false;
-            } else if (response.success && response.data && response.data.deleted) {
-                currentlyEditingData.value = {};
-                currentlyEditing.value = -1;
-                saving.value = false;
-                fetchData();
-            } else {
-                window.alert("onbekende fout");
-                saving.value = false;
-            }
-        }
-    }
-
-    function verifyInputs() {
-        const form = document.querySelector("#messageEdit");
-
-        for (let element of form.elements) {
-            if (!element.checkValidity()) {
-                element.reportValidity();
-                return false;
-            }
-        }
-
-        if (StaticContentProvider.LANGUAGES.length !== currentlyEditingData.value.translations.length) {
-            const translations = [];
-            StaticContentProvider.LANGUAGES.forEach(language => {
-                translations.push({lang_code: language.lang_code, title: "", body: ""});
-            });
-            currentlyEditingData.value.translations = translations;
-
-            window.alert("Ontbrekende vertaling, talen zonder vertalingen gevonden, gelieve dit aan te vullen.");
-            return false;
-        }
-
-        return true;
-    }
-
-    function setFormData() {
-        const formData = new FormData();
-
-        formData.append("translations", JSON.stringify(currentlyEditingData.value.translations));
-        formData.append("state", currentlyEditingData.value.state);
-
-        return formData;
-    }
-
-    function handleResponse(response) {
-        if (!response.success) {
-            window.alert(response.error);
-            if (response.error.includes("Unautherized")) {
-                router.push({ name: "admin" });
-            }
-            saving.value = false;
-        } else if (response.success && response.data) {
-            if (response.data.errors) {
-                let errorsString = ""
-                for (let field in response.data.errors) {
-                    errorsString += `${field}: ${response.data.errors[field]}\n`;
-                }
-                window.alert(errorsString);
-                saving.value = false;
-            } else if (response.data.data) {
-                currentlyEditingData.value = {};
-                currentlyEditing.value = -1;
-                saving.value = false;
-                fetchData();
-            }
+        
+        if (response?.ok) {
+            window.$toast?.success(modalMode.value === 'create' ? 'Bericht aangemaakt!' : 'Bericht bijgewerkt!');
+            closeModal();
+            fetchMessages();
         } else {
-            window.alert("onbekende fout");
-            saving.value = false;
+            const err = await response?.json();
+            window.$toast?.error(err?.message || 'Opslaan mislukt');
         }
+    } catch (err) {
+        console.error('Save failed:', err);
+        window.$toast?.error('Er is een fout opgetreden bij het opslaan');
     }
+    
+    saving.value = false;
+}
 
-    onMounted(verifyLogin);
+async function handleDelete() {
+    if (!editingMessage.value) return;
+    
+    const title = editingMessage.value.translations?.find(t => t.lang_code === 'NL')?.title || 'dit bericht';
+    if (!confirm(`Weet je zeker dat je "${title}" wilt verwijderen?`)) return;
+    
+    saving.value = true;
+    try {
+        const response = await apiRequest(`admin/messages/${editingMessage.value.id}`, {
+            method: 'DELETE'
+        });
+        
+        if (response?.ok) {
+            window.$toast?.success('Bericht verwijderd');
+            closeModal();
+            fetchMessages();
+        } else {
+            window.$toast?.error('Verwijderen mislukt');
+        }
+    } catch (err) {
+        window.$toast?.error('Er is een fout opgetreden');
+    }
+    saving.value = false;
+}
+
+async function handleArchive() {
+    if (!editingMessage.value) return;
+    
+    saving.value = true;
+    try {
+        const payload = {
+            state: 'archived',
+            priority: editingMessage.value.priority || 0,
+            translations: editingMessage.value.translations
+        };
+        
+        const response = await apiRequest(`admin/messages/${editingMessage.value.id}`, {
+            method: 'PUT',
+            body: JSON.stringify(payload)
+        });
+        
+        if (response?.ok) {
+            window.$toast?.success('Bericht gearchiveerd');
+            closeModal();
+            fetchMessages();
+        } else {
+            window.$toast?.error('Archiveren mislukt');
+        }
+    } catch (err) {
+        window.$toast?.error('Er is een fout opgetreden');
+    }
+    saving.value = false;
+}
+
+// Formatting
+function formatDate(dateString) {
+    if (!dateString) return '-';
+    return new Date(dateString).toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+}
+
+function getStateBadge(state) {
+    const badges = {
+        published: 'success',
+        ONLINE: 'success',
+        draft: 'warning',
+        DRAFT: 'warning',
+        archived: 'neutral',
+        ARCHIVED: 'neutral'
+    };
+    return badges[state] || 'neutral';
+}
+
+function getMessageTitle(message) {
+    return message.translations?.find(t => t.lang_code === 'NL')?.title || 
+           message.translations?.[0]?.title || 
+           'Naamloos';
+}
+
+// Initialize
+onMounted(async () => {
+    await fetchLanguages();
+    await fetchMessages();
+});
 </script>
 
 <template>
-    <header>
-        <div>
-            <button @click="() => (currentlyEditing === -1) ? router.push({ name: 'admin'}) : stopEditing()" type="button">Terug</button>
-            <button v-show="currentlyEditing === -1" type="button" @click="createMessage">Nieuw Bericht</button>
-        </div>
-        <form v-show="messages.length > 0 && messages[0] !== 'loading' && currentlyEditing === -1" method="post" @submit.prevent="" id="search">
-            <div>
-                <input v-model="search" type="search" id="search" name="search" autocomplete="search" required placeholder="Zoeken">
-            </div>
-        </form>
-    </header>
-    <main>
-        <table v-show="currentlyEditing === -1">
-            <thead>
-                <th>ID</th>
-                <th>Status</th>
-                <th>Titel</th>
-                <th>Laatst Aangepast</th>
-                <th></th>
-            </thead>
-            <tbody>
-                <tr v-for="message in filteredMessages">
-                    <td>{{ message.id }}</td>
-                    <td :class="message.state">{{ message.state }}</td>
-                    <td>{{ message.translations.find(translation => translation.lang_code === "NL").title }}</td>
-                    <td>{{ dateTimeFormatter(message.updated_at) }}</td>
-                    <td><div @click="() => editMessage(message)" class="icon-edit"></div></td>
-                </tr>
-            </tbody>
-        </table>
-        <form @submit.prevent="" method="post" id="messageEdit" v-show="currentlyEditing !== -1">
-            <section class="general">
-                <p><i>Bij een lang bericht is het aangeraden op te splitsen in titel en body, zo niet, is een titel alleen voldoende.</i></p>
-                <div v-for="(translation, index) in currentlyEditingData.translations">
-                    <label for="title">{{ `Titel - ${translation.lang_code}` }}<span>*</span></label>
-                    <input v-model="currentlyEditingData.translations[index].title" type="text" id="title" name="title" max="200" required>
-                    <label for="body">{{ `Body - ${translation.lang_code}` }}</label>
-                    <textarea v-model="currentlyEditingData.translations[index].body" id="body" name="body" max="2000" required></textarea>
+    <AdminLayout pageTitle="Berichten">
+        <template #actions>
+            <button class="admin-btn admin-btn-primary" @click="openCreateModal">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 1rem; height: 1rem;">
+                    <line x1="12" y1="5" x2="12" y2="19"/>
+                    <line x1="5" y1="12" x2="19" y2="12"/>
+                </svg>
+                Nieuw Bericht
+            </button>
+        </template>
+
+        <!-- Filters -->
+        <div class="admin-card" style="margin-bottom: 1.5rem;">
+            <div class="admin-card-body">
+                <div class="admin-filters">
+                    <div class="admin-search" style="flex: 1; max-width: 20rem;">
+                        <span class="admin-search-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 1rem; height: 1rem;">
+                                <circle cx="11" cy="11" r="8"/>
+                                <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                            </svg>
+                        </span>
+                        <input v-model="search" type="search" class="admin-input" placeholder="Zoeken...">
+                    </div>
+                    <div class="admin-filter-group">
+                        <label class="admin-filter-label">Status:</label>
+                        <select v-model="statusFilter" class="admin-select" style="width: auto;">
+                            <option value="">Alle</option>
+                            <option value="published">Gepubliceerd</option>
+                            <option value="draft">Concept</option>
+                            <option value="archived">Gearchiveerd</option>
+                        </select>
+                    </div>
                 </div>
-            </section>
-            <section class="buttons">
-                <button class="btn-red" @click="remove()" type="button" v-if="currentlyEditing !== -2">Verwijderen</button>
-                    <button class="btn-orange" @click="update('ARCHIVED')" type="button" v-if="currentlyEditingData.state === 'ONLINE'">Archiveren</button>
-                    <button class="btn-orange" @click="() => (currentlyEditing === -2) ? save('DRAFT') : update('DRAFT')" type="button" v-if="currentlyEditingData.state !== 'ONLINE'">Opslaan Als Concept</button>
-                    <button @click="() => (currentlyEditing === -2) ? save('ONLINE') : update('ONLINE')" type="button">Publiceren</button>
-            </section>
-        </form>
-        <div id="overlay" v-show="saving"></div>
-    </main>
+            </div>
+        </div>
+
+        <!-- Table -->
+        <div class="admin-card">
+            <div class="admin-table-wrapper">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Titel</th>
+                            <th style="width: 10rem;">Laatst Bijgewerkt</th>
+                            <th style="width: 6rem;">Status</th>
+                            <th style="width: 5rem;"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-if="loading">
+                            <td colspan="4" style="text-align: center; padding: 3rem;">
+                                <div class="admin-spinner" style="margin: 0 auto;"></div>
+                            </td>
+                        </tr>
+                        <tr v-else-if="filteredMessages.length === 0">
+                            <td colspan="4">
+                                <div class="admin-empty">
+                                    <div class="admin-empty-icon">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                                        </svg>
+                                    </div>
+                                    <p class="admin-empty-title">Geen berichten gevonden</p>
+                                    <p class="admin-empty-description">Maak je eerste bericht om aankondigingen te tonen</p>
+                                    <button class="admin-btn admin-btn-primary" @click="openCreateModal">
+                                        Nieuw Bericht
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr v-else v-for="message in filteredMessages" :key="message.id">
+                            <td>
+                                <span style="font-weight: 500;">{{ getMessageTitle(message) }}</span>
+                            </td>
+                            <td>{{ formatDate(message.updated_at) }}</td>
+                            <td>
+                                <span :class="['admin-badge', `admin-badge-${getStateBadge(message.state)}`]">
+                                    {{ message.state }}
+                                </span>
+                            </td>
+                            <td>
+                                <div class="admin-table-actions">
+                                    <button class="admin-btn admin-btn-ghost admin-btn-icon admin-btn-sm" @click="openEditModal(message)" title="Edit">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 1rem; height: 1rem;">
+                                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Modal -->
+        <Teleport to="body">
+            <div v-if="showModal" class="admin-modal-overlay" @click.self="closeModal">
+                <div class="admin-modal admin-modal-lg">
+                    <div class="admin-modal-header">
+                        <h2 class="admin-modal-title">
+                            {{ modalMode === 'create' ? 'Nieuw Bericht' : 'Bericht Bewerken' }}
+                        </h2>
+                        <button class="admin-modal-close" @click="closeModal">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="18" y1="6" x2="6" y2="18"/>
+                                <line x1="6" y1="6" x2="18" y2="18"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="admin-modal-body">
+                        <p class="form-hint" style="margin-bottom: 1.5rem; color: var(--admin-text-muted); font-size: 0.875rem;">
+                            Berichten worden getoond op de homepage. Voor langere teksten, gebruik zowel titel als inhoud. Voor kortere aankondigingen volstaat alleen een titel.
+                        </p>
+                        
+                        <div class="translations-list">
+                            <div v-for="(translation, index) in formData.translations" :key="translation.lang_code" class="translation-card">
+                                <h4 class="translation-lang">{{ translation.lang_code }}</h4>
+                                <div class="admin-form-group">
+                                    <label class="admin-label">Titel *</label>
+                                    <input v-model="formData.translations[index].title" type="text" class="admin-input" required>
+                                </div>
+                                <div class="admin-form-group">
+                                    <label class="admin-label">Inhoud</label>
+                                    <textarea v-model="formData.translations[index].content" class="admin-textarea" rows="3"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="admin-modal-footer">
+                        <button v-if="modalMode === 'edit'" class="admin-btn admin-btn-danger" @click="handleDelete" :disabled="saving">
+                            Verwijderen
+                        </button>
+                        <button v-if="modalMode === 'edit' && (formData.state === 'published' || formData.state === 'ONLINE')" class="admin-btn admin-btn-secondary" @click="handleArchive" :disabled="saving">
+                            Archiveren
+                        </button>
+                        <div style="flex: 1;"></div>
+                        <button class="admin-btn admin-btn-secondary" @click="closeModal" :disabled="saving">
+                            Annuleren
+                        </button>
+                        <button class="admin-btn admin-btn-secondary" @click="handleSave(false)" :disabled="saving">
+                            {{ saving ? 'Opslaan...' : 'Opslaan' }}
+                        </button>
+                        <button class="admin-btn admin-btn-primary" @click="handleSave(true)" :disabled="saving">
+                            {{ saving ? 'Opslaan...' : (modalMode === 'edit' && editingMessage?.state === 'published' ? 'Opslaan & Gepubliceerd' : 'Opslaan & Publiceren') }}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </Teleport>
+    </AdminLayout>
 </template>
 
 <style scoped>
-header {
-        display: flex;
-        justify-content: space-between;
-    }
+.translations-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
 
-    main {
-        overflow-y: auto;
-    }
+.translation-card {
+    background: var(--admin-bg);
+    border-radius: var(--admin-radius);
+    padding: 1.25rem;
+    border: 1px solid var(--admin-border-light);
+}
 
-    button {
-        color: var(--color-text);
-        background-color: var(--color-primary);
-        border: none;
-        width: 9rem;
-        height: 2rem;
-        font-family: inherit;
-        border-radius: 0.4rem;
-        box-shadow: var(--color-accent-dark) 0.5rem 0.5rem;
-        text-transform: capitalize;
-        font-weight: bold;
-        scale: 100%;
-        transition: scale 0.15s;
-        margin: 1rem;
-    }
-
-    button:hover {
-        cursor: pointer;
-        scale: 103%;
-        transition: scale 0.25s;
-    }
-
-    #search {
-        display: flex;
-        justify-content: flex-end;
-        padding: 1rem;
-        gap: 1rem;
-        background: none !important;
-    }
-
-    #search > div input {
-        width: 20rem;
-        max-width: 95vw;
-    }
-
-    #search > div {
-        position: relative;
-    }
-
-    #search > div::before {
-        content: '';
-        height: 1.3rem;
-        width: 1.3rem;
-        position: absolute;
-        left: 0.5rem;
-        top: 0.3rem;
-        background-color: var(--color-text);
-        mask: url(@/assets/media/search.svg);
-        mask-size: contain;
-        mask-repeat: no-repeat;
-        mask-position: center;
-    }
-
-    #search input {
-        padding: 0 0.5rem 0 2rem;
-        text-transform: capitalize;
-    }
-
-    form input, form textarea {
-        height: 2rem;
-        border-radius: 0.3rem;
-        border: solid 0.1rem var(--color-text);
-        outline: none;
-        font-family: inherit;
-        font-size: 1rem;
-        box-sizing: border-box;
-        line-height: 2rem;
-        background-color: var(--color-background);
-        color: var(--color-text)
-    }
-
-    table {
-        width: 90vw;
-        max-width: 80rem;
-        margin: 3rem auto;
-    }
-
-    thead {
-        background-color: var(--color-primary);
-        color: var(--color-text);
-    }
-
-    th, td, tr {
-        text-align: center;
-        padding: 0 0.5rem;
-    }
-
-    tbody tr:nth-child(even) {
-        background-color: var(--color-background-2);
-    }
-
-    th:nth-child(3), td:nth-child(3) {
-        text-align: start;
-    }
-
-    td {
-        height: 1.8rem;
-    }
-
-    td div {
-        display: flex;
-        justify-content: center;
-    }
-
-    td img {
-        height: 1.5rem;
-    }
-
-    th:nth-child(1) {
-        width: 3rem;
-    }
-
-    th:nth-child(2) {
-        width: 5rem;
-    }
-
-    td:nth-child(4) {
-        width: 10rem;
-    }
-
-    th:nth-child(5) {
-        width: 3rem;
-    }
-
-    td.ONLINE, td.true {
-        background-color: rgb(125, 209, 0);
-    }
-
-    td.DRAFT {
-        background-color: rgb(255, 136, 0);
-    }
-
-    td.ARCHIVED, td.false {
-        background-color: red;
-        color: var(--color-background);
-    }
-
-    div.icon-edit {
-        margin: auto;
-        height: 60%;
-        aspect-ratio: 1 / 1;
-        mask: url(@/assets/media/edit.svg);
-        mask-size: contain;
-        background-color: var(--color-text);
-        mask-repeat: no-repeat;
-        mask-position: center;
-    }
-
-    div.icon-edit:hover {
-        cursor: pointer;
-        background-color: var(--color-primary);
-    }
-
-    #messageEdit {
-        display: grid;
-        grid-template-columns: 1fr;
-        padding: 0 1rem 1rem 1rem;
-    }
-
-    #messageEdit  p {
-        margin-bottom: 2rem;
-        position: sticky;
-        top: 0;
-        padding: 0.5rem 0;
-        background-color: var(--color-background)
-    }
-
-    #messageEdit section.general > div {
-        display: flex;
-        flex-direction: column;
-        margin-bottom: 5rem;
-    }
-
-    #messageEdit section.general {
-        display: flex;
-        height: max-content;
-        flex-direction: column;
-    }
-
-    #messageEdit section.image-upload {
-        align-items: center;
-    }
-
-    #messageEdit label {
-        margin-bottom: 0.3rem;
-    }
-
-    #messageEdit label:not(:first-child) {
-        margin-top: 0.5rem;
-    }
-
-    #messageEdit label span {
-        color: red;
-    }
-
-    #messageEdit label i {
-        opacity: 60%;
-    }
-
-    #messageEdit input, #messageEdit textarea {
-        width: 80%;
-        font-size: 0.85rem;
-    }
-
-    #messageEdit textarea {
-        resize: vertical;
-        height: min-content;
-    }
-
-    #messageEdit section.general input:nth-of-type(4), #messageEdit section.general input:nth-of-type(5) {
-        text-align: center;
-        width: 12rem;
-    }
-
-    #messageEdit select {
-        width: 12rem;
-        height: 2rem;
-        font: inherit;
-        font-size: 0.9rem;
-        border-radius: 0.3rem;
-        border: solid 0.1rem var(--color-text);
-        padding: 0.2rem 0;
-        outline: none;
-        background-color: var(--color-background-2);
-        color: var(--color-text);
-    }
-
-    #messageEdit section.image-upload input[type="file"] {
-        width: 18rem;
-        padding-left: 0.5rem;
-    }
-
-    #messageEdit section.image-upload img {
-        margin-top: 3rem;
-        height: 30rem;
-        max-width: 80%;
-        object-fit: contain;
-        object-position: 0;
-    }
-
-    #messageEdit section.translations {
-        margin-top: 3rem;
-        display: flex;
-        justify-content: center;
-        gap: 3rem;
-        flex-wrap: wrap;
-    }
-
-    #messageEdit section.translations div {
-        width: 40rem;
-        border-radius: 0.3rem;
-    }
-
-    #messageEdit section.buttons {
-        margin: 1rem;
-        display: flex;
-        gap: 1rem;
-        justify-content: center;
-    }
-
-    #messageEdit button.btn-red {
-        background-color: rgb(255, 66, 66);
-        box-shadow: #e0b8aa 0.5rem 0.5rem;
-    }
-
-    #messageEdit button.btn-orange {
-        background-color: rgb(255, 138, 70);
-        box-shadow: #e9cdc2 0.5rem 0.5rem;
-    }
-
-    #overlay {
-        position: absolute;
-        top: 0;
-        right: 0;
-        bottom: 0;
-        left: 0;
-        z-index: 10;
-        background-color: rgba(0, 0, 0, 0.5);
-    }
-
-    @media (prefers-color-scheme: dark) {
-        thead {
-            background-color: var(--color-secondary);
-        }
-
-        td.ONLINE, td.true {
-            background-color: green;
-        }
-
-        td.ARCHIVED, td.false {
-            background-color: darkred;
-        }
-
-        #overlay {
-            background-color: rgba(60, 60, 60, 0.5);
-        }
-
-        #messageEdit button.btn-red {
-            background-color: rgb(255, 87, 57);
-            color: var(--color-text3);
-            box-shadow: #360f01 0.5rem 0.5rem;
-        }
-
-        #messageEdit button.btn-orange {
-            background-color: rgb(233, 177, 22);
-            color: var(--color-text3);
-            box-shadow: #362a01 0.5rem 0.5rem;
-        }
-    }
+.translation-lang {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--admin-primary);
+    margin: 0 0 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
 </style>
