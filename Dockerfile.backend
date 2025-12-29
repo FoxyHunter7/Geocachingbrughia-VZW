@@ -1,0 +1,43 @@
+# Build stage
+FROM golang:1.22-alpine AS builder
+
+WORKDIR /app
+
+# Install build dependencies for CGO (needed for go-sqlite3)
+RUN apk add --no-cache gcc musl-dev
+
+# Copy go mod files first for better caching
+COPY go.mod go.sum* ./
+RUN go mod download
+
+# Copy source code
+COPY . .
+
+# Build the binary
+# CGO_ENABLED=1 for go-sqlite3, static linking for distroless
+RUN CGO_ENABLED=1 GOOS=linux go build \
+    -ldflags="-s -w -linkmode external -extldflags '-static'" \
+    -o server .
+
+# Create data directory with correct permissions for nonroot (65532)
+RUN mkdir -p /data && chown 65532:65532 /data
+
+# Runtime stage - distroless for minimal attack surface
+FROM gcr.io/distroless/static-debian12:nonroot
+
+WORKDIR /app
+
+# Copy the binary from builder
+COPY --from=builder /app/server /app/server
+
+# Copy the data directory with correct ownership
+COPY --from=builder --chown=nonroot:nonroot /data /data
+
+# Distroless nonroot user is UID 65532
+USER nonroot:nonroot
+
+# Expose port
+EXPOSE 8080
+
+# Run the server
+ENTRYPOINT ["/app/server"]

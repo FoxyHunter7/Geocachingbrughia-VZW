@@ -1,0 +1,59 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: ../Dockerfile.backend
+    container_name: geocaching-backend
+    restart: unless-stopped
+    volumes:
+      - geocaching-data:/data:rw
+    environment:
+      - DATABASE_PATH=/data/geocaching.db
+      - PORT=8080
+      - ENV=production
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_EXPIRY_HOURS=24
+      - SMTP_HOST=${SMTP_HOST}
+      - SMTP_PORT=${SMTP_PORT:-587}
+      - SMTP_USER=${SMTP_USER}
+      - SMTP_PASS=${SMTP_PASS}
+      - SMTP_FROM=${SMTP_FROM}
+      - NOTIFICATION_EMAIL=${NOTIFICATION_EMAIL}
+      - REMINDER_DAYS=${REMINDER_DAYS:-3}
+      - CORS_ORIGINS=${CORS_ORIGINS:-https://geocachingbrughia.be,http://localhost}
+    networks:
+      - geocaching-network
+    security_opt:
+      - no-new-privileges:true
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: ../Dockerfile.frontend
+      args:
+        - VITE_API_URL=/api/
+    container_name: geocaching-frontend
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./certs:/etc/nginx/certs:ro  # For SSL certificates
+    depends_on:
+      - backend
+    networks:
+      - geocaching-network
+    healthcheck:
+      test: ["CMD", "nginx", "-t"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+networks:
+  geocaching-network:
+    driver: bridge
+
+volumes:
+  geocaching-data:
+    # Only the database needs persistence

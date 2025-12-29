@@ -1,0 +1,356 @@
+{
+    "ButtonBack": {
+        "DE": "zurück",
+        "EN": "back",
+        "FR": "retour",
+        "NL": "terug"
+    },
+    "ButtonCancel": {
+        "DE": "abbrechen",
+        "EN": "cancel",
+        "FR": "annuler",
+        "NL": "annuleren"
+    },
+    "ButtonConfirm": {
+        "DE": "bestätigen",
+        "EN": "confirm",
+        "FR": "confirmer",
+        "NL": "bevestigen"
+    },
+    "ButtonNext": {
+        "DE": "weiter",
+        "EN": "next",
+        "FR": "suivant",
+        "NL": "volgende"
+    },
+    "ButtonPurchase": {
+        "DE": "ticket(s) kaufen",
+        "EN": "purchase ticket(s)",
+        "FR": "acheter le(s) billet(s)",
+        "NL": "ticket(s) kopen"
+    },
+    "ButtonViewOnGC": {
+        "DE": "Auf Geocaching.com ansehen",
+        "EN": "View on Geocaching.com",
+        "FR": "Voir sur Geocaching.com",
+        "NL": "Bekijk op Geocaching.com"
+    },
+    "ContactCallTxt": {
+        "DE": "rufen Sie uns an",
+        "EN": "give us a call",
+        "FR": "appelez-nous",
+        "NL": "bel ons"
+    },
+    "ContactHelpQuestionTxt": {
+        "DE": "können wir Ihnen helfen?",
+        "EN": "can we help you?",
+        "FR": "pouvons-nous vous aider?",
+        "NL": "kunnen wij u helpen?"
+    },
+    "ContactHelpTxt": {
+        "DE": "Haben Sie eine Frage? Stört Sie etwas, oder möchten Sie uns einfach etwas mitteilen? Dann können Sie dies über diesen Kanal tun; Mailen, schreiben, anrufen oder das Formular ausfüllen.",
+        "EN": "Do you have a question? Is something bothering you, or do you simply want to tell us something? Then you can do so through this channel; Mail, write, call or fill out the form.",
+        "FR": "Avez-vous une question? Quelque chose vous dérange ou vous souhaitez simplement nous dire quelque chose? Vous pouvez le faire par ce canal; Envoyez un mail, écrivez, appelez ou remplissez le formulaire.",
+        "NL": "Heeft u een vraag? Zit er iets dwars, of wilt u ons gewoon iets vertellen? Dan kan dat via dit kanaal; Mail, schrijf, bel of vul het formulier in."
+    },
+    "ContactMailTxt": {
+        "DE": "senden Sie uns eine E-Mail",
+        "EN": "send us an e-mail",
+        "FR": "envoyez-nous un e-mail",
+        "NL": "stuur ons een e-mail"
+    },
+    "ContactPostalMailTxt": {
+        "DE": "Post",
+        "EN": "postal mail",
+        "FR": "courrier postal",
+        "NL": "post"
+    },
+    "FormAddress": {
+        "DE": "Adresse",
+        "EN": "address",
+        "FR": "adresse",
+        "NL": "adres"
+    },
+    "FormFirstName": {
+        "DE": "Vorname",
+        "EN": "firstname",
+        "FR": "prénom",
+        "NL": "voornaam"
+    },
+    "FormFullName": {
+        "DE": "vollständiger Name",
+        "EN": "fullname",
+        "FR": "nom complet",
+        "NL": "volledige naam"
+    },
+    "FormLastName": {
+        "DE": "Nachname",
+        "EN": "lastname",
+        "FR": "nom de famille",
+        "NL": "achternaam"
+    },
+    "FormMail": {
+        "DE": "E-Mail",
+        "EN": "e-mail",
+        "FR": "e-mail",
+        "NL": "e-mail"
+    },
+    "FormMessage": {
+        "DE": "Nachricht",
+        "EN": "message",
+        "FR": "message",
+        "NL": "bericht"
+    },
+    "FormPhoneNumber": {
+        "DE": "Telefonnummer",
+        "EN": "phone number",
+        "FR": "numéro de téléphone",
+        "NL": "telefoonnummer"
+    },
+    "FormSearch": {
+        "DE": "suchen",
+        "EN": "search",
+        "FR": "rechercher",
+        "NL": "zoeken"
+    },
+    "FormSubject": {
+        "DE": "Betreff",
+        "EN": "subject",
+        "FR": "sujet",
+        "NL": "onderwerp"
+    },
+    "FormSubmit": {
+        "DE": "einreichen",
+        "EN": "submit",
+        "FR": "envoyer",
+        "NL": "verzenden"
+    },
+    "FormSuccess": {
+        "DE": "gesendet",
+        "EN": "sent",
+        "FR": "envoyé",
+        "NL": "verzonden"
+    },
+    "FormFailed": {
+        "DE": "etwas ist schief gelaufen, das Formular konnte nicht gesendet werden",
+        "EN": "omething went wrong, couldn't submit",
+        "FR": "un problème est survenu, le formulaire n'a pas pu être envoyé",
+        "NL": "er liep iets mis, kon formulier niet verzenden"
+    },
+    "NavEvents": {
+        "DE": "Veranstaltungen",
+        "EN": "events",
+        "FR": "événements",
+        "NL": "evenementen"
+    },
+    "NavGeocaches": {
+        "DE": "Geocaches",
+        "EN": "geocaches",
+        "FR": "géocaches",
+        "NL": "geocaches"
+    },
+    "NavHome": {
+        "DE": "Startseite",
+        "EN": "home",
+        "FR": "accueil",
+        "NL": "home"
+    },
+    "NavShop": {
+        "DE": "Shop",
+        "EN": "shop",
+        "FR": "boutique",
+        "NL": "winkel"
+    },
+    "SocialsFollowTxt": {
+        "DE": "folgen Sie uns in den sozialen Medien",
+        "EN": "follow us on social media",
+        "FR": "suivez-nous sur les réseaux sociaux",
+        "NL": "volg ons op sociale media"
+    },
+    "SplashBody": {
+        "DE": "Jedes Jahr organisieren wir eine Vielzahl von Geocaching-Veranstaltungen, die Menschen zusammenbringen. Diese Veranstaltungen umfassen Aktivitäten wie unsere Aufräumaktion, bekannt als CITO (Cache In Trash Out), das jährliche GIFF-Filmfestival, bei dem Filme von Geocachern aus der ganzen Welt gezeigt werden, und unser Hauptgeocaching-Event, der Brugse Beer",
+        "EN": "Every year, we organise a range of Geocaching events that bring people together. These events include activities such as our clean-up effort, known as CITO (Cache In Trash Out), the yearly GIFF-Filmfestival showcasing films made by geocachers worldwide, and our flagship geocaching event, the Brugse Beer.",
+        "FR": "Chaque année, nous organisons une variété d'événements de géocaching qui rassemblent les gens. Ces événements comprennent des activités telles que notre effort de nettoyage, connu sous le nom de CITO (Cache In Trash Out), le festival annuel GIFF qui présente des films réalisés par des géocacheurs du monde entier, ainsi que notre événement phare de géocaching, le Brugse Beer.",
+        "NL": "Jaarlijks organiseren wij diverse geocaching evenementen waarbij we mensen samenbrengen. Deze evenementen omvatten onder andere onze zwerfvuilactie, CITO (Cache In Trash Out), het jaarlijkse GIFF-filmfestival, dat gewijd is aan films gemaakt door geocachers van over de hele wereld, en ons vooraanstaande geocaching evenement, de BRUGSE BEER."
+    },
+    "SplashImg": {
+        "DE": "static/bertje.jpg",
+        "EN": "static/bertje.jpg",
+        "FR": "static/bertje.jpg",
+        "NL": "static/bertje.jpg"
+    },
+    "SplashTitle": {
+        "DE": "GeocachingBrughia vereint Menschen",
+        "EN": "GeocachingBrughia brings people together",
+        "FR": "GeocachingBrughia rassemble les gens",
+        "NL": "GeocachingBrughia brengt mensen samen"
+    },
+    "UILoadingEvents": {
+        "DE": "Veranstaltungen werden geladen",
+        "EN": "loading events",
+        "FR": "chargement des événements",
+        "NL": "evenementen laden"
+    },
+    "UILoadingGeocaches": {
+        "DE": "Geocaches werden geladen",
+        "EN": "loading geocaches",
+        "FR": "chargement des géocaches",
+        "NL": "geocaches laden"
+    },
+    "UILoadingSite": {
+        "DE": "Website-Inhalt wird geladen",
+        "EN": "loading website content",
+        "FR": "chargement du contenu du site",
+        "NL": "website-inhoud laden"
+    },
+    "UILoading": {
+        "DE": "Laden...",
+        "EN": "Loading...",
+        "FR": "Chargement...",
+        "NL": "Laden..."
+    },
+    "UIError": {
+        "DE": "Hoppla!",
+        "EN": "Oops!",
+        "FR": "Oups!",
+        "NL": "Oeps!"
+    },
+    "UIBack": {
+        "DE": "Zurück",
+        "EN": "Back",
+        "FR": "Retour",
+        "NL": "Terug"
+    },
+    "UIStart": {
+        "DE": "Start",
+        "EN": "Start",
+        "FR": "Début",
+        "NL": "Start"
+    },
+    "UIEnd": {
+        "DE": "Ende",
+        "EN": "End",
+        "FR": "Fin",
+        "NL": "Einde"
+    },
+    "UILocation": {
+        "DE": "Ort",
+        "EN": "Location",
+        "FR": "Lieu",
+        "NL": "Locatie"
+    },
+    "UINoEvents": {
+        "DE": "Momentan sind keine Veranstaltungen geplant.",
+        "EN": "There are no events planned at the moment.",
+        "FR": "Il n'y a pas d'événements prévus pour le moment.",
+        "NL": "Er zijn momenteel geen evenementen gepland."
+    },
+    "UINoEventsSubTxt": {
+        "DE": "Schauen Sie später noch einmal vorbei!",
+        "EN": "Check back later!",
+        "FR": "Revenez plus tard!",
+        "NL": "Kijk later nog eens!"
+    },
+    "UINoGeocaches": {
+        "DE": "Momentan gibt es keine Geocaches.",
+        "EN": "There are no geocaches at the moment.",
+        "FR": "Il n'y a pas de géocaches pour le moment.",
+        "NL": "Er zijn momenteel geen geocaches."
+    },
+    "UINoGeocachesSubTxt": {
+        "DE": "Schauen Sie später noch einmal vorbei!",
+        "EN": "Check back later!",
+        "FR": "Revenez plus tard!",
+        "NL": "Kijk later nog eens!"
+    },
+    "UINoGeocachesSearchResults": {
+        "DE": "Keine Geocaches gefunden",
+        "EN": "No geocaches found",
+        "FR": "Aucune géocache trouvée",
+        "NL": "Geen geocaches gevonden"
+    },
+    "UINoEventsSearchResults": {
+        "DE": "Keine Veranstaltungen gefunden",
+        "EN": "No events found",
+        "FR": "Aucun événement trouvé",
+        "NL": "Geen evenementen gevonden"
+    },
+    "UINoStoreItems": {
+        "DE": "Artikel nicht verfügbar.",
+        "EN": "Items not available.",
+        "FR": "Articles non disponibles.",
+        "NL": "Artikelen niet beschikbaar."
+    },
+    "UINoStoreItemsSubTxt": {
+        "DE": "Die Artikelinformationen konnten nicht abgerufen werden.",
+        "EN": "The store item information could not be retrieved.",
+        "FR": "Les informations sur les articles n'ont pas pu être récupérées.",
+        "NL": "De informatie over de artikelen kon niet worden opgehaald."
+    },
+    "UIPageNotFound": {
+        "DE": "Seite nicht gefunden",
+        "EN": "Page Not Found",
+        "FR": "Page non trouvée",
+        "NL": "Pagina niet gevonden"
+    },
+    "UIPageNotFoundSubTxt": {
+        "DE": "Oops! Die gesuchte Seite konnte nicht gefunden werden. Sie werden in ///t/// Sekunden zur Startseite weitergeleitet.",
+        "EN": "Oops! The page you are looking for could not be found. You will be redirected back to the homepage in: ///t/// seconds.",
+        "FR": "Oops ! La page que vous recherchez est introuvable. Vous serez redirigé vers la page d'accueil dans ///t/// secondes.",
+        "NL": "Oeps! De pagina die u zoekt, kon niet worden gevonden. U wordt binnen ///t/// seconden teruggeleid naar de homepage."
+    },
+    "GeocacheTitle": {
+        "EN": "title",
+        "NL": "titel",
+        "FR": "titre",
+        "DE": "titel"
+    },
+    "GeocacheGeoLink": {
+        "EN": "link to cache",
+        "NL": "link naar cache",
+        "FR": "lien vers la cache",
+        "DE": "Link zur Cache"
+    },
+    "GeocacheDifficulty": {
+        "EN": "difficulty",
+        "NL": "moeilijkheidsgraad",
+        "FR": "difficulté",
+        "DE": "Schwierigkeit"
+    },
+    "GeocacheTerrain": {
+        "EN": "terrain",
+        "NL": "terrein",
+        "FR": "terrain",
+        "DE": "Gelände"
+    },
+    "ContactAddress": {
+        "EN": "Korte Kwadeplasstraat 6, 8020 Oostkamp",
+        "NL": "Korte Kwadeplasstraat 6, 8020 Oostkamp",
+        "FR": "Korte Kwadeplasstraat 6, 8020 Oostkamp",
+        "DE": "Korte Kwadeplasstraat 6, 8020 Oostkamp"
+    },
+    "ContactAddressUrl": {
+        "EN": "https://www.google.com/maps/place/Korte+Kwadeplasstraat+6,+8020+Oostkamp",
+        "NL": "https://www.google.com/maps/place/Korte+Kwadeplasstraat+6,+8020+Oostkamp",
+        "FR": "https://www.google.com/maps/place/Korte+Kwadeplasstraat+6,+8020+Oostkamp",
+        "DE": "https://www.google.com/maps/place/Korte+Kwadeplasstraat+6,+8020+Oostkamp"
+    },
+    "ContactPhone1": {
+        "EN": "+32 50 841 331",
+        "NL": "+32 50 841 331",
+        "FR": "+32 50 841 331",
+        "DE": "+32 50 841 331"
+    },
+    "ContactPhone2": {
+        "EN": "+32 487 906 431",
+        "NL": "+32 487 906 431",
+        "FR": "+32 487 906 431",
+        "DE": "+32 487 906 431"
+    },
+    "ContactEmail": {
+        "EN": "info@geocachingbrughia.be",
+        "NL": "info@geocachingbrughia.be",
+        "FR": "info@geocachingbrughia.be",
+        "DE": "info@geocachingbrughia.be"
+    }
+}
