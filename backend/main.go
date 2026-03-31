@@ -55,7 +55,7 @@ func main() {
 	defer cancel()
 
 	// Start reminder scheduler (checks every hour)
-	go emailService.StartReminderScheduler(db, cfg.ReminderDays)
+	go emailService.StartReminderScheduler(ctx, db, cfg.ReminderDays)
 
 	// Set up router
 	r := router.New(db, cfg, emailService)

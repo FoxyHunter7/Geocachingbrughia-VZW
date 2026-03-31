@@ -1,6 +1,7 @@
 package email
 
 import (
+	"context"
 	"fmt"
 	"html"
 	"log"
@@ -179,18 +180,26 @@ type PendingSubmission struct {
 	CreatedAt time.Time
 }
 
-// StartReminderScheduler starts a background job to send reminders
-func (s *Service) StartReminderScheduler(db *database.DB, reminderDays int) {
+// StartReminderScheduler starts a background job to send reminders.
+// It stops when ctx is cancelled.
+func (s *Service) StartReminderScheduler(ctx context.Context, db *database.DB, reminderDays int) {
 	if s.dialer == nil {
 		log.Println("Email not configured, reminder scheduler disabled")
 		return
 	}
 
 	ticker := time.NewTicker(1 * time.Hour)
+	defer ticker.Stop()
 	log.Printf("Reminder scheduler started (checking every hour, reminder after %d days)", reminderDays)
 
-	for range ticker.C {
-		s.checkAndSendReminders(db, reminderDays)
+	for {
+		select {
+		case <-ticker.C:
+			s.checkAndSendReminders(db, reminderDays)
+		case <-ctx.Done():
+			log.Println("Reminder scheduler stopped")
+			return
+		}
 	}
 }
 
