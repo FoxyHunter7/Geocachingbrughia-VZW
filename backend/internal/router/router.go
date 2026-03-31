@@ -73,6 +73,7 @@ func New(db *database.DB, cfg *config.Config, emailService *email.Service) http.
 		// Protected admin routes
 		r.Route("/admin", func(r chi.Router) {
 			r.Use(middleware.JWTAuth(cfg.JWT.Secret))
+			r.Use(middleware.NoCache)
 
 			// Auth
 			r.Get("/profile", h.GetProfile)
