@@ -272,7 +272,7 @@ func (h *Handler) ResendInvitation(w http.ResponseWriter, r *http.Request) {
 
 	// Update password
 	_, err = h.db.Exec(
-		"UPDATE users SET password = ?, updated_at = datetime('now') WHERE id = ?",
+		"UPDATE users SET password_hash = ?, updated_at = datetime('now') WHERE id = ?",
 		string(hashedPassword), userID,
 	)
 	if err != nil {
