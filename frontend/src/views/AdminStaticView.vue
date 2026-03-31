@@ -180,7 +180,7 @@ async function handleSave() {
         }
         
         closeModal();
-        fetchStaticContent();
+        await fetchStaticContent();
     } catch (err) {
         console.error('Save failed:', err);
         window.$toast?.error('Er is een fout opgetreden bij het opslaan');
@@ -203,7 +203,7 @@ async function handleDelete() {
         if (response?.ok) {
             window.$toast?.success('Inhoud verwijderd');
             closeModal();
-            fetchStaticContent();
+            await fetchStaticContent();
         } else {
             window.$toast?.error('Verwijderen mislukt');
         }
