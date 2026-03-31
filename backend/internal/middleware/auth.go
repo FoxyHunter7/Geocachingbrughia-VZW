@@ -51,10 +51,26 @@ func JWTAuth(secret string) func(http.Handler) http.Handler {
 				return
 			}
 
+			userIDFloat, ok := claims["user_id"].(float64)
+			if !ok {
+				http.Error(w, `{"error": "Invalid token claims"}`, http.StatusUnauthorized)
+				return
+			}
+			email, ok := claims["email"].(string)
+			if !ok {
+				http.Error(w, `{"error": "Invalid token claims"}`, http.StatusUnauthorized)
+				return
+			}
+			name, ok := claims["name"].(string)
+			if !ok {
+				http.Error(w, `{"error": "Invalid token claims"}`, http.StatusUnauthorized)
+				return
+			}
+
 			userClaims := UserClaims{
-				UserID: int64(claims["user_id"].(float64)),
-				Email:  claims["email"].(string),
-				Name:   claims["name"].(string),
+				UserID: int64(userIDFloat),
+				Email:  email,
+				Name:   name,
 			}
 
 			ctx := context.WithValue(r.Context(), UserContextKey, userClaims)
