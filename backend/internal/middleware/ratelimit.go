@@ -83,13 +83,8 @@ func (rl *RateLimiter) cleanup() {
 func LoginRateLimit(limiter *RateLimiter) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			// r.RemoteAddr is already set to the real client IP by Chi's RealIP middleware
 			ip := r.RemoteAddr
-			// Use X-Real-IP or X-Forwarded-For if behind proxy
-			if realIP := r.Header.Get("X-Real-IP"); realIP != "" {
-				ip = realIP
-			} else if forwardedFor := r.Header.Get("X-Forwarded-For"); forwardedFor != "" {
-				ip = forwardedFor
-			}
 
 			if !limiter.Allow(ip) {
 				w.Header().Set("Content-Type", "application/json")
