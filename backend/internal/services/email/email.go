@@ -2,6 +2,7 @@ package email
 
 import (
 	"fmt"
+	"html"
 	"log"
 	"time"
 
@@ -40,6 +41,11 @@ func (s *Service) SendNewContactNotification(fromEmail, subject, message string,
 		messagePreview = messagePreview[:500] + "..."
 	}
 
+	// Escape user-supplied values before embedding in HTML
+	safeEmail := html.EscapeString(fromEmail)
+	safeSubject := html.EscapeString(subject)
+	safeMessage := html.EscapeString(messagePreview)
+
 	htmlBody := fmt.Sprintf(`
 <!DOCTYPE html>
 <html>
@@ -69,7 +75,7 @@ func (s *Service) SendNewContactNotification(fromEmail, subject, message string,
     </p>
 </body>
 </html>
-`, fromEmail, fromEmail, subject, time.Now().Format("02-01-2006 15:04"), messagePreview, submissionID)
+`, safeEmail, safeEmail, safeSubject, time.Now().Format("02-01-2006 15:04"), safeMessage, submissionID)
 
 	plainBody := fmt.Sprintf(`!! Automatische melding, stuur uw antwoordt naar de persoon zelf, niet deze mail. !!
 
@@ -117,7 +123,7 @@ func (s *Service) SendReminderEmail(submissions []PendingSubmission) {
                 <td style="padding: 8px; border-bottom: 1px solid #ddd;">%s</td>
                 <td style="padding: 8px; border-bottom: 1px solid #ddd;">%d dagen geleden</td>
             </tr>
-        `, sub.ID, sub.Email, sub.Subject, daysAgo)
+        `, sub.ID, html.EscapeString(sub.Email), html.EscapeString(sub.Subject), daysAgo)
 
 		itemsPlain += fmt.Sprintf("- #%d | %s | %s | %d dagen geleden\n", sub.ID, sub.Email, sub.Subject, daysAgo)
 	}
