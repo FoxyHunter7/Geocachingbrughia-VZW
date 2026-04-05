@@ -9,6 +9,7 @@
   import Hero from '@/components/Hero.vue';
   import Socials from '@/components/Socials.vue';
   import Contact from '@/components/Contact.vue';
+  import GoldenKeyBanner from '@/components/GoldenKeyBanner.vue';
 
   const events = ref(["loading"]);
   const messages = ref([]);
@@ -38,6 +39,7 @@
     <Message v-for="message in messages" :message="message" />
   </Teleport>
   <main>
+    <GoldenKeyBanner />
     <section v-show="events.length !== 0 && events[0] === 'loading'" id=loading>
       <div v-show="loaderActive" class="initial-loader"></div>
     </section>

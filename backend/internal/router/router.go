@@ -59,6 +59,7 @@ func New(db *database.DB, cfg *config.Config, emailService *email.Service) http.
 		r.With(middleware.CacheControl()).Get("/home_events", h.GetHomeEvents)
 		r.With(middleware.CacheControl()).Get("/messages", h.GetPublicMessages)
 		r.With(middleware.CacheControl()).Get("/geocaches", h.GetPublicGeocaches)
+		r.With(middleware.CacheControl()).Get("/golden-key", h.GetGoldenKeySettings)
 
 		// Serve uploaded images (public, cached)
 		r.Get("/images/*", h.ServeImage)
@@ -129,6 +130,10 @@ func New(db *database.DB, cfg *config.Config, emailService *email.Service) http.
 			r.Put("/contacts/{id}", h.UpdateContactSubmission)
 			r.Post("/contacts/{id}/notes", h.AddContactNote)
 			r.Delete("/contacts/{id}", h.DeleteContactSubmission)
+
+			// Golden Key settings
+			r.Get("/golden-key", h.GetGoldenKeySettings)
+			r.Put("/golden-key", h.UpdateGoldenKeySettings)
 
 			// User management
 			r.Get("/users", h.GetUsers)

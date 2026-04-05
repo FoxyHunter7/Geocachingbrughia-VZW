@@ -62,7 +62,7 @@
 </script>
 
 <template>
-  <section id="side-menu" :class="{ open: isSideMenuOpen }"></section>
+  <section v-if="!isAdminRoute" id="side-menu" :class="{ open: isSideMenuOpen }"></section>
   <TopHeader v-if="!isAdminRoute" :isMobile="isMobile" @menu-state-change="(state) => { isSideMenuOpen = state }" @lang-selector="openInPopup('languageSelector')"/>
   <div v-if="!isAdminRoute" id="messages">
     <WarningBanner v-if="scsErrors" :error="scsErrors"></WarningBanner>
@@ -122,15 +122,20 @@
   #messages {
     background-color: var(--color-background-2);
     height: fit-content;
-    margin: 0.5rem 0.5rem 0 0.5rem;
+    margin: 0;
     border-radius: 0.5rem;
     display: flex;
     flex-direction: column;
     gap: 0.1rem;
   }
 
+  #messages:not(:empty) {
+    margin: 0.5rem 0.5rem 0 0.5rem;
+  }
+
   #messages:empty {
     padding: 0;
+    margin: 0;
   }
 
   #popup-menu {

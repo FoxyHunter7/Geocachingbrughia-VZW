@@ -16,6 +16,8 @@ import AdminLanguagesView from "@/views/AdminLanguagesView.vue";
 import AdminContactsView from "@/views/AdminContactsView.vue";
 import AdminDashboardView from "@/views/AdminDashboardView.vue";
 import AdminUsersView from "@/views/AdminUsersView.vue";
+import GoldenKeyView from "@/views/GoldenKeyView.vue";
+import AdminGoldenKeyView from "@/views/AdminGoldenKeyView.vue";
 import { StaticContentProvider } from '@/services/StaticContentService';
 import { LanguageProvider } from '@/services/LanguageService';
 
@@ -70,6 +72,12 @@ export default function setupRouter() {
         props: true,
         component: ShopView,
         alias: StaticContentProvider.ROUTES.navShop.aliases
+      },
+      {
+        path: '/golden-key',
+        name: "goldenKey",
+        props: false,
+        component: GoldenKeyView
       },
       {
         path: '/admin',
@@ -130,6 +138,12 @@ export default function setupRouter() {
         name: "adminUsers",
         props: false,
         component: AdminUsersView
+      },
+      {
+        path: '/admin/golden-key',
+        name: "adminGoldenKey",
+        props: false,
+        component: AdminGoldenKeyView
       },
       {
         path: '/:pathMatch(.*)',

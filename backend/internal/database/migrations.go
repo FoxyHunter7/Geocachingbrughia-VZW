@@ -204,6 +204,24 @@ func (db *DB) Migrate() error {
 				ALTER TABLE geocaches ADD COLUMN placed_date DATE;
 			`,
 		},
+		{
+			name: "create_golden_key_settings_table",
+			sql: `
+				CREATE TABLE IF NOT EXISTS golden_key_settings (
+					id INTEGER PRIMARY KEY CHECK (id = 1),
+					activation_time TEXT NOT NULL DEFAULT '2026-04-12 10:12:00',
+					created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+					updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+				);
+			`,
+		},
+		{
+			name: "seed_golden_key_settings",
+			sql: `
+				INSERT OR IGNORE INTO golden_key_settings (id, activation_time)
+				VALUES (1, '2026-04-12 10:12:00');
+			`,
+		},
 	}
 
 	for _, m := range migrations {
