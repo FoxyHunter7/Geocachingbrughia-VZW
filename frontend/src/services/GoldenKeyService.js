@@ -11,12 +11,13 @@ async function getGoldenKeySettings() {
     } catch {
         return {
             activation_time: FALLBACK_ACTIVATION.toISOString(),
-            is_active: new Date() >= FALLBACK_ACTIVATION
+            is_active: new Date() >= FALLBACK_ACTIVATION,
+            banner_text: {}
         };
     }
 }
 
-async function updateGoldenKeySettings(activationTimeISO) {
+async function updateGoldenKeySettings({ activation_time, banner_text = {} }) {
     const token = localStorage.getItem("admin_token");
     const response = await fetch(`${config.apiUrl}admin/golden-key`, {
         method: "PUT",
@@ -25,7 +26,7 @@ async function updateGoldenKeySettings(activationTimeISO) {
             "Accept": "application/json",
             ...(token && { "Authorization": `Bearer ${token}` })
         },
-        body: JSON.stringify({ activation_time: activationTimeISO })
+        body: JSON.stringify({ activation_time, banner_text })
     });
     if (!response.ok) throw new Error("Failed to update golden key settings");
     return await response.json();

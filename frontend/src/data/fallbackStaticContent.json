@@ -352,5 +352,11 @@
         "NL": "info@geocachingbrughia.be",
         "FR": "info@geocachingbrughia.be",
         "DE": "info@geocachingbrughia.be"
+    },
+    "GoldenKeyRulesBtn": {
+        "DE": "Spielregeln",
+        "EN": "Rules of the game",
+        "FR": "Règles du jeu",
+        "NL": "Spelregels"
     }
 }

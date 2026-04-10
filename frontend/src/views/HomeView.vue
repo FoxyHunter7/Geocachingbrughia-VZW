@@ -57,7 +57,7 @@
     overflow-y: auto;
   }
 
-  section {
+  section:not(.gk-banner) {
     max-width: 100rem;
     margin: 0 auto;
   }

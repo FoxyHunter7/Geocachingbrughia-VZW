@@ -60,6 +60,8 @@ func New(db *database.DB, cfg *config.Config, emailService *email.Service) http.
 		r.With(middleware.CacheControl()).Get("/messages", h.GetPublicMessages)
 		r.With(middleware.CacheControl()).Get("/geocaches", h.GetPublicGeocaches)
 		r.With(middleware.CacheControl()).Get("/golden-key", h.GetGoldenKeySettings)
+		r.With(middleware.CacheControl()).Get("/golden-key/months", h.GetGoldenKeyMonths)
+		r.With(middleware.CacheControl()).Get("/golden-key/months/{id}", h.GetGoldenKeyMonthByID)
 
 		// Serve uploaded images (public, cached)
 		r.Get("/images/*", h.ServeImage)
@@ -134,6 +136,14 @@ func New(db *database.DB, cfg *config.Config, emailService *email.Service) http.
 			// Golden Key settings
 			r.Get("/golden-key", h.GetGoldenKeySettings)
 			r.Put("/golden-key", h.UpdateGoldenKeySettings)
+
+			// Golden Key months
+			r.Get("/golden-key/months", h.GetAdminGoldenKeyMonths)
+			r.Get("/golden-key/months/{id}", h.GetAdminGoldenKeyMonthByID)
+			r.Put("/golden-key/months/{id}", h.UpdateGoldenKeyMonth)
+			r.Post("/golden-key/months/{id}/hints", h.AddGoldenKeyHint)
+			r.Put("/golden-key/hints/{id}", h.UpdateGoldenKeyHint)
+			r.Delete("/golden-key/hints/{id}", h.DeleteGoldenKeyHint)
 
 			// User management
 			r.Get("/users", h.GetUsers)

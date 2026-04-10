@@ -7,20 +7,26 @@ import (
 )
 
 type goldenKeySettings struct {
-	ActivationTime time.Time `json:"activation_time"`
-	IsActive       bool      `json:"is_active"`
+	ActivationTime time.Time         `json:"activation_time"`
+	IsActive       bool              `json:"is_active"`
+	BannerText     map[string]string `json:"banner_text"`
+	Rules          map[string]string `json:"rules"`
 }
 
 type updateGoldenKeyRequest struct {
-	ActivationTime string `json:"activation_time"`
+	ActivationTime string            `json:"activation_time"`
+	BannerText     map[string]string `json:"banner_text"`
+	Rules          map[string]string `json:"rules"`
 }
 
 // GetGoldenKeySettings returns the golden key activation time and active status.
 // Public endpoint — no authentication required.
 func (h *Handler) GetGoldenKeySettings(w http.ResponseWriter, r *http.Request) {
 	var activationTimeStr string
+	var bannerTextJSON string
+	var rulesJSON string
 
-	err := h.db.QueryRow(`SELECT activation_time FROM golden_key_settings WHERE id = 1`).Scan(&activationTimeStr)
+	err := h.db.QueryRow(`SELECT activation_time, banner_text, rules FROM golden_key_settings WHERE id = 1`).Scan(&activationTimeStr, &bannerTextJSON, &rulesJSON)
 	if err != nil {
 		respondJSON(w, http.StatusInternalServerError, map[string]string{"error": "Failed to fetch golden key settings"})
 		return
@@ -32,9 +38,21 @@ func (h *Handler) GetGoldenKeySettings(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	bannerTextMap := map[string]string{}
+	if bannerTextJSON != "" {
+		_ = json.Unmarshal([]byte(bannerTextJSON), &bannerTextMap)
+	}
+
+	rulesMap := map[string]string{}
+	if rulesJSON != "" {
+		_ = json.Unmarshal([]byte(rulesJSON), &rulesMap)
+	}
+
 	respondJSON(w, http.StatusOK, goldenKeySettings{
 		ActivationTime: activationTime,
 		IsActive:       time.Now().UTC().After(activationTime),
+		BannerText:     bannerTextMap,
+		Rules:          rulesMap,
 	})
 }
 
@@ -55,9 +73,12 @@ func (h *Handler) UpdateGoldenKeySettings(w http.ResponseWriter, r *http.Request
 
 	utcStr := activationTime.UTC().Format("2006-01-02 15:04:05")
 
+	bannerTextBytes, _ := json.Marshal(req.BannerText)
+	rulesBytes, _ := json.Marshal(req.Rules)
+
 	_, err = h.db.Exec(
-		`UPDATE golden_key_settings SET activation_time = ?, updated_at = CURRENT_TIMESTAMP WHERE id = 1`,
-		utcStr,
+		`UPDATE golden_key_settings SET activation_time = ?, banner_text = ?, rules = ?, updated_at = CURRENT_TIMESTAMP WHERE id = 1`,
+		utcStr, string(bannerTextBytes), string(rulesBytes),
 	)
 	if err != nil {
 		respondJSON(w, http.StatusInternalServerError, map[string]string{"error": "Failed to update golden key settings"})

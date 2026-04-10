@@ -222,12 +222,77 @@ func (db *DB) Migrate() error {
 				VALUES (1, '2026-04-12 10:12:00');
 			`,
 		},
+		{
+			name: "add_banner_text_to_golden_key_settings",
+			sql: `
+				ALTER TABLE golden_key_settings ADD COLUMN banner_text TEXT NOT NULL DEFAULT '';
+			`,
+		},
+		{
+			name: "add_rules_to_golden_key_settings",
+			sql: `
+				ALTER TABLE golden_key_settings ADD COLUMN rules TEXT NOT NULL DEFAULT '{}';
+			`,
+		},
+		{
+			name: "create_golden_key_months_table",
+			sql: `
+				CREATE TABLE IF NOT EXISTS golden_key_months (
+					id INTEGER PRIMARY KEY AUTOINCREMENT,
+					month_number INTEGER NOT NULL UNIQUE,
+					month_name TEXT NOT NULL,
+					live_date DATETIME NOT NULL,
+					is_found INTEGER NOT NULL DEFAULT 0,
+					finder_name TEXT,
+					finder_image TEXT,
+					created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+					updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+				);
+			`,
+		},
+		{
+			name: "create_golden_key_hints_table",
+			sql: `
+				CREATE TABLE IF NOT EXISTS golden_key_hints (
+					id INTEGER PRIMARY KEY AUTOINCREMENT,
+					month_id INTEGER NOT NULL,
+					sort_order INTEGER NOT NULL DEFAULT 0,
+					content TEXT NOT NULL DEFAULT '',
+					image_url TEXT,
+					created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+					updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+					FOREIGN KEY (month_id) REFERENCES golden_key_months(id) ON DELETE CASCADE
+				);
+			`,
+		},
+		{
+			name: "add_found_date_to_golden_key_months",
+			sql:  `ALTER TABLE golden_key_months ADD COLUMN found_date DATETIME`,
+		},
+		{
+			name: "seed_golden_key_months",
+			sql: `
+				INSERT OR IGNORE INTO golden_key_months (month_number, month_name, live_date) VALUES
+				(1,  'April',     '2026-04-12 10:12:00'),
+				(2,  'Mei',       '2026-05-12 10:12:00'),
+				(3,  'Juni',      '2026-06-12 10:12:00'),
+				(4,  'Juli',      '2026-07-12 10:12:00'),
+				(5,  'Augustus',  '2026-08-12 10:12:00'),
+				(6,  'September', '2026-09-12 10:12:00'),
+				(7,  'Oktober',   '2026-10-12 10:12:00'),
+				(8,  'November',  '2026-11-12 10:12:00'),
+				(9,  'December',  '2026-12-12 10:12:00'),
+				(10, 'Januari',   '2027-01-12 10:12:00'),
+				(11, 'Februari',  '2027-02-12 10:12:00'),
+				(12, 'Maart',     '2027-03-12 10:12:00');
+			`,
+		},
 	}
 
 	for _, m := range migrations {
 		if _, err := db.Exec(m.sql); err != nil {
 			// Ignore "duplicate column" errors for ALTER TABLE migrations
-			if m.name == "add_needs_password_update_to_users" || m.name == "add_type_to_geocaches" || m.name == "add_placed_date_to_geocaches" {
+			if m.name == "add_needs_password_update_to_users" || m.name == "add_type_to_geocaches" || m.name == "add_placed_date_to_geocaches" || m.name == "add_banner_text_to_golden_key_settings" || m.name == "add_found_date_to_golden_key_months" || m.name == "add_rules_to_golden_key_settings" {
 				log.Printf("  ✓ %s (column already exists)", m.name)
 				continue
 			}

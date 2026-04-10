@@ -1,7 +1,9 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue';
+import { RouterLink } from 'vue-router';
 import AdminLayout from '@/components/admin/AdminLayout.vue';
 import config from '@/data/config.js';
+import { getAdminGoldenKeyMonths } from '@/services/GoldenKeyMonthService';
 
 const loading = ref(true);
 const saving = ref(false);
@@ -10,6 +12,59 @@ const errorMsg = ref('');
 
 // Stored activation time (UTC ISO from API)
 const activationTimeUTC = ref('');
+const bannerTexts = ref({});
+const rulesTexts = ref({});
+
+// Languages for per-language banner text
+const languages = ref([]);
+const showBannerModal = ref(false);
+const draftTexts = ref({});
+const modalSaving = ref(false);
+const modalError = ref('');
+
+const hasBannerText = computed(() =>
+    Object.values(bannerTexts.value).some(t => t && t.trim() !== '')
+);
+
+function openBannerModal() {
+    draftTexts.value = { ...bannerTexts.value };
+    modalError.value = '';
+    showBannerModal.value = true;
+}
+
+function closeBannerModal() {
+    showBannerModal.value = false;
+}
+
+async function saveBannerModal() {
+    modalError.value = '';
+    modalSaving.value = true;
+    try {
+        const localDate = new Date(localDatetimeInput.value);
+        const utcISO = isNaN(localDate.getTime())
+            ? new Date(activationTimeUTC.value).toISOString()
+            : localDate.toISOString();
+
+        const res = await apiRequest('admin/golden-key', {
+            method: 'PUT',
+            body: JSON.stringify({ activation_time: utcISO, banner_text: draftTexts.value, rules: rulesTexts.value })
+        });
+
+        if (res?.ok) {
+            const data = await res.json();
+            activationTimeUTC.value = data.activation_time;
+            localDatetimeInput.value = toLocalDatetimeInput(data.activation_time);
+            bannerTexts.value = data.banner_text || {};
+            rulesTexts.value = data.rules || {};
+            showBannerModal.value = false;
+        } else {
+            modalError.value = 'Opslaan mislukt. Probeer opnieuw.';
+        }
+    } catch {
+        modalError.value = 'Er is een fout opgetreden.';
+    }
+    modalSaving.value = false;
+}
 
 // The datetime-local input value (local time string, no timezone)
 const localDatetimeInput = ref('');
@@ -51,6 +106,8 @@ async function fetchSettings() {
             const data = await res.json();
             activationTimeUTC.value = data.activation_time;
             localDatetimeInput.value = toLocalDatetimeInput(data.activation_time);
+            bannerTexts.value = data.banner_text || {};
+            rulesTexts.value = data.rules || {};
         }
     } catch (err) {
         errorMsg.value = 'Kon de instellingen niet ophalen.';
@@ -74,13 +131,15 @@ async function saveSettings() {
 
         const res = await apiRequest('admin/golden-key', {
             method: 'PUT',
-            body: JSON.stringify({ activation_time: utcISO })
+            body: JSON.stringify({ activation_time: utcISO, banner_text: bannerTexts.value, rules: rulesTexts.value })
         });
 
         if (res?.ok) {
             const data = await res.json();
             activationTimeUTC.value = data.activation_time;
             localDatetimeInput.value = toLocalDatetimeInput(data.activation_time);
+            bannerTexts.value = data.banner_text || {};
+            rulesTexts.value = data.rules || {};
             successMsg.value = 'Instellingen opgeslagen.';
         } else {
             errorMsg.value = 'Opslaan mislukt. Probeer opnieuw.';
@@ -91,7 +150,41 @@ async function saveSettings() {
     saving.value = false;
 }
 
-onMounted(fetchSettings);
+async function fetchLanguages() {
+    try {
+        const res = await apiRequest('admin/languages');
+        if (res?.ok) {
+            const data = await res.json();
+            languages.value = data.data || data || [];
+        }
+    } catch { /* languages stay empty */ }
+}
+
+// ---- Months (read-only list; editing happens on the month detail page) ----
+const months = ref([]);
+const fetchingMonths = ref(false);
+
+function monthStateLabel(state) {
+    if (state === 'found')  return '🏆 Gevonden';
+    if (state === 'active') return '🔓 Actief';
+    return '🔒 Vergrendeld';
+}
+function monthStateCss(state) {
+    if (state === 'found')  return 'badge-found';
+    if (state === 'active') return 'badge-active';
+    return 'badge-locked';
+}
+
+async function fetchMonths() {
+    fetchingMonths.value = true;
+    const data = await getAdminGoldenKeyMonths();
+    months.value = Array.isArray(data) ? data : [];
+    fetchingMonths.value = false;
+}
+
+onMounted(async () => {
+    await Promise.all([fetchSettings(), fetchLanguages(), fetchMonths()]);
+});
 </script>
 
 <template>
@@ -112,10 +205,63 @@ onMounted(fetchSettings);
                 <div class="card status-card">
                     <h2 class="card-title">Status</h2>
                     <div class="status-row">
-                        <span class="status-label">Huidige status</span>
-                        <span class="status-badge" :class="isActive ? 'status-active' : 'status-soon'">
-                            {{ isActive ? 'Actief' : 'Binnenkort' }}
-                        </span>
+                        <div class="status-left">
+                            <span class="status-label">Huidige status</span>
+                            <span class="status-badge" :class="isActive ? 'status-active' : 'status-soon'">
+                                {{ isActive ? 'Actief' : 'Binnenkort' }}
+                            </span>
+                        </div>
+                        <div class="status-right">
+                            <span v-if="hasBannerText" class="banner-set-indicator" title="Bannertekst ingesteld">
+                                <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M13.5 3.5a1.5 1.5 0 0 1 0 2.12l-7.25 7.25a1 1 0 0 1-.39.24l-3 1a.5.5 0 0 1-.63-.63l1-3a1 1 0 0 1 .24-.39L10.88 3.5a1.5 1.5 0 0 1 2.12 0z"/></svg>
+                                Bannertekst ingesteld
+                            </span>
+                            <button class="admin-btn admin-btn-sm admin-btn-secondary" @click="openBannerModal">
+                                Bannertekst bewerken
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Banner text modal -->
+                <div v-if="showBannerModal" class="admin-modal-overlay" @click.self="closeBannerModal">
+                    <div class="admin-modal admin-modal-lg">
+                        <div class="admin-modal-header">
+                            <h2 class="admin-modal-title">Bannertekst bewerken</h2>
+                            <button class="admin-modal-close" @click="closeBannerModal" aria-label="Sluiten">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                            </button>
+                        </div>
+                        <div class="admin-modal-body">
+                            <p class="modal-hint">
+                                Deze tekst verschijnt naast de afbeelding in de homepage-banner wanneer Golden Key actief is,
+                                in de taal van de bezoeker. Laat een veld leeg voor talen zonder tekst.
+                            </p>
+                            <div
+                                v-for="lang in languages"
+                                :key="lang.code"
+                                class="form-group"
+                            >
+                                <label :for="'draft-text-' + lang.code" class="form-label">
+                                    {{ lang.name }} ({{ lang.code }})
+                                </label>
+                                <textarea
+                                    :id="'draft-text-' + lang.code"
+                                    v-model="draftTexts[lang.code]"
+                                    class="form-input form-textarea"
+                                    rows="3"
+                                    :placeholder="'Bannertekst in ' + lang.name + '…'"
+                                ></textarea>
+                            </div>
+                            <p v-if="languages.length === 0" class="modal-hint">Geen talen gevonden.</p>
+                            <div v-if="modalError" class="alert alert-error">{{ modalError }}</div>
+                        </div>
+                        <div class="admin-modal-footer">
+                            <button class="admin-btn admin-btn-secondary" @click="closeBannerModal">Annuleren</button>
+                            <button class="admin-btn admin-btn-primary" @click="saveBannerModal" :disabled="modalSaving">
+                                {{ modalSaving ? 'Opslaan…' : 'Opslaan' }}
+                            </button>
+                        </div>
                     </div>
                 </div>
 
@@ -137,15 +283,85 @@ onMounted(fetchSettings);
                             class="form-input"
                         />
                     </div>
+                </div>
 
-                    <div v-if="successMsg" class="alert alert-success">{{ successMsg }}</div>
-                    <div v-if="errorMsg" class="alert alert-error">{{ errorMsg }}</div>
+                <div v-if="successMsg" class="alert alert-success">{{ successMsg }}</div>
+                <div v-if="errorMsg" class="alert alert-error">{{ errorMsg }}</div>
 
-                    <div class="form-actions">
-                        <button class="btn btn-primary" @click="saveSettings" :disabled="saving">
-                            {{ saving ? 'Opslaan…' : 'Opslaan' }}
-                        </button>
+                <div class="form-actions">
+                    <button class="btn btn-primary" @click="saveSettings" :disabled="saving">
+                        {{ saving ? 'Opslaan…' : 'Opslaan' }}
+                    </button>
+                </div>
+
+                <!-- Months management -->
+                <div class="card months-card">
+                    <h2 class="card-title">Maanden</h2>
+                    <p class="card-hint">
+                        Klik op "Bewerken" om de live datum, vindersinformatie en hints van een maand te beheren.
+                    </p>
+
+                    <div v-if="fetchingMonths" class="loading-state">
+                        <div class="spinner"></div>
                     </div>
+
+                    <table v-else class="months-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Maand</th>
+                                <th>Live datum</th>
+                                <th>Status</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="month in months" :key="month.id">
+                                <td class="month-col month-num">{{ month.month_number }}</td>
+                                <td class="month-col month-name">{{ month.month_name }}</td>
+                                <td class="month-col month-date">{{ new Date(month.live_date).toLocaleString('nl-BE', { timeZoneName: 'short' }) }}</td>
+                                <td class="month-col">
+                                    <span class="month-badge" :class="monthStateCss(month.state)">
+                                        {{ monthStateLabel(month.state) }}
+                                    </span>
+                                </td>
+                                <td class="month-col month-actions">
+                                    <RouterLink
+                                        :to="`/admin/golden-key/months/${month.id}`"
+                                        class="admin-btn admin-btn-sm admin-btn-secondary"
+                                    >
+                                        Bewerken
+                                    </RouterLink>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Rules card -->
+                <div class="card">
+                    <h2 class="card-title">Spelregels</h2>
+                    <p class="card-hint">
+                        De tekst die op de pagina "Spelregels" verschijnt, per taal van de bezoeker.
+                        Eenvoudige HTML is toegestaan (bijv. &lt;b&gt;, &lt;ul&gt;, &lt;li&gt;).
+                    </p>
+                    <div
+                        v-for="lang in languages"
+                        :key="lang.code"
+                        class="form-group"
+                    >
+                        <label :for="'rules-text-' + lang.code" class="form-label">
+                            {{ lang.name }} ({{ lang.code }})
+                        </label>
+                        <textarea
+                            :id="'rules-text-' + lang.code"
+                            v-model="rulesTexts[lang.code]"
+                            class="form-input form-textarea"
+                            rows="6"
+                            :placeholder="'Spelregels in ' + lang.name + '…'"
+                        ></textarea>
+                    </div>
+                    <p v-if="languages.length === 0" class="card-hint">Geen talen gevonden.</p>
                 </div>
             </template>
         </div>
@@ -153,8 +369,9 @@ onMounted(fetchSettings);
 </template>
 
 <style scoped>
+/* ---- Months card ---- */
 .gk-admin {
-    max-width: 640px;
+    max-width: 900px;
 }
 
 .page-header {
@@ -197,10 +414,26 @@ onMounted(fetchSettings);
 }
 
 /* Status */
-.status-card .status-row {
+.status-row {
     display: flex;
     align-items: center;
-    gap: 1rem;
+    justify-content: space-between;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.status-left {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.status-right {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    flex-wrap: wrap;
 }
 
 .status-label {
@@ -237,6 +470,22 @@ onMounted(fetchSettings);
     color: #15803d;
 }
 
+.banner-set-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.8rem;
+    color: var(--admin-text-secondary);
+}
+
+/* Modal */
+.modal-hint {
+    font-size: 0.85rem;
+    color: var(--admin-text-secondary);
+    margin-bottom: 1.25rem;
+    line-height: 1.5;
+}
+
 /* Form */
 .form-group {
     margin-bottom: 1.25rem;
@@ -264,6 +513,13 @@ onMounted(fetchSettings);
 .form-input:focus {
     outline: none;
     border-color: var(--admin-primary);
+}
+
+.form-textarea {
+    resize: vertical;
+    min-height: 80px;
+    font-family: inherit;
+    line-height: 1.5;
 }
 
 .form-actions {
@@ -339,4 +595,80 @@ onMounted(fetchSettings);
 @keyframes spin {
     to { transform: rotate(360deg); }
 }
+
+/* ---- Months card ---- */
+.gk-admin {
+    max-width: 900px;
+}
+
+.months-card {
+    margin-top: 2rem;
+}
+
+.months-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+}
+
+.months-table th {
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--admin-text-secondary);
+    padding: 0.5rem 0.75rem;
+    border-bottom: 1px solid var(--admin-border);
+}
+
+.month-col {
+    padding: 0.65rem 0.75rem;
+    border-bottom: 1px solid var(--admin-border);
+    vertical-align: middle;
+}
+
+.month-num {
+    color: var(--admin-text-secondary);
+    width: 2rem;
+}
+
+.month-name {
+    font-weight: 500;
+}
+
+.month-date {
+    color: var(--admin-text-secondary);
+    font-size: 0.82rem;
+}
+
+.month-actions {
+    text-align: right;
+}
+
+/* State badges */
+.month-badge {
+    display: inline-block;
+    padding: 0.25rem 0.6rem;
+    border-radius: 9999px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.badge-locked {
+    background: color-mix(in srgb, #f59e0b 12%, transparent);
+    color: #b45309;
+}
+
+.badge-active {
+    background: color-mix(in srgb, #22c55e 12%, transparent);
+    color: #15803d;
+}
+
+.badge-found {
+    background: color-mix(in srgb, #f59e0b 18%, transparent);
+    color: #92400e;
+}
+
 </style>
