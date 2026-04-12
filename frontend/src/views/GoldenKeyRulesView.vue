@@ -4,6 +4,35 @@ import { RouterLink } from 'vue-router';
 import { getGoldenKeySettings } from '@/services/GoldenKeyService';
 import LanguageProvider from '@/services/LanguageService';
 import StaticContentProvider from '@/services/StaticContentService';
+import { generateHTML } from '@tiptap/vue-3';
+import Document from '@tiptap/extension-document';
+import Paragraph from '@tiptap/extension-paragraph';
+import Text from '@tiptap/extension-text';
+import Bold from '@tiptap/extension-bold';
+import Italic from '@tiptap/extension-italic';
+import Underline from '@tiptap/extension-underline';
+import Link from '@tiptap/extension-link';
+import BulletList from '@tiptap/extension-bullet-list';
+import ListItem from '@tiptap/extension-list-item';
+import Strike from '@tiptap/extension-strike';
+import Table from '@tiptap/extension-table';
+import TableCell from '@tiptap/extension-table-cell';
+import TableHeader from '@tiptap/extension-table-header';
+import TableRow from '@tiptap/extension-table-row';
+
+const tiptapExtensions = [
+    Document, Paragraph, Text, Bold, Italic, Underline, Link,
+    BulletList, ListItem, Strike, Table, TableRow, TableHeader, TableCell
+];
+
+function renderRules(content) {
+    if (!content) return '';
+    try {
+        return generateHTML(JSON.parse(content), tiptapExtensions);
+    } catch {
+        return content;
+    }
+}
 
 const lang = computed(() => LanguageProvider.CURR_LANG.value);
 const dictionary = StaticContentProvider.DICTIONARY;
@@ -41,7 +70,7 @@ onMounted(async () => {
                 <h1 class="gkr__title">{{ dictionary.GoldenKeyRulesBtn?.[lang] ?? 'Spelregels' }}</h1>
             </header>
 
-            <div v-if="rulesText" class="gkr__content" v-html="rulesText"></div>
+            <div v-if="rulesText" class="gkr__content" v-html="renderRules(rulesText)"></div>
             <p v-else class="gkr__empty">Geen spelregels beschikbaar.</p>
         </template>
     </main>
@@ -135,8 +164,11 @@ onMounted(async () => {
     color: #d4b06a;
     font-size: clamp(0.9rem, 2.2vw, 1.05rem);
     line-height: 1.75;
-    white-space: pre-wrap;
     word-break: break-word;
+}
+
+.gkr__content :deep(p) {
+    margin: 0.5em 0;
 }
 
 .gkr__empty {

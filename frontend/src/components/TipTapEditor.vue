@@ -179,6 +179,7 @@
     .editor :deep(.ProseMirror) {
         min-height: 180px;
         outline: none;
+        line-height: 1.75;
     }
 
     .editor :deep(.ProseMirror p) {

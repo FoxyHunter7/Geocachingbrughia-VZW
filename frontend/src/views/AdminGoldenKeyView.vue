@@ -2,6 +2,7 @@
 import { ref, computed, onMounted } from 'vue';
 import { RouterLink } from 'vue-router';
 import AdminLayout from '@/components/admin/AdminLayout.vue';
+import TipTapEditor from '@/components/TipTapEditor.vue';
 import config from '@/data/config.js';
 import { getAdminGoldenKeyMonths } from '@/services/GoldenKeyMonthService';
 
@@ -14,6 +15,18 @@ const errorMsg = ref('');
 const activationTimeUTC = ref('');
 const bannerTexts = ref({});
 const rulesTexts = ref({});
+const rulesEditorRefs = {};
+
+function setRulesEditorRef(el, code) {
+    if (el) rulesEditorRefs[code] = el;
+}
+
+function collectRulesFromEditors() {
+    for (const [code, editorRef] of Object.entries(rulesEditorRefs)) {
+        const content = editorRef?.getContent?.()?.description ?? '';
+        rulesTexts.value[code] = content;
+    }
+}
 
 // Languages for per-language banner text
 const languages = ref([]);
@@ -45,6 +58,7 @@ async function saveBannerModal() {
             ? new Date(activationTimeUTC.value).toISOString()
             : localDate.toISOString();
 
+        collectRulesFromEditors();
         const res = await apiRequest('admin/golden-key', {
             method: 'PUT',
             body: JSON.stringify({ activation_time: utcISO, banner_text: draftTexts.value, rules: rulesTexts.value })
@@ -129,6 +143,7 @@ async function saveSettings() {
         }
         const utcISO = localDate.toISOString();
 
+        collectRulesFromEditors();
         const res = await apiRequest('admin/golden-key', {
             method: 'PUT',
             body: JSON.stringify({ activation_time: utcISO, banner_text: bannerTexts.value, rules: rulesTexts.value })
@@ -343,25 +358,26 @@ onMounted(async () => {
                     <h2 class="card-title">Spelregels</h2>
                     <p class="card-hint">
                         De tekst die op de pagina "Spelregels" verschijnt, per taal van de bezoeker.
-                        Eenvoudige HTML is toegestaan (bijv. &lt;b&gt;, &lt;ul&gt;, &lt;li&gt;).
                     </p>
                     <div
                         v-for="lang in languages"
                         :key="lang.code"
                         class="form-group"
                     >
-                        <label :for="'rules-text-' + lang.code" class="form-label">
-                            {{ lang.name }} ({{ lang.code }})
-                        </label>
-                        <textarea
-                            :id="'rules-text-' + lang.code"
-                            v-model="rulesTexts[lang.code]"
-                            class="form-input form-textarea"
-                            rows="6"
-                            :placeholder="'Spelregels in ' + lang.name + '…'"
-                        ></textarea>
+                        <label class="form-label">{{ lang.name }} ({{ lang.code }})</label>
+                        <TipTapEditor
+                            :ref="el => setRulesEditorRef(el, lang.code)"
+                            :content="rulesTexts[lang.code] ?? ''"
+                            :editable="true"
+                            :langCode="lang.code"
+                        />
                     </div>
                     <p v-if="languages.length === 0" class="card-hint">Geen talen gevonden.</p>
+                    <div class="form-actions" style="margin-top: 1.25rem;">
+                        <button class="btn btn-primary" @click="saveSettings" :disabled="saving">
+                            {{ saving ? 'Opslaan…' : 'Opslaan' }}
+                        </button>
+                    </div>
                 </div>
             </template>
         </div>
