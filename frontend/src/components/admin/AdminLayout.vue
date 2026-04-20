@@ -32,6 +32,10 @@ const isSubmitting = ref(false);
 // Contact count for badge
 const contactCount = ref(0);
 
+// Sidebar state
+const sidebarCollapsed = ref(false);
+const mobileOpen = ref(false);
+
 // Token management
 function getToken() {
     return localStorage.getItem('admin_token');
@@ -284,15 +288,29 @@ onMounted(checkAuth);
     </div>
 
     <!-- Admin layout -->
-    <div v-else class="admin-panel admin-layout">
+    <div v-else class="admin-panel admin-layout" :class="{ 'sidebar-collapsed': sidebarCollapsed }">
+        <!-- Mobile backdrop -->
+        <div v-if="mobileOpen" class="mobile-overlay" @click="mobileOpen = false"></div>
+
         <AdminSidebar 
             :userProfile="userProfile" 
             :contactCount="contactCount"
+            :collapsed="sidebarCollapsed"
+            :mobileOpen="mobileOpen"
+            @update:collapsed="sidebarCollapsed = $event"
+            @close="mobileOpen = false"
             @logout="handleLogout" 
         />
         
         <main class="admin-main">
             <header class="admin-header">
+                <button class="mobile-menu-btn" @click="mobileOpen = !mobileOpen" aria-label="Toggle menu">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="3" y1="12" x2="21" y2="12"/>
+                        <line x1="3" y1="6" x2="21" y2="6"/>
+                        <line x1="3" y1="18" x2="21" y2="18"/>
+                    </svg>
+                </button>
                 <div class="header-title">
                     <h1>{{ pageTitle }}</h1>
                 </div>
@@ -415,6 +433,40 @@ onMounted(checkAuth);
     transition: margin-left 0.2s ease;
 }
 
+.admin-layout.sidebar-collapsed .admin-main {
+    margin-left: var(--sidebar-collapsed-width);
+}
+
+.mobile-menu-btn {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    flex-shrink: 0;
+    border: none;
+    background: transparent;
+    color: var(--admin-text);
+    border-radius: var(--admin-radius);
+    cursor: pointer;
+}
+
+.mobile-menu-btn:hover {
+    background: var(--admin-surface-hover);
+}
+
+.mobile-menu-btn svg {
+    width: 1.25rem;
+    height: 1.25rem;
+}
+
+.mobile-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    z-index: 150;
+}
+
 .admin-header {
     background: var(--admin-surface);
     padding: 1.25rem 2rem;
@@ -447,5 +499,28 @@ onMounted(checkAuth);
     padding: 1.5rem 2rem 2rem;
     overflow-y: auto;
     overflow-x: hidden;
+}
+
+@media (max-width: 768px) {
+    .admin-main {
+        margin-left: 0 !important;
+    }
+
+    .mobile-menu-btn {
+        display: flex;
+    }
+
+    .admin-header {
+        padding: 1rem;
+        gap: 0.75rem;
+    }
+
+    .header-title h1 {
+        font-size: 1.125rem;
+    }
+
+    .admin-content {
+        padding: 1rem 1rem 1.5rem;
+    }
 }
 </style>
