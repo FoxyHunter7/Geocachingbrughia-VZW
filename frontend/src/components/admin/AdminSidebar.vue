@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from 'vue';
+import { computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 const props = defineProps({
@@ -10,14 +10,21 @@ const props = defineProps({
     contactCount: {
         type: Number,
         default: 0
+    },
+    collapsed: {
+        type: Boolean,
+        default: false
+    },
+    mobileOpen: {
+        type: Boolean,
+        default: false
     }
 });
 
-const emit = defineEmits(['logout']);
+const emit = defineEmits(['logout', 'update:collapsed', 'close']);
 
 const route = useRoute();
 const router = useRouter();
-const collapsed = ref(false);
 
 const menuItems = [
     { 
@@ -81,6 +88,7 @@ const isActive = (routeName) => route.name === routeName;
 
 const navigateTo = (routeName) => {
     router.push({ name: routeName });
+    emit('close');
 };
 
 const userInitials = computed(() => {
@@ -90,7 +98,7 @@ const userInitials = computed(() => {
 </script>
 
 <template>
-    <aside class="sidebar" :class="{ collapsed }">
+    <aside class="sidebar" :class="{ collapsed, 'mobile-open': mobileOpen }">
         <!-- Logo -->
         <div class="sidebar-brand">
             <div class="brand-icon">
@@ -190,7 +198,7 @@ const userInitials = computed(() => {
         </nav>
 
         <!-- Collapse Toggle -->
-        <button class="collapse-btn" @click="collapsed = !collapsed" :title="collapsed ? 'Expand' : 'Collapse'">
+        <button class="collapse-btn" @click="emit('update:collapsed', !collapsed)" :title="collapsed ? 'Expand' : 'Collapse'">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <polyline v-if="collapsed" points="9 18 15 12 9 6"/>
                 <polyline v-else points="15 18 9 12 15 6"/>
@@ -473,5 +481,24 @@ const userInitials = computed(() => {
 
 .sidebar.collapsed .logout-btn {
     margin-top: 0.25rem;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    .sidebar {
+        transform: translateX(-100%);
+        z-index: 200;
+        transition: transform 0.25s ease, width 0.2s ease, min-width 0.2s ease;
+    }
+
+    .sidebar.mobile-open {
+        transform: translateX(0);
+        width: var(--sidebar-width);
+        min-width: var(--sidebar-width);
+    }
+
+    .collapse-btn {
+        display: none;
+    }
 }
 </style>

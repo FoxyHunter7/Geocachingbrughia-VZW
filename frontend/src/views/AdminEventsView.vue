@@ -151,11 +151,12 @@ function openEditModal(event) {
     modalMode.value = 'edit';
     editingEvent.value = event;
     
-    // Format dates for datetime-local input
+    // Format UTC date from API to local time for datetime-local input
     const formatDate = (d) => {
         if (!d) return '';
         const date = new Date(d);
-        return date.toISOString().slice(0, 16);
+        const local = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
+        return local.toISOString().slice(0, 16);
     };
     
     formData.value = {
