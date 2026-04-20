@@ -39,8 +39,8 @@ onUnmounted(() => {
 
 const imageSrc = computed(() =>
     isActive.value
-        ? '/assets/media/static/goldenkey-front-page-active.jpg'
-        : '/assets/media/static/goldenkey-front-page-soon.jpg'
+        ? '/assets/media/static/goldenkey-front-page-active.webp'
+        : '/assets/media/static/goldenkey-front-page-soon.webp'
 );
 </script>
 

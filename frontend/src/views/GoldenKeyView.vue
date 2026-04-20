@@ -96,7 +96,7 @@ onUnmounted(() => {
         </div>
 
         <img
-            :src="'/assets/media/static/goldenkey-page-soon.jpeg'"
+            :src="'/assets/media/static/goldenkey-page-soon.webp'"
             alt="Golden Key — Coming Soon"
             class="gk-soon-image"
         />
@@ -111,7 +111,7 @@ onUnmounted(() => {
 
         <div class="gk-rules-wrap">
             <RouterLink to="/golden-key/rules" class="gk-rules-btn">
-                <img src="/assets/media/static/goldenkey-knop.png" alt="" class="gk-rules-btn__img" aria-hidden="true" />
+                <img src="/assets/media/static/goldenkey-knop.webp" alt="" class="gk-rules-btn__img" aria-hidden="true" />
                 <span class="gk-rules-btn__text">{{ dictionary.GoldenKeyRulesBtn?.[lang] ?? 'Spelregels' }}</span>
             </RouterLink>
         </div>
@@ -129,7 +129,7 @@ onUnmounted(() => {
                 }"
             >
                 <img
-                    src="/assets/media/static/goldenkey-knop-maand.png"
+                    src="/assets/media/static/goldenkey-knop-maand.webp"
                     :alt="month.month_name"
                     class="gk-btn__img"
                 />
@@ -160,6 +160,7 @@ onUnmounted(() => {
     min-height: calc(100vh - 4.5rem);
     padding: 2rem 1rem;
     gap: 2.5rem;
+    overflow-y: auto;
 }
 
 /* ===== Soon: plain black ===== */
