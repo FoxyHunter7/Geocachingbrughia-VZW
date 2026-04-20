@@ -16,6 +16,11 @@ import AdminLanguagesView from "@/views/AdminLanguagesView.vue";
 import AdminContactsView from "@/views/AdminContactsView.vue";
 import AdminDashboardView from "@/views/AdminDashboardView.vue";
 import AdminUsersView from "@/views/AdminUsersView.vue";
+import GoldenKeyView from "@/views/GoldenKeyView.vue";
+import GoldenKeyMonthView from "@/views/GoldenKeyMonthView.vue";
+import GoldenKeyRulesView from "@/views/GoldenKeyRulesView.vue";
+import AdminGoldenKeyView from "@/views/AdminGoldenKeyView.vue";
+import AdminGoldenKeyMonthView from "@/views/AdminGoldenKeyMonthView.vue";
 import { StaticContentProvider } from '@/services/StaticContentService';
 import { LanguageProvider } from '@/services/LanguageService';
 
@@ -70,6 +75,24 @@ export default function setupRouter() {
         props: true,
         component: ShopView,
         alias: StaticContentProvider.ROUTES.navShop.aliases
+      },
+      {
+        path: '/golden-key',
+        name: "goldenKey",
+        props: false,
+        component: GoldenKeyView
+      },
+      {
+        path: '/golden-key/rules',
+        name: "goldenKeyRules",
+        props: false,
+        component: GoldenKeyRulesView
+      },
+      {
+        path: '/golden-key/:id',
+        name: "goldenKeyMonth",
+        props: true,
+        component: GoldenKeyMonthView
       },
       {
         path: '/admin',
@@ -130,6 +153,18 @@ export default function setupRouter() {
         name: "adminUsers",
         props: false,
         component: AdminUsersView
+      },
+      {
+        path: '/admin/golden-key',
+        name: "adminGoldenKey",
+        props: false,
+        component: AdminGoldenKeyView
+      },
+      {
+        path: '/admin/golden-key/months/:id',
+        name: "adminGoldenKeyMonth",
+        props: true,
+        component: AdminGoldenKeyMonthView
       },
       {
         path: '/:pathMatch(.*)',

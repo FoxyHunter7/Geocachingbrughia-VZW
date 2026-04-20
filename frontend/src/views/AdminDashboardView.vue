@@ -1,8 +1,9 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import AdminLayout from '@/components/admin/AdminLayout.vue';
 import config from '@/data/config.js';
+import { getAdminGoldenKeyMonths } from '@/services/GoldenKeyMonthService';
 
 const router = useRouter();
 const loading = ref(true);
@@ -15,6 +16,16 @@ const stats = ref({
     languages: { total: 0, active: 0 },
     users: { total: 0 }
 });
+
+const goldenKey = ref({
+    isActive: false,
+    activationTime: null,
+    months: []
+});
+
+const gkActiveMonths = computed(() => goldenKey.value.months.filter(m => m.state === 'active'));
+const gkFoundMonths = computed(() => goldenKey.value.months.filter(m => m.state === 'found'));
+const gkLockedMonths = computed(() => goldenKey.value.months.filter(m => m.state === 'locked'));
 
 const recentContacts = ref([]);
 
@@ -78,6 +89,15 @@ async function fetchDashboardData() {
         if (usersData && usersData.data) {
             stats.value.users.total = usersData.data.length;
         }
+
+        const gkSettings = await apiRequest('admin/golden-key');
+        if (gkSettings) {
+            goldenKey.value.isActive = new Date() >= new Date(gkSettings.activation_time);
+            goldenKey.value.activationTime = gkSettings.activation_time;
+        }
+
+        const gkMonths = await getAdminGoldenKeyMonths();
+        goldenKey.value.months = Array.isArray(gkMonths) ? gkMonths : [];
     } catch (err) {
         console.error('Failed to fetch dashboard data:', err);
     }
@@ -191,21 +211,49 @@ onMounted(fetchDashboardData);
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="summary-grid">
-                <div class="summary-card">
-                    <h4>Evenementen</h4>
-                    <div class="summary-stats">
-                        <div class="summary-stat"><span class="stat-value">{{ stats.events.published }}</span><span class="stat-label">Gepubliceerd</span></div>
-                        <div class="summary-stat"><span class="stat-value">{{ stats.events.draft }}</span><span class="stat-label">Concept</span></div>
+                <!-- Golden Key status card -->
+                <div class="admin-card">
+                    <div class="admin-card-header">
+                        <h3 class="admin-card-title">Golden Key</h3>
+                        <router-link :to="{ name: 'adminGoldenKey' }" class="admin-btn admin-btn-ghost admin-btn-sm">Beheren</router-link>
                     </div>
-                </div>
-                <div class="summary-card">
-                    <h4>Contactberichten</h4>
-                    <div class="summary-stats">
-                        <div class="summary-stat"><span class="stat-value text-danger">{{ stats.contacts.newCount }}</span><span class="stat-label">Nieuw</span></div>
-                        <div class="summary-stat"><span class="stat-value text-warning">{{ stats.contacts.inProgress }}</span><span class="stat-label">In behandeling</span></div>
+                    <div class="admin-card-body">
+                        <div v-if="loading" class="loading-state"><div class="admin-spinner"></div></div>
+                        <template v-else>
+                            <div class="gk-status-row">
+                                <span class="gk-status-badge" :class="goldenKey.isActive ? 'gk-active' : 'gk-soon'">
+                                    {{ goldenKey.isActive ? 'Actief' : 'Binnenkort' }}
+                                </span>
+                                <span v-if="goldenKey.activationTime" class="gk-activation-hint">
+                                    {{ goldenKey.isActive ? 'Geactiveerd op' : 'Activeert op' }}
+                                    {{ new Date(goldenKey.activationTime).toLocaleString('nl-BE', { dateStyle: 'medium', timeStyle: 'short' }) }}
+                                </span>
+                            </div>
+                            <div class="gk-month-stats">
+                                <div class="gk-month-stat">
+                                    <span class="gk-month-count gk-count-active">{{ gkActiveMonths.length }}</span>
+                                    <span class="gk-month-label">Actief</span>
+                                </div>
+                                <div class="gk-month-stat">
+                                    <span class="gk-month-count gk-count-found">{{ gkFoundMonths.length }}</span>
+                                    <span class="gk-month-label">Gevonden</span>
+                                </div>
+                                <div class="gk-month-stat">
+                                    <span class="gk-month-count gk-count-locked">{{ gkLockedMonths.length }}</span>
+                                    <span class="gk-month-label">Vergrendeld</span>
+                                </div>
+                            </div>
+                            <div v-if="gkActiveMonths.length > 0" class="gk-active-list">
+                                <p class="gk-active-list-title">Lopende zoektochten</p>
+                                <div v-for="month in gkActiveMonths" :key="month.id" class="gk-active-item">
+                                    <span class="gk-active-name">{{ month.month_name }}</span>
+                                    <router-link :to="`/admin/golden-key/months/${month.id}`" class="admin-btn admin-btn-ghost admin-btn-sm">Bekijken</router-link>
+                                </div>
+                            </div>
+                            <p v-else-if="!goldenKey.isActive" class="gk-inactive-note">Golden Key is nog niet geactiveerd.</p>
+                            <p v-else class="gk-inactive-note">Geen actieve zoektochten.</p>
+                        </template>
                     </div>
                 </div>
             </div>
@@ -220,17 +268,25 @@ onMounted(fetchDashboardData);
 .clickable:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); }
 @media (max-width: 1200px) { .stats-grid { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 640px) { .stats-grid { grid-template-columns: 1fr; } }
-.content-grid { display: grid; grid-template-columns: 1fr; gap: 1.5rem; max-width: 800px; }
-.summary-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
-@media (max-width: 640px) { .summary-grid { grid-template-columns: 1fr; } }
-.summary-card { background: var(--admin-surface); border: 1px solid var(--admin-border); border-radius: var(--admin-radius); padding: 1.25rem; }
-.summary-card h4 { margin: 0 0 1rem 0; font-size: 0.875rem; font-weight: 600; color: var(--admin-text-secondary); text-transform: uppercase; }
-.summary-stats { display: flex; gap: 2rem; }
-.summary-stat { display: flex; flex-direction: column; gap: 0.25rem; }
-.stat-value { font-size: 1.5rem; font-weight: 700; color: var(--admin-text); }
-.stat-value.text-danger { color: var(--admin-danger); }
-.stat-value.text-warning { color: var(--admin-warning); }
-.stat-label { font-size: 0.75rem; color: var(--admin-text-muted); }
+.content-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+@media (max-width: 900px) { .content-grid { grid-template-columns: 1fr; } }
+.gk-status-row { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.25rem; flex-wrap: wrap; }
+.gk-status-badge { display: inline-flex; align-items: center; padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; }
+.gk-active { background: var(--admin-primary-bg); color: var(--admin-primary); }
+.gk-soon { background: var(--admin-warning-bg); color: var(--admin-warning); }
+.gk-activation-hint { font-size: 0.8rem; color: var(--admin-text-muted); }
+.gk-month-stats { display: flex; gap: 1.5rem; margin-bottom: 1.25rem; }
+.gk-month-stat { display: flex; flex-direction: column; align-items: center; gap: 0.2rem; }
+.gk-month-count { font-size: 1.75rem; font-weight: 700; line-height: 1; }
+.gk-count-active { color: var(--admin-primary); }
+.gk-count-found { color: var(--admin-success); }
+.gk-count-locked { color: var(--admin-text-muted); }
+.gk-month-label { font-size: 0.725rem; color: var(--admin-text-muted); text-transform: uppercase; letter-spacing: 0.04em; }
+.gk-active-list { border-top: 1px solid var(--admin-border-light); padding-top: 1rem; display: flex; flex-direction: column; gap: 0.5rem; }
+.gk-active-list-title { margin: 0 0 0.5rem; font-size: 0.8rem; font-weight: 600; color: var(--admin-text-secondary); text-transform: uppercase; letter-spacing: 0.04em; }
+.gk-active-item { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }
+.gk-active-name { font-size: 0.875rem; font-weight: 500; color: var(--admin-text); }
+.gk-inactive-note { font-size: 0.875rem; color: var(--admin-text-muted); font-style: italic; margin: 0; }
 .loading-state { display: flex; align-items: center; justify-content: center; padding: 3rem; }
 .contact-list { display: flex; flex-direction: column; }
 .contact-item { display: flex; align-items: flex-start; gap: 0.875rem; padding: 1rem 1.25rem; cursor: pointer; transition: background 0.15s ease; border-bottom: 1px solid var(--admin-border-light); }

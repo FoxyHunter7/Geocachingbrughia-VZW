@@ -35,6 +35,13 @@ const menuItems = [
         icon: 'location',
         route: 'adminGeocaches'
     },
+    { type: 'divider' },
+    {
+        name: 'Golden Key',
+        icon: 'golden-key',
+        route: 'adminGoldenKey'
+    },
+    { type: 'divider' },
     {
         name: 'Berichtgeving',
         icon: 'megaphone',
@@ -165,6 +172,12 @@ const userInitials = computed(() => {
                             <circle cx="9" cy="7" r="4"/>
                             <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
                             <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                        </svg>
+                        <!-- Golden Key -->
+                        <svg v-else-if="item.icon === 'golden-key'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="7.5" cy="15.5" r="5.5"/>
+                            <path d="M21 2L11.5 11.5"/>
+                            <path d="M15.5 6l3 3"/>
                         </svg>
                     </span>
                     <span class="nav-label" v-if="!collapsed">{{ item.name }}</span>
