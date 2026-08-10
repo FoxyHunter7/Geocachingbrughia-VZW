@@ -21,6 +21,7 @@ services:
       - NOTIFICATION_EMAIL=${NOTIFICATION_EMAIL}
       - REMINDER_DAYS=${REMINDER_DAYS:-3}
       - CORS_ORIGINS=${CORS_ORIGINS:-https://geocachingbrughia.be,http://localhost}
+      - FRONTEND_URL=${FRONTEND_URL:-https://geocachingbrughia.be}
     networks:
       - geocaching-network
     security_opt:

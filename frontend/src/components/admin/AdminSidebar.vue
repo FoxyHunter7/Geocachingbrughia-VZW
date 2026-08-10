@@ -50,6 +50,17 @@ const menuItems = [
     },
     { type: 'divider' },
     {
+        name: 'Webshop',
+        icon: 'shopping-cart',
+        route: 'adminShop'
+    },
+    {
+        name: 'Bestellingen',
+        icon: 'package',
+        route: 'adminShopOrders'
+    },
+    { type: 'divider' },
+    {
         name: 'Berichtgeving',
         icon: 'megaphone',
         route: 'adminMessages'
@@ -186,6 +197,19 @@ const userInitials = computed(() => {
                             <circle cx="7.5" cy="15.5" r="5.5"/>
                             <path d="M21 2L11.5 11.5"/>
                             <path d="M15.5 6l3 3"/>
+                        </svg>
+                        <!-- Shopping Cart -->
+                        <svg v-else-if="item.icon === 'shopping-cart'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="9" cy="21" r="1"/>
+                            <circle cx="20" cy="21" r="1"/>
+                            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+                        </svg>
+                        <!-- Package -->
+                        <svg v-else-if="item.icon === 'package'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="16.5" y1="9.4" x2="7.5" y2="4.21"/>
+                            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                            <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+                            <line x1="12" y1="22.08" x2="12" y2="12"/>
                         </svg>
                     </span>
                     <span class="nav-label" v-if="!collapsed">{{ item.name }}</span>

@@ -287,6 +287,88 @@ func (db *DB) Migrate() error {
 				(12, 'Maart',     '2027-03-12 10:12:00');
 			`,
 		},
+		{
+			name: "create_shop_settings_table",
+			sql: `
+				CREATE TABLE IF NOT EXISTS shop_settings (
+					id INTEGER PRIMARY KEY CHECK (id = 1),
+					stripe_secret_key TEXT NOT NULL DEFAULT '',
+					stripe_publishable_key TEXT NOT NULL DEFAULT '',
+					stripe_webhook_secret TEXT NOT NULL DEFAULT '',
+					pretix_widget_url TEXT NOT NULL DEFAULT '',
+					currency TEXT NOT NULL DEFAULT 'EUR',
+					created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+					updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+				);
+			`,
+		},
+		{
+			name: "seed_shop_settings",
+			sql: `
+				INSERT OR IGNORE INTO shop_settings (id) VALUES (1);
+			`,
+		},
+		{
+			name: "create_shop_items_table",
+			sql: `
+				CREATE TABLE IF NOT EXISTS shop_items (
+					id INTEGER PRIMARY KEY AUTOINCREMENT,
+					title TEXT NOT NULL,
+					description TEXT NOT NULL DEFAULT '',
+					price_cents INTEGER NOT NULL DEFAULT 0,
+					image_url TEXT,
+					stock_quantity INTEGER,
+					allow_pickup INTEGER NOT NULL DEFAULT 0,
+					pickup_label TEXT NOT NULL DEFAULT '',
+					allow_shipping INTEGER NOT NULL DEFAULT 0,
+					shipping_regions TEXT NOT NULL DEFAULT '',
+					auto_confirm INTEGER NOT NULL DEFAULT 0,
+					active INTEGER NOT NULL DEFAULT 0,
+					sort_order INTEGER NOT NULL DEFAULT 0,
+					created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+					updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+				);
+			`,
+		},
+		{
+			name: "create_shop_orders_table",
+			sql: `
+				CREATE TABLE IF NOT EXISTS shop_orders (
+					id INTEGER PRIMARY KEY AUTOINCREMENT,
+					item_id INTEGER NOT NULL,
+					stripe_session_id TEXT,
+					stripe_payment_intent_id TEXT,
+					buyer_email TEXT NOT NULL,
+					quantity INTEGER NOT NULL DEFAULT 1,
+					amount_cents INTEGER NOT NULL DEFAULT 0,
+					fulfillment_type TEXT NOT NULL DEFAULT 'pickup',
+					shipping_name TEXT NOT NULL DEFAULT '',
+					shipping_address TEXT NOT NULL DEFAULT '',
+					shipping_city TEXT NOT NULL DEFAULT '',
+					shipping_postal_code TEXT NOT NULL DEFAULT '',
+					shipping_country TEXT NOT NULL DEFAULT '',
+					status TEXT NOT NULL DEFAULT 'pending',
+					notes TEXT NOT NULL DEFAULT '',
+					created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+					updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+					FOREIGN KEY (item_id) REFERENCES shop_items(id) ON DELETE CASCADE
+				);
+			`,
+		},
+		{
+			name: "create_shop_orders_status_index",
+			sql: `
+				CREATE INDEX IF NOT EXISTS idx_shop_orders_status
+				ON shop_orders(status);
+			`,
+		},
+		{
+			name: "create_shop_items_active_index",
+			sql: `
+				CREATE INDEX IF NOT EXISTS idx_shop_items_active
+				ON shop_items(active, sort_order);
+			`,
+		},
 	}
 
 	for _, m := range migrations {

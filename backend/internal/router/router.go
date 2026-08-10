@@ -63,6 +63,15 @@ func New(db *database.DB, cfg *config.Config, emailService *email.Service) http.
 		r.With(middleware.CacheControl()).Get("/golden-key/months", h.GetGoldenKeyMonths)
 		r.With(middleware.CacheControl()).Get("/golden-key/months/{id}", h.GetGoldenKeyMonthByID)
 
+		// Shop (public)
+		r.With(middleware.CacheControl()).Get("/shop/settings", h.GetPublicShopSettings)
+		r.With(middleware.CacheControl()).Get("/shop/items", h.GetPublicShopItems)
+		r.With(middleware.CacheControl()).Get("/shop/items/{id}", h.GetShopItemByID)
+		r.Post("/shop/checkout", h.CreateCheckoutSession)
+
+		// Stripe webhook (no auth, signature-verified in handler)
+		r.Post("/shop/webhook", h.StripeWebhook)
+
 		// Serve uploaded images (public, cached)
 		r.Get("/images/*", h.ServeImage)
 
@@ -145,6 +154,22 @@ func New(db *database.DB, cfg *config.Config, emailService *email.Service) http.
 			r.Post("/golden-key/months/{id}/hints", h.AddGoldenKeyHint)
 			r.Put("/golden-key/hints/{id}", h.UpdateGoldenKeyHint)
 			r.Delete("/golden-key/hints/{id}", h.DeleteGoldenKeyHint)
+
+			// Shop settings
+			r.Get("/shop/settings", h.GetAdminShopSettings)
+			r.Put("/shop/settings", h.UpdateShopSettings)
+
+			// Shop items CRUD
+			r.Get("/shop/items", h.GetAdminShopItems)
+			r.Get("/shop/items/{id}", h.GetShopItemByID)
+			r.Post("/shop/items", h.CreateShopItem)
+			r.Put("/shop/items/{id}", h.UpdateShopItem)
+			r.Delete("/shop/items/{id}", h.DeleteShopItem)
+
+			// Shop orders
+			r.Get("/shop/orders", h.GetAdminShopOrders)
+			r.Get("/shop/orders/{id}", h.GetShopOrderByID)
+			r.Put("/shop/orders/{id}/status", h.UpdateShopOrderStatus)
 
 			// User management
 			r.Get("/users", h.GetUsers)

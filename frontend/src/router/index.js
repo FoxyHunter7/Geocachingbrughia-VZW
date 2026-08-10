@@ -21,6 +21,8 @@ import GoldenKeyMonthView from "@/views/GoldenKeyMonthView.vue";
 import GoldenKeyRulesView from "@/views/GoldenKeyRulesView.vue";
 import AdminGoldenKeyView from "@/views/AdminGoldenKeyView.vue";
 import AdminGoldenKeyMonthView from "@/views/AdminGoldenKeyMonthView.vue";
+import AdminShopView from "@/views/AdminShopView.vue";
+import AdminShopOrdersView from "@/views/AdminShopOrdersView.vue";
 import { StaticContentProvider } from '@/services/StaticContentService';
 import { LanguageProvider } from '@/services/LanguageService';
 
@@ -165,6 +167,30 @@ export default function setupRouter() {
         name: "adminGoldenKeyMonth",
         props: true,
         component: AdminGoldenKeyMonthView
+      },
+      {
+        path: '/admin/shop',
+        name: "adminShop",
+        props: false,
+        component: AdminShopView
+      },
+      {
+        path: '/admin/shop/orders',
+        name: "adminShopOrders",
+        props: false,
+        component: AdminShopOrdersView
+      },
+      {
+        path: '/shop/success',
+        name: "shopSuccess",
+        props: true,
+        component: () => import('@/views/ShopSuccessView.vue')
+      },
+      {
+        path: '/shop/cancel',
+        name: "shopCancel",
+        props: true,
+        component: () => import('@/views/ShopCancelView.vue')
       },
       {
         path: '/:pathMatch(.*)',
