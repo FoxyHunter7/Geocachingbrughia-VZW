@@ -24,12 +24,15 @@ host=pretix-db
 
 [mail]
 ; Use the same SMTP server as the main backend (see ../.env)
+; Port 465 = implicit TLS (set tls=on + ssl=on)
+; Port 587 = STARTTLS (set tls=on + starttls=on)
 from=tickets@geocachingbrughia.be
 host=smtp.example.com
-port=587
+port=465
 user=notifications@geocachingbrughia.be
 password=your-smtp-password
 tls=on
+ssl=on
 
 [redis]
 ; Docker DNS — the pretix-redis container is reachable at this hostname
