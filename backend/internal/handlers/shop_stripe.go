@@ -34,8 +34,8 @@ func (h *Handler) CreateCheckoutSession(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	if req.ItemID == 0 || req.Quantity < 1 {
-		respondJSON(w, http.StatusBadRequest, map[string]string{"error": "Invalid item or quantity"})
+	if req.ItemID == 0 || !validateQuantity(req.Quantity) {
+		respondJSON(w, http.StatusBadRequest, map[string]string{"error": "Invalid item or quantity (max 999)"})
 		return
 	}
 
@@ -44,9 +44,24 @@ func (h *Handler) CreateCheckoutSession(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	if req.BuyerEmail == "" {
-		respondJSON(w, http.StatusBadRequest, map[string]string{"error": "Email is required"})
+	if !validateEmail(req.BuyerEmail) {
+		respondJSON(w, http.StatusBadRequest, map[string]string{"error": "A valid email is required"})
 		return
+	}
+
+	if req.FulfillmentType == "shipping" {
+		if !validateCountryCode(req.ShippingCountry) {
+			respondJSON(w, http.StatusBadRequest, map[string]string{"error": "Invalid or unsupported shipping country"})
+			return
+		}
+		req.ShippingName = truncateString(strings.TrimSpace(req.ShippingName), 200)
+		req.ShippingAddress = truncateString(strings.TrimSpace(req.ShippingAddress), 500)
+		req.ShippingCity = truncateString(strings.TrimSpace(req.ShippingCity), 100)
+		req.ShippingPostal = truncateString(strings.TrimSpace(req.ShippingPostal), 20)
+		if req.ShippingName == "" || req.ShippingAddress == "" || req.ShippingCity == "" || req.ShippingPostal == "" {
+			respondJSON(w, http.StatusBadRequest, map[string]string{"error": "All shipping fields are required"})
+			return
+		}
 	}
 
 	settings, err := h.getShopSettings()
@@ -98,6 +113,10 @@ func (h *Handler) CreateCheckoutSession(w http.ResponseWriter, r *http.Request) 
 	}
 
 	totalCents := item.PriceCents * req.Quantity
+	if totalCents > maxPriceCents || totalCents < item.PriceCents {
+		respondJSON(w, http.StatusBadRequest, map[string]string{"error": "Total amount exceeds maximum allowed"})
+		return
+	}
 
 	result, err := h.db.Exec(`
 		INSERT INTO shop_orders (item_id, buyer_email, quantity, amount_cents,

@@ -30,7 +30,7 @@
 </script>
 
 <template>
-    <section>
+    <section id="contact" class="contact-section">
         <h2>{{ dictionary.ContactHelpQuestionTxt[lang] }}</h2>
         <p>{{ dictionary.ContactHelpTxt[lang] }}</p>
         <div>

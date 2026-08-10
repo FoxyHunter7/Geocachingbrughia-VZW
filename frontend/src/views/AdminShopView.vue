@@ -221,6 +221,8 @@ async function handleSaveItem() {
         errors.push('Prijs moet een positief getal zijn');
     } else if (priceCents <= 0) {
         errors.push('Prijs moet groter zijn dan 0');
+    } else if (priceCents > 100000000) {
+        errors.push('Prijs is te hoog (maximum EUR 1000000.00)');
     }
 
     if (!itemForm.value.allow_pickup && !itemForm.value.allow_shipping) {

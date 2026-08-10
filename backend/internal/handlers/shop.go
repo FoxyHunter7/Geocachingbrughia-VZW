@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/go-chi/chi/v5"
 )
@@ -140,12 +141,22 @@ func (h *Handler) UpdateShopSettings(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	req.StripeSecretKey = strings.TrimSpace(req.StripeSecretKey)
+	req.StripePublishableKey = strings.TrimSpace(req.StripePublishableKey)
+	req.StripeWebhookSecret = strings.TrimSpace(req.StripeWebhookSecret)
+	req.PretixWidgetURL = truncateString(strings.TrimSpace(req.PretixWidgetURL), 500)
+
+	if len(req.StripeSecretKey) > 200 || len(req.StripePublishableKey) > 200 || len(req.StripeWebhookSecret) > 200 {
+		respondJSON(w, http.StatusBadRequest, map[string]string{"error": "Stripe key values are too long"})
+		return
+	}
+
 	_, err := h.db.Exec(`
 		UPDATE shop_settings SET
 			stripe_secret_key = ?, stripe_publishable_key = ?, stripe_webhook_secret = ?,
 			pretix_widget_url = ?, currency = ?, updated_at = CURRENT_TIMESTAMP
 		WHERE id = 1
-	`, req.StripeSecretKey, req.StripePublishableKey, req.StripeWebhookSecret, req.PretixWidgetURL, req.Currency)
+	`, req.StripeSecretKey, req.StripePublishableKey, req.StripeWebhookSecret, req.PretixWidgetURL, "EUR")
 
 	if err != nil {
 		respondJSON(w, http.StatusInternalServerError, map[string]string{"error": "Failed to update shop settings"})
@@ -242,12 +253,26 @@ func (h *Handler) CreateShopItem(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	item.Title = strings.TrimSpace(item.Title)
+	item.Description = truncateString(item.Description, maxStringLength)
+	item.PickupLabel = truncateString(strings.TrimSpace(item.PickupLabel), maxTitleLength)
+	item.ShippingRegions = truncateString(strings.TrimSpace(item.ShippingRegions), maxTitleLength)
+	item.ImageURL = truncateString(strings.TrimSpace(item.ImageURL), 500)
+
 	if item.Title == "" {
 		respondJSON(w, http.StatusBadRequest, map[string]string{"error": "Title is required"})
 		return
 	}
-	if item.PriceCents <= 0 {
-		respondJSON(w, http.StatusBadRequest, map[string]string{"error": "Price must be greater than 0"})
+	if len(item.Title) > maxTitleLength {
+		respondJSON(w, http.StatusBadRequest, map[string]string{"error": "Title is too long (max 200 characters)"})
+		return
+	}
+	if !validatePriceCents(item.PriceCents) {
+		respondJSON(w, http.StatusBadRequest, map[string]string{"error": "Price must be between 0.01 and 1000000.00"})
+		return
+	}
+	if !validateStock(item.StockQuantity) {
+		respondJSON(w, http.StatusBadRequest, map[string]string{"error": "Stock must be between 0 and 999999"})
 		return
 	}
 	if !item.AllowPickup && !item.AllowShipping {
@@ -292,12 +317,26 @@ func (h *Handler) UpdateShopItem(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	item.Title = strings.TrimSpace(item.Title)
+	item.Description = truncateString(item.Description, maxStringLength)
+	item.PickupLabel = truncateString(strings.TrimSpace(item.PickupLabel), maxTitleLength)
+	item.ShippingRegions = truncateString(strings.TrimSpace(item.ShippingRegions), maxTitleLength)
+	item.ImageURL = truncateString(strings.TrimSpace(item.ImageURL), 500)
+
 	if item.Title == "" {
 		respondJSON(w, http.StatusBadRequest, map[string]string{"error": "Title is required"})
 		return
 	}
-	if item.PriceCents <= 0 {
-		respondJSON(w, http.StatusBadRequest, map[string]string{"error": "Price must be greater than 0"})
+	if len(item.Title) > maxTitleLength {
+		respondJSON(w, http.StatusBadRequest, map[string]string{"error": "Title is too long (max 200 characters)"})
+		return
+	}
+	if !validatePriceCents(item.PriceCents) {
+		respondJSON(w, http.StatusBadRequest, map[string]string{"error": "Price must be between 0.01 and 1000000.00"})
+		return
+	}
+	if !validateStock(item.StockQuantity) {
+		respondJSON(w, http.StatusBadRequest, map[string]string{"error": "Stock must be between 0 and 999999"})
 		return
 	}
 	if !item.AllowPickup && !item.AllowShipping {
@@ -457,6 +496,9 @@ func (h *Handler) UpdateShopOrderStatus(w http.ResponseWriter, r *http.Request) 
 		respondJSON(w, http.StatusBadRequest, map[string]string{"error": "Invalid request body"})
 		return
 	}
+
+	update.Status = strings.TrimSpace(update.Status)
+	update.Notes = truncateString(strings.TrimSpace(update.Notes), maxStringLength)
 
 	validStatuses := map[string]bool{
 		"pending": true, "paid": true, "confirmed": true,

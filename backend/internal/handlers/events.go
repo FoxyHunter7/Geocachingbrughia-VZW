@@ -11,6 +11,7 @@ import (
 	"image/png"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
@@ -308,6 +309,26 @@ func (h *Handler) CreateEvent(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	event.Title = strings.TrimSpace(event.Title)
+	event.Location = truncateString(strings.TrimSpace(event.Location), 200)
+	event.Geolink = truncateString(strings.TrimSpace(event.Geolink), 500)
+	event.TicketURL = truncateString(strings.TrimSpace(event.TicketURL), 500)
+	event.ImageURL = truncateString(strings.TrimSpace(event.ImageURL), 500)
+
+	if event.Title == "" {
+		respondJSON(w, http.StatusBadRequest, map[string]string{"error": "Title is required"})
+		return
+	}
+	if len(event.Title) > maxTitleLength {
+		respondJSON(w, http.StatusBadRequest, map[string]string{"error": "Title is too long"})
+		return
+	}
+
+	validEventStates := map[string]bool{"published": true, "draft": true, "archived": true}
+	if !validEventStates[event.State] {
+		event.State = "draft"
+	}
+
 	onHome := 0
 	if event.OnHome {
 		onHome = 1
@@ -348,6 +369,22 @@ func (h *Handler) UpdateEvent(w http.ResponseWriter, r *http.Request) {
 	if err := json.NewDecoder(r.Body).Decode(&event); err != nil {
 		respondJSON(w, http.StatusBadRequest, map[string]string{"error": "Invalid request body"})
 		return
+	}
+
+	event.Title = strings.TrimSpace(event.Title)
+	event.Location = truncateString(strings.TrimSpace(event.Location), 200)
+	event.Geolink = truncateString(strings.TrimSpace(event.Geolink), 500)
+	event.TicketURL = truncateString(strings.TrimSpace(event.TicketURL), 500)
+	event.ImageURL = truncateString(strings.TrimSpace(event.ImageURL), 500)
+
+	if event.Title == "" {
+		respondJSON(w, http.StatusBadRequest, map[string]string{"error": "Title is required"})
+		return
+	}
+
+	validEventStates := map[string]bool{"published": true, "draft": true, "archived": true}
+	if !validEventStates[event.State] {
+		event.State = "draft"
 	}
 
 	onHome := 0

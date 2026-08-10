@@ -88,8 +88,8 @@ func (h *Handler) CreateUser(w http.ResponseWriter, r *http.Request) {
 	}
 	if req.Email == "" {
 		errors["email"] = append(errors["email"], "Email is required")
-	} else if !strings.Contains(req.Email, "@") {
-		errors["email"] = append(errors["email"], "Invalid email format")
+	} else if !validateEmail(req.Email) {
+		errors["email"] = append(errors["email"], "A valid email is required")
 	}
 
 	if len(errors) > 0 {

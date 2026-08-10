@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/FoxyHunter7/geocachingbrughia-backend/internal/middleware"
 	"github.com/go-chi/chi/v5"
@@ -48,15 +49,25 @@ func (h *Handler) SubmitContactForm(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Validate input
+	req.Email = strings.TrimSpace(req.Email)
+	req.Subject = strings.TrimSpace(req.Subject)
+	req.Message = strings.TrimSpace(req.Message)
+
 	errors := make(map[string][]string)
 	if req.Email == "" {
 		errors["email"] = append(errors["email"], "Email is required")
+	} else if !validateEmail(req.Email) {
+		errors["email"] = append(errors["email"], "A valid email is required")
 	}
 	if req.Subject == "" {
 		errors["subject"] = append(errors["subject"], "Subject is required")
+	} else if len(req.Subject) > 200 {
+		errors["subject"] = append(errors["subject"], "Subject is too long (max 200 characters)")
 	}
 	if req.Message == "" {
 		errors["message"] = append(errors["message"], "Message is required")
+	} else if len(req.Message) > maxStringLength {
+		errors["message"] = append(errors["message"], "Message is too long")
 	}
 
 	if len(errors) > 0 {

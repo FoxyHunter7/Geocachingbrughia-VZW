@@ -16,7 +16,7 @@
 </script>
 
 <template>
-    <section>
+    <section id="socials">
         <h2>{{ StaticContentProvider.DICTIONARY.SocialsFollowTxt[lang] }}</h2>
         <div>
             <figure v-for="social in socials" @click="openLink(social.url)">

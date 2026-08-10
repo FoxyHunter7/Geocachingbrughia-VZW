@@ -644,6 +644,18 @@ payment page, no PCI scope).
    the secret key in public endpoints (GetPublicShopSettings only
    returns the publishable key).
 5. Price is stored in **cents** (integer) — never use floats for money.
+6. All user inputs must be validated server-side using the helpers in
+   `validation.go`: `validateEmail`, `validatePriceCents`,
+   `validateQuantity`, `validateStock`, `truncateString`,
+   `validateCountryCode`. Never trust client-side validation alone.
+7. String inputs must be length-limited (`maxStringLength=10000`,
+   `maxTitleLength=200`) and trimmed before storage.
+8. Numeric inputs must be range-checked (`maxPriceCents=100000000`,
+   `maxQuantity=999`, `maxStock=999999`) to prevent integer overflow
+   on multiplication (e.g. `price * quantity`).
+9. Email inputs must use `validateEmail()` (RFC-compliant via
+   `net/mail.ParseAddress`), not just `strings.Contains(email, "@")`.
+10. Country codes must be validated against `validCountryCodes` map.
 
 ## 14. Before you say "done"
 
