@@ -32,7 +32,6 @@ const selectedFile = ref(null);
 
 const itemForm = ref({
     title: '',
-    description: '',
     translations: [],
     priceEuros: '',
     image_url: '',
@@ -212,7 +211,6 @@ function openCreateModal() {
     imagePreview.value = '';
     itemForm.value = {
         title: '',
-        description: '',
         translations: languages.value.map(l => ({ lang_code: l.code, description: '' })),
         priceEuros: '',
         image_url: '',
@@ -234,7 +232,6 @@ function openEditModal(item) {
     selectedFile.value = null;
     itemForm.value = {
         title: item.title || '',
-        description: item.description || '',
         translations: item.translations?.length
             ? languages.value.map(l => {
                 const t = item.translations.find(t => t.lang_code === l.code);
@@ -335,7 +332,6 @@ async function handleSaveItem() {
 
         const payload = {
             title: itemForm.value.title,
-            description: itemForm.value.description || '',
             translations: itemForm.value.translations,
             price_cents: priceCents,
             image_url: finalImageUrl,
@@ -617,22 +613,10 @@ onUnmounted(() => document.removeEventListener('keydown', handleKeydown));
                         </div>
 
                         <div class="admin-form-group">
-                            <label class="admin-label" for="item-description">Korte beschrijving (standaard)</label>
-                            <textarea
-                                id="item-description"
-                                v-model="itemForm.description"
-                                class="admin-textarea"
-                                rows="2"
-                                placeholder="Korte beschrijving voor overzicht en fallback..."
-                            ></textarea>
-                            <p class="admin-form-hint">Dit is de standaard beschrijving. Gebruik de tabs hieronder voor vertalingen.</p>
-                        </div>
-
-                        <div class="admin-form-group">
                             <TranslationTabs
                                 :languages="languages"
                                 :translations="itemForm.translations"
-                                label="Beschrijving vertalingen"
+                                label="Korte beschrijving"
                                 @update:translations="itemForm.translations = $event"
                             />
                         </div>

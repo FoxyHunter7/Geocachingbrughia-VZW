@@ -170,8 +170,6 @@ defineExpose({ activeLang, updateTranslation });
     gap: 0;
     border-right: 1px solid var(--admin-border);
     background: var(--admin-bg);
-    overflow-y: auto;
-    max-height: 200px;
     flex-shrink: 0;
     width: 52px;
 }
@@ -244,6 +242,12 @@ defineExpose({ activeLang, updateTranslation });
     flex-direction: column;
 }
 
+.translation-panel-container > div {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
 .translation-tabs-body.with-slot {
     min-height: 250px;
 }
@@ -255,7 +259,7 @@ defineExpose({ activeLang, updateTranslation });
 .translation-input {
     border: none;
     border-radius: 0;
-    height: 100%;
+    flex: 1;
     min-height: 120px;
 }
 
