@@ -246,8 +246,20 @@ func (h *Handler) CreateShopItem(w http.ResponseWriter, r *http.Request) {
 		respondJSON(w, http.StatusBadRequest, map[string]string{"error": "Title is required"})
 		return
 	}
-	if item.PriceCents < 0 {
-		respondJSON(w, http.StatusBadRequest, map[string]string{"error": "Price cannot be negative"})
+	if item.PriceCents <= 0 {
+		respondJSON(w, http.StatusBadRequest, map[string]string{"error": "Price must be greater than 0"})
+		return
+	}
+	if !item.AllowPickup && !item.AllowShipping {
+		respondJSON(w, http.StatusBadRequest, map[string]string{"error": "At least one fulfillment option (pickup or shipping) is required"})
+		return
+	}
+	if item.AllowPickup && item.PickupLabel == "" {
+		respondJSON(w, http.StatusBadRequest, map[string]string{"error": "Pickup label is required when pickup is enabled"})
+		return
+	}
+	if item.AllowShipping && item.ShippingRegions == "" {
+		respondJSON(w, http.StatusBadRequest, map[string]string{"error": "Shipping regions are required when shipping is enabled"})
 		return
 	}
 
@@ -282,6 +294,22 @@ func (h *Handler) UpdateShopItem(w http.ResponseWriter, r *http.Request) {
 
 	if item.Title == "" {
 		respondJSON(w, http.StatusBadRequest, map[string]string{"error": "Title is required"})
+		return
+	}
+	if item.PriceCents <= 0 {
+		respondJSON(w, http.StatusBadRequest, map[string]string{"error": "Price must be greater than 0"})
+		return
+	}
+	if !item.AllowPickup && !item.AllowShipping {
+		respondJSON(w, http.StatusBadRequest, map[string]string{"error": "At least one fulfillment option (pickup or shipping) is required"})
+		return
+	}
+	if item.AllowPickup && item.PickupLabel == "" {
+		respondJSON(w, http.StatusBadRequest, map[string]string{"error": "Pickup label is required when pickup is enabled"})
+		return
+	}
+	if item.AllowShipping && item.ShippingRegions == "" {
+		respondJSON(w, http.StatusBadRequest, map[string]string{"error": "Shipping regions are required when shipping is enabled"})
 		return
 	}
 

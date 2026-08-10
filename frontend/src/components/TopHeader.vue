@@ -16,6 +16,19 @@
     });
 
     const dictionary = SCP.DICTIONARY;
+
+    function getFlagUrl(lang) {
+        if (lang.flag_url) {
+            if (lang.flag_url.includes('/assets/') || lang.flag_url.includes('fallbackLangFlags')) {
+                return lang.flag_url;
+            }
+            return `${config.apiUrl}images/${lang.flag_url}`;
+        }
+        if (lang.imageUrl) {
+            return `/assets/media/${lang.imageUrl}`;
+        }
+        return `/assets/media/fallbackLangFlags/${lang.code}.svg`;
+    }
 </script>
 
 <template>
@@ -28,10 +41,10 @@
                 <RouterLink @click="if (isMobile) {isNavOpen = !isNavOpen; $emit('menuStateChange', isNavOpen)}" :to="{ path: SCP.constructRoute(lang, 'NavEvents') }">{{ dictionary.NavEvents[lang] }}</RouterLink>
                 <RouterLink @click="if (isMobile) {isNavOpen = !isNavOpen; $emit('menuStateChange', isNavOpen)}" :to="{ path: SCP.constructRoute(lang, 'NavGeocaches') }">{{ dictionary.NavGeocaches[lang] }}</RouterLink>
                 <RouterLink @click="if (isMobile) {isNavOpen = !isNavOpen; $emit('menuStateChange', isNavOpen)}" to="/golden-key">Golden Key</RouterLink>
-                <RouterLink class="icon-external-link" @click="if (isMobile) {isNavOpen = !isNavOpen; $emit('menuStateChange', isNavOpen)}" :to="{ path: SCP.constructRoute(lang, 'NavShop') }">{{ dictionary.NavShop[lang] }}</RouterLink>
+                <RouterLink @click="if (isMobile) {isNavOpen = !isNavOpen; $emit('menuStateChange', isNavOpen)}" :to="{ path: SCP.constructRoute(lang, 'NavShop') }">{{ dictionary.NavShop[lang] }}</RouterLink>
             </nav>
             <figure v-if="langInfo" @click="$emit('langSelector')" id="lang-selector">
-                <img :src="(langInfo.fallback || !langInfo.imageUrl) ? `/assets/media/${langInfo.imageUrl || 'fallbackLangFlags/EN.svg'}` : `${config.apiUrl}images/${langInfo.imageUrl}`">
+                <img :src="getFlagUrl(langInfo)">
                 <p>{{ langInfo.name }}</p>
             </figure>
         </Teleport>

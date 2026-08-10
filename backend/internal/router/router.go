@@ -66,7 +66,6 @@ func New(db *database.DB, cfg *config.Config, emailService *email.Service) http.
 		// Shop (public)
 		r.With(middleware.CacheControl()).Get("/shop/settings", h.GetPublicShopSettings)
 		r.With(middleware.CacheControl()).Get("/shop/items", h.GetPublicShopItems)
-		r.With(middleware.CacheControl()).Get("/shop/items/{id}", h.GetShopItemByID)
 		r.Post("/shop/checkout", h.CreateCheckoutSession)
 
 		// Stripe webhook (no auth, signature-verified in handler)

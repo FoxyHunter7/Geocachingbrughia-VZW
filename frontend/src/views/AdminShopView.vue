@@ -14,8 +14,7 @@ const settings = ref({
     stripe_secret_key: '',
     stripe_publishable_key: '',
     stripe_webhook_secret: '',
-    pretix_widget_url: '',
-    currency: 'EUR'
+    pretix_widget_url: ''
 });
 
 // Items
@@ -100,8 +99,7 @@ async function fetchSettings() {
             stripe_secret_key: data.stripe_secret_key || '',
             stripe_publishable_key: data.stripe_publishable_key || '',
             stripe_webhook_secret: data.stripe_webhook_secret || '',
-            pretix_widget_url: data.pretix_widget_url || '',
-            currency: data.currency || 'EUR'
+            pretix_widget_url: data.pretix_widget_url || ''
         };
     } catch {
         window.$toast?.error('Instellingen laden mislukt');
@@ -114,7 +112,7 @@ async function saveSettings() {
     try {
         await apiRequest('admin/shop/settings', {
             method: 'PUT',
-            body: JSON.stringify(settings.value)
+            body: JSON.stringify({ ...settings.value, currency: 'EUR' })
         });
         window.$toast?.success('Instellingen opgeslagen');
     } catch {
@@ -165,15 +163,15 @@ function openEditModal(item) {
     itemForm.value = {
         title: item.title || '',
         description: item.description || '',
-        priceEuros: centsToEuros(item.price),
+        priceEuros: centsToEuros(item.price_cents),
         image_url: item.image_url || '',
-        stock: item.stock === null || item.stock === undefined ? '' : item.stock,
+        stock: item.stock_quantity === null || item.stock_quantity === undefined ? '' : item.stock_quantity,
         allow_pickup: !!item.allow_pickup,
         pickup_label: item.pickup_label || '',
         allow_shipping: !!item.allow_shipping,
         shipping_regions: item.shipping_regions || '',
         auto_confirm: !!item.auto_confirm,
-        is_active: !!item.is_active,
+        is_active: !!item.active,
         sort_order: item.sort_order || 0
     };
     imagePreview.value = imageUrl(item.image_url);
@@ -210,10 +208,38 @@ async function uploadImage(file) {
 }
 
 async function handleSaveItem() {
+    const errors = [];
+
     if (!itemForm.value.title.trim()) {
-        window.$toast?.error('Titel is verplicht');
+        errors.push('Titel is verplicht');
+    }
+
+    const priceCents = eurosToCents(itemForm.value.priceEuros);
+    if (itemForm.value.priceEuros === '' || itemForm.value.priceEuros === null || itemForm.value.priceEuros === undefined) {
+        errors.push('Prijs is verplicht');
+    } else if (isNaN(parseFloat(itemForm.value.priceEuros)) || parseFloat(itemForm.value.priceEuros) < 0) {
+        errors.push('Prijs moet een positief getal zijn');
+    } else if (priceCents <= 0) {
+        errors.push('Prijs moet groter zijn dan 0');
+    }
+
+    if (!itemForm.value.allow_pickup && !itemForm.value.allow_shipping) {
+        errors.push('Minstens één leveringsoptie (afhalen of verzenden) is verplicht');
+    }
+
+    if (itemForm.value.allow_pickup && !itemForm.value.pickup_label.trim()) {
+        errors.push('Afhaal-label is verplicht wanneer afhalen is ingeschakeld');
+    }
+
+    if (itemForm.value.allow_shipping && !itemForm.value.shipping_regions.trim()) {
+        errors.push('Verzendregio\'s zijn verplicht wanneer verzenden is ingeschakeld');
+    }
+
+    if (errors.length > 0) {
+        window.$toast?.error(errors.join(', '));
         return;
     }
+
     savingItem.value = true;
     try {
         let finalImageUrl = itemForm.value.image_url || '';
@@ -230,15 +256,15 @@ async function handleSaveItem() {
         const payload = {
             title: itemForm.value.title,
             description: itemForm.value.description || '',
-            price: eurosToCents(itemForm.value.priceEuros),
+            price_cents: priceCents,
             image_url: finalImageUrl,
-            stock: itemForm.value.stock === '' ? null : parseInt(itemForm.value.stock, 10),
+            stock_quantity: itemForm.value.stock === '' ? null : parseInt(itemForm.value.stock, 10),
             allow_pickup: itemForm.value.allow_pickup,
             pickup_label: itemForm.value.pickup_label || '',
             allow_shipping: itemForm.value.allow_shipping,
             shipping_regions: itemForm.value.shipping_regions || '',
             auto_confirm: itemForm.value.auto_confirm,
-            is_active: itemForm.value.is_active,
+            active: itemForm.value.is_active,
             sort_order: parseInt(itemForm.value.sort_order, 10) || 0
         };
 
@@ -257,17 +283,16 @@ async function handleSaveItem() {
     savingItem.value = false;
 }
 
-async function handleDeleteItem() {
-    if (!editingItem.value) return;
-    if (!confirm(`Weet je zeker dat je "${editingItem.value.title}" wilt verwijderen?`)) return;
+async function handleDeleteItem(item) {
+    if (!item) return;
+    if (!confirm(`Weet je zeker dat je "${item.title}" wilt verwijderen?`)) return;
     savingItem.value = true;
     try {
-        await apiRequest(`admin/shop/items/${editingItem.value.id}`, { method: 'DELETE' });
+        await apiRequest(`admin/shop/items/${item.id}`, { method: 'DELETE' });
         window.$toast?.success('Item verwijderd');
-        closeModal();
         fetchItems();
-    } catch {
-        window.$toast?.error('Verwijderen mislukt');
+    } catch (err) {
+        window.$toast?.error(err.message || 'Verwijderen mislukt');
     }
     savingItem.value = false;
 }
@@ -293,13 +318,28 @@ onMounted(async () => {
         <div class="admin-card" style="margin-bottom: 1.5rem;">
             <div class="admin-card-header">
                 <h2 class="admin-card-title">Webshop Instellingen</h2>
-                <button
-                    class="admin-btn admin-btn-primary"
-                    @click="saveSettings"
-                    :disabled="savingSettings || loadingSettings"
-                >
-                    {{ savingSettings ? 'Opslaan...' : 'Opslaan' }}
-                </button>
+                <div style="display: flex; gap: 0.75rem; align-items: center;">
+                    <a
+                        href="https://ticketing.geocachingbrughia.be/control/"
+                        target="_blank"
+                        rel="noopener"
+                        class="admin-btn admin-btn-secondary"
+                    >
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 1rem; height: 1rem;">
+                            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+                            <polyline points="15 3 21 3 21 9"/>
+                            <line x1="10" y1="14" x2="21" y2="3"/>
+                        </svg>
+                        Pretix Beheer
+                    </a>
+                    <button
+                        class="admin-btn admin-btn-primary"
+                        @click="saveSettings"
+                        :disabled="savingSettings || loadingSettings"
+                    >
+                        {{ savingSettings ? 'Opslaan...' : 'Opslaan' }}
+                    </button>
+                </div>
             </div>
             <div class="admin-card-body">
                 <div v-if="loadingSettings" style="text-align: center; padding: 2rem;">
@@ -349,13 +389,6 @@ onMounted(async () => {
                         <p class="admin-form-hint">
                             URL van de Pretix widget voor het insluiten van ticketverkoop op de website.
                         </p>
-                    </div>
-                    <div class="admin-form-group">
-                        <label class="admin-label" for="shop-currency">Valuta</label>
-                        <select id="shop-currency" v-model="settings.currency" class="admin-select">
-                            <option value="EUR">EUR (&euro;)</option>
-                            <option value="USD">USD ($)</option>
-                        </select>
                     </div>
                 </template>
             </div>
@@ -416,13 +449,13 @@ onMounted(async () => {
                             <td>
                                 <span style="font-weight: 500;">{{ item.title }}</span>
                             </td>
-                            <td>{{ item.price_display || ('€ ' + centsToEuros(item.price)) }}</td>
-                            <td>{{ stockLabel(item.stock) }}</td>
+                            <td>{{ item.price_display || ('€ ' + centsToEuros(item.price_cents)) }}</td>
+                            <td>{{ stockLabel(item.stock_quantity) }}</td>
                             <td>
                                 <span
-                                    :class="['admin-badge', item.is_active ? 'admin-badge-success' : 'admin-badge-neutral']"
+                                    :class="['admin-badge', item.active ? 'admin-badge-success' : 'admin-badge-neutral']"
                                 >
-                                    {{ item.is_active ? 'Actief' : 'Inactief' }}
+                                    {{ item.active ? 'Actief' : 'Inactief' }}
                                 </span>
                             </td>
                             <td>
@@ -449,7 +482,7 @@ onMounted(async () => {
                                     </button>
                                     <button
                                         class="admin-btn admin-btn-ghost admin-btn-icon admin-btn-sm"
-                                        @click="openEditModal(item)"
+                                        @click="handleDeleteItem(item)"
                                         title="Verwijderen"
                                     >
                                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 1rem; height: 1rem;">
@@ -505,7 +538,7 @@ onMounted(async () => {
 
                         <div class="admin-form-row">
                             <div class="admin-form-group">
-                                <label class="admin-label" for="item-price">Prijs (&euro;)</label>
+                                <label class="admin-label" for="item-price">Prijs (&euro;) *</label>
                                 <input
                                     id="item-price"
                                     v-model="itemForm.priceEuros"
@@ -514,6 +547,7 @@ onMounted(async () => {
                                     min="0"
                                     class="admin-input"
                                     placeholder="0.00"
+                                    required
                                 >
                             </div>
                             <div class="admin-form-group">
@@ -546,7 +580,7 @@ onMounted(async () => {
                             </div>
                         </div>
 
-                        <div class="form-section-title">Levering</div>
+                        <div class="form-section-title">Levering <span class="form-required-hint">minimaal 1 vereist</span></div>
                         <div class="admin-form-group">
                             <label class="admin-checkbox">
                                 <input
@@ -597,6 +631,7 @@ onMounted(async () => {
                                     >
                                     Auto-bevestigen
                                 </label>
+                                <p class="admin-form-hint">Bestellingen worden automatisch bevestigd na betaling. Schakel uit als je bestellingen manueel wilt controleren voor verzending/afhalen.</p>
                             </div>
                             <div class="admin-form-group">
                                 <label class="admin-checkbox">
@@ -606,6 +641,7 @@ onMounted(async () => {
                                     >
                                     Actief
                                 </label>
+                                <p class="admin-form-hint">Alleen actieve items zijn zichtbaar in de webshop. Schakel uit om een item tijdelijk te verbergen zonder het te verwijderen.</p>
                             </div>
                         </div>
 
@@ -625,7 +661,7 @@ onMounted(async () => {
                         <button
                             v-if="modalMode === 'edit'"
                             class="admin-btn admin-btn-danger"
-                            @click="handleDeleteItem"
+                            @click="handleDeleteItem(editingItem)"
                             :disabled="savingItem"
                         >
                             Verwijderen
@@ -682,6 +718,17 @@ onMounted(async () => {
     margin: 1.5rem 0 0.75rem;
     padding-top: 1rem;
     border-top: 1px solid var(--admin-border-light);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.form-required-hint {
+    font-size: 0.6875rem;
+    font-weight: 500;
+    color: var(--admin-danger);
+    text-transform: none;
+    letter-spacing: 0;
 }
 
 .image-upload {

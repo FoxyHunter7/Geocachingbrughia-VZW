@@ -258,7 +258,7 @@
                                     </div>
                                     <div class="detail-row">
                                         <dt>Stripe Payment ID</dt>
-                                        <dd class="mono">{{ orderDetails.stripe_payment_id || '—' }}</dd>
+                                        <dd class="mono">{{ orderDetails.stripe_payment_intent_id || '—' }}</dd>
                                     </div>
                                 </dl>
                             </div>

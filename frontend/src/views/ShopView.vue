@@ -52,6 +52,22 @@ function closeCheckout() { checkoutItem.value = null; checkoutError.value = ''; 
 async function submitCheckout() {
     if (!checkoutItem.value) return;
     checkoutError.value = '';
+
+    if (!form.value.buyer_email.trim()) {
+        checkoutError.value = 'E-mailadres is verplicht';
+        return;
+    }
+    if (form.value.quantity < 1) {
+        checkoutError.value = 'Aantal moet minimaal 1 zijn';
+        return;
+    }
+    if (form.value.fulfillment_type === 'shipping') {
+        if (!form.value.shipping_name.trim() || !form.value.shipping_address.trim() || !form.value.shipping_city.trim() || !form.value.shipping_postal_code.trim()) {
+            checkoutError.value = 'Alle verzendvelden zijn verplicht';
+            return;
+        }
+    }
+
     checkoutLoading.value = true;
     try {
         const res = await createCheckoutSession({ item_id: checkoutItem.value.id, quantity: form.value.quantity, fulfillment_type: form.value.fulfillment_type, buyer_email: form.value.buyer_email, shipping_name: form.value.shipping_name, shipping_address: form.value.shipping_address, shipping_city: form.value.shipping_city, shipping_postal_code: form.value.shipping_postal_code, shipping_country: form.value.shipping_country });
@@ -62,7 +78,7 @@ async function submitCheckout() {
     checkoutLoading.value = false;
 }
 
-function fmt(item) { return item.price_display || `EUR ${(item.price_cents / 100).toFixed(2)}`; }
+function fmt(item) { return item.price_display || `\u20ac ${(item.price_cents / 100).toFixed(2)}`; }
 const hasItems = computed(() => items.value.length > 0);
 const hasPretix = computed(() => !!settings.value.pretix_widget_url);
 function imgUrl(url) { return url?.startsWith('http') ? url : `/api/images/${url}`; }
