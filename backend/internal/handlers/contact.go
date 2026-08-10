@@ -258,6 +258,39 @@ func (h *Handler) UpdateContactSubmission(w http.ResponseWriter, r *http.Request
 	respondJSON(w, http.StatusOK, map[string]string{"message": "Submission updated"})
 }
 
+// UpdateContactStatus updates only the status of a contact submission,
+// preserving assigned_to (unlike UpdateContactSubmission which would null it
+// when the field is omitted from the request body).
+func (h *Handler) UpdateContactStatus(w http.ResponseWriter, r *http.Request) {
+	id := chi.URLParam(r, "id")
+
+	var update struct {
+		Status string `json:"status"`
+	}
+	if err := json.NewDecoder(r.Body).Decode(&update); err != nil {
+		respondJSON(w, http.StatusBadRequest, map[string]string{"error": "Invalid request body"})
+		return
+	}
+
+	validStatuses := map[string]bool{"new": true, "in_progress": true, "resolved": true, "closed": true}
+	if !validStatuses[update.Status] {
+		respondJSON(w, http.StatusBadRequest, map[string]string{"error": "Invalid status"})
+		return
+	}
+
+	_, err := h.db.Exec(`
+		UPDATE contact_submissions SET status = ?, updated_at = CURRENT_TIMESTAMP
+		WHERE id = ?
+	`, update.Status, id)
+
+	if err != nil {
+		respondJSON(w, http.StatusInternalServerError, map[string]string{"error": "Failed to update status"})
+		return
+	}
+
+	respondJSON(w, http.StatusOK, map[string]string{"message": "Status updated"})
+}
+
 // AddContactNote adds an internal note to a submission
 func (h *Handler) AddContactNote(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
@@ -293,10 +326,20 @@ func (h *Handler) AddContactNote(w http.ResponseWriter, r *http.Request) {
 	}
 
 	noteID, _ := result.LastInsertId()
-	respondJSON(w, http.StatusCreated, map[string]interface{}{
-		"id":      noteID,
-		"message": "Note added",
-	})
+
+	var cn ContactNote
+	err = h.db.QueryRow(`
+		SELECT cn.id, cn.user_id, u.name, cn.note, cn.created_at
+		FROM contact_notes cn
+		JOIN users u ON cn.user_id = u.id
+		WHERE cn.id = ?
+	`, noteID).Scan(&cn.ID, &cn.UserID, &cn.UserName, &cn.Note, &cn.CreatedAt)
+	if err != nil {
+		respondJSON(w, http.StatusInternalServerError, map[string]string{"error": "Failed to fetch note"})
+		return
+	}
+
+	respondJSON(w, http.StatusCreated, cn)
 }
 
 // DeleteContactSubmission deletes a contact submission

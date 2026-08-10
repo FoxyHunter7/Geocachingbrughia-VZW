@@ -108,10 +108,6 @@
                             <h3 class="detail-subject">{{ contactDetails.subject }}</h3>
                             <div class="detail-meta">
                                 <span class="detail-meta-item">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                                    {{ contactDetails.name }}
-                                </span>
-                                <span class="detail-meta-item">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
                                     {{ contactDetails.email }}
                                 </span>
@@ -167,10 +163,10 @@
                             <div v-if="contactDetails.notes?.length" class="notes-list">
                                 <div v-for="note in contactDetails.notes" :key="note.id" class="note-item">
                                     <div class="note-header">
-                                        <span class="note-author">{{ note.admin_email }}</span>
+                                        <span class="note-author">{{ note.user_name }}</span>
                                         <span class="note-date">{{ formatDate(note.created_at) }}</span>
                                     </div>
-                                    <p class="note-content">{{ note.content }}</p>
+                                    <p class="note-content">{{ note.note }}</p>
                                 </div>
                             </div>
                             <p v-else class="no-notes">Nog geen notities</p>
@@ -240,6 +236,15 @@ const apiRequest = async (endpoint, options = {}) => {
         router.push({ name: 'admin' })
         throw new Error('Session expired')
     }
+
+    if (!response.ok) {
+        let msg = `Request failed (${response.status})`
+        try {
+            const err = await response.json()
+            msg = err.error || err.message || msg
+        } catch { /* response had no JSON body */ }
+        throw new Error(msg)
+    }
     
     return response
 }
@@ -303,7 +308,7 @@ const fetchContacts = async () => {
         
         contacts.value = data.data || []
         totalContacts.value = data.total || 0
-        totalPages.value = Math.ceil(totalContacts.value / pageSize)
+        totalPages.value = data.last_page || Math.ceil(totalContacts.value / pageSize)
     } catch (error) {
         console.error('Error fetching contacts:', error)
         window.$toast?.error('Berichten laden mislukt')
@@ -373,7 +378,7 @@ const addNote = async () => {
     try {
         const response = await apiRequest(`/contacts/${contactDetails.value.id}/notes`, {
             method: 'POST',
-            body: JSON.stringify({ content: newNote.value.trim() })
+            body: JSON.stringify({ note: newNote.value.trim() })
         })
         
         const note = await response.json()
@@ -422,7 +427,7 @@ const openEmailClient = () => {
     if (!contactDetails.value) return
     
     const subject = encodeURIComponent(`Re: ${contactDetails.value.subject}`)
-    const body = encodeURIComponent(`\n\n--- Original Message ---\nFrom: ${contactDetails.value.name} <${contactDetails.value.email}>\nDate: ${formatDate(contactDetails.value.created_at)}\n\n${contactDetails.value.message}`)
+    const body = encodeURIComponent(`\n\n--- Original Message ---\nFrom: ${contactDetails.value.email}\nDate: ${formatDate(contactDetails.value.created_at)}\n\n${contactDetails.value.message}`)
     
     window.location.href = `mailto:${contactDetails.value.email}?subject=${subject}&body=${body}`
 }
@@ -474,6 +479,7 @@ onMounted(fetchContacts)
     grid-template-columns: 400px 1fr;
     gap: 1.5rem;
     min-height: calc(100vh - 250px);
+    min-height: calc(100dvh - 250px);
 }
 
 .contacts-list.has-selection {
@@ -483,6 +489,7 @@ onMounted(fetchContacts)
 /* Contact Items */
 .contact-items {
     max-height: calc(100vh - 350px);
+    max-height: calc(100dvh - 350px);
     overflow-y: auto;
 }
 

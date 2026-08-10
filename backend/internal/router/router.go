@@ -130,6 +130,7 @@ func New(db *database.DB, cfg *config.Config, emailService *email.Service) http.
 			r.Get("/contacts", h.GetContactSubmissions)
 			r.Get("/contacts/{id}", h.GetContactSubmissionByID)
 			r.Put("/contacts/{id}", h.UpdateContactSubmission)
+			r.Put("/contacts/{id}/status", h.UpdateContactStatus)
 			r.Post("/contacts/{id}/notes", h.AddContactNote)
 			r.Delete("/contacts/{id}", h.DeleteContactSubmission)
 

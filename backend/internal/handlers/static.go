@@ -18,7 +18,7 @@ type Language struct {
 
 // StaticContent represents a translation entry
 type StaticContent struct {
-	Property string                   `json:"property"`
+	Property string                     `json:"property"`
 	Contents []StaticContentTranslation `json:"contents"`
 }
 
@@ -75,7 +75,7 @@ func (h *Handler) GetStaticContent(w http.ResponseWriter, r *http.Request) {
 	// Get the latest update time for ETag
 	var lastUpdate time.Time
 	h.db.QueryRow("SELECT MAX(updated_at) FROM static_content").Scan(&lastUpdate)
-	
+
 	etag := fmt.Sprintf(`"%x"`, md5.Sum([]byte(lastUpdate.String())))
 	if match := r.Header.Get("If-None-Match"); match == etag {
 		w.WriteHeader(http.StatusNotModified)

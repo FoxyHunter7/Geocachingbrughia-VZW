@@ -133,6 +133,7 @@ onMounted(async () => {
 .gkm {
     flex: 1 1 auto;
     min-height: calc(100vh - 4.5rem);
+    min-height: calc(100dvh - 4.5rem);
     overflow-y: auto;
     background-color: #050505;
     background-image:

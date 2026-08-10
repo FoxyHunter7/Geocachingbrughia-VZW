@@ -17,7 +17,7 @@ async function getGoldenKeySettings() {
     }
 }
 
-async function updateGoldenKeySettings({ activation_time, banner_text = {} }) {
+async function updateGoldenKeySettings({ activation_time, banner_text = {}, rules = {} }) {
     const token = localStorage.getItem("admin_token");
     const response = await fetch(`${config.apiUrl}admin/golden-key`, {
         method: "PUT",
@@ -26,7 +26,7 @@ async function updateGoldenKeySettings({ activation_time, banner_text = {} }) {
             "Accept": "application/json",
             ...(token && { "Authorization": `Bearer ${token}` })
         },
-        body: JSON.stringify({ activation_time, banner_text })
+        body: JSON.stringify({ activation_time, banner_text, rules })
     });
     if (!response.ok) throw new Error("Failed to update golden key settings");
     return await response.json();

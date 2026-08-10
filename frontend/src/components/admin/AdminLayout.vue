@@ -19,11 +19,8 @@ const toastRef = ref(null);
 const loggedIn = ref(false);
 const doneChecking = ref(false);
 const userProfile = ref({});
-const needsSetup = ref(false);
 
-// Login/Register form
-const formMode = ref('login');
-const name = ref('');
+// Login form
 const email = ref('');
 const password = ref('');
 const formError = ref('');
@@ -67,24 +64,8 @@ async function apiRequest(endpoint, options = {}) {
     return response;
 }
 
-// Check if setup is needed
-async function checkSetupStatus() {
-    try {
-        const response = await fetch(`${import.meta.env.VITE_API_URL}setup-status`);
-        const data = await response.json();
-        needsSetup.value = data.needsSetup === true;
-        if (needsSetup.value) {
-            formMode.value = 'register';
-        }
-    } catch (err) {
-        console.error('Setup status check failed:', err);
-    }
-}
-
 // Auth functions
 async function checkAuth() {
-    await checkSetupStatus();
-    
     const token = getToken();
     if (!token) {
         doneChecking.value = true;
@@ -130,12 +111,9 @@ async function handleSubmit() {
     isSubmitting.value = true;
 
     try {
-        const endpoint = formMode.value === 'register' ? 'register' : 'login';
-        const body = formMode.value === 'register' 
-            ? { name: name.value, email: email.value, password: password.value }
-            : { email: email.value, password: password.value };
+        const body = { email: email.value, password: password.value };
 
-        const response = await apiRequest(endpoint, {
+        const response = await apiRequest('login', {
             method: 'POST',
             body: JSON.stringify(body)
         });
@@ -146,9 +124,8 @@ async function handleSubmit() {
             setToken(data.token);
             userProfile.value = data.user;
             loggedIn.value = true;
-            needsSetup.value = false;
             fetchContactCount();
-            window.$toast?.success(formMode.value === 'register' ? 'Account created successfully!' : 'Welcome back!');
+            window.$toast?.success('Welcome back!');
         } else if (data.errors) {
             const errors = Object.values(data.errors).flat();
             formError.value = errors.join(', ');
@@ -217,27 +194,12 @@ onMounted(checkAuth);
                             <circle cx="12" cy="10" r="3"/>
                         </svg>
                     </div>
-                    <h1 v-if="needsSetup">Welcome!</h1>
-                    <h1 v-else>Admin Panel</h1>
-                    <p v-if="needsSetup">Create your administrator account to get started</p>
-                    <p v-else>Sign in to manage your website</p>
+                    <h1>Admin Panel</h1>
+                    <p>Sign in to manage your website</p>
                 </div>
                 
                 <!-- Form -->
                 <form @submit.prevent="handleSubmit" class="login-form">
-                    <div v-if="formMode === 'register'" class="admin-form-group">
-                        <label class="admin-label" for="name">Full Name</label>
-                        <input 
-                            v-model="name" 
-                            type="text" 
-                            id="name" 
-                            class="admin-input"
-                            required 
-                            autocomplete="name"
-                            placeholder="Your full name"
-                        >
-                    </div>
-
                     <div class="admin-form-group">
                         <label class="admin-label" for="email">Email Address</label>
                         <input 
@@ -276,7 +238,7 @@ onMounted(checkAuth);
                     
                     <button type="submit" class="admin-btn admin-btn-primary admin-btn-lg login-submit" :disabled="isSubmitting">
                         <div v-if="isSubmitting" class="admin-spinner" style="width: 1rem; height: 1rem;"></div>
-                        <span v-else>{{ formMode === 'register' ? 'Create Account' : 'Sign In' }}</span>
+                        <span v-else>Sign In</span>
                     </button>
                 </form>
             </div>
@@ -301,7 +263,7 @@ onMounted(checkAuth);
             @close="mobileOpen = false"
             @logout="handleLogout" 
         />
-        
+
         <main class="admin-main">
             <header class="admin-header">
                 <button class="mobile-menu-btn" @click="mobileOpen = !mobileOpen" aria-label="Toggle menu">
@@ -330,6 +292,7 @@ onMounted(checkAuth);
 /* Loading state */
 .auth-loading {
     height: 100vh;
+    height: 100dvh;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -341,6 +304,7 @@ onMounted(checkAuth);
 /* Login Page */
 .login-page {
     min-height: 100vh;
+    min-height: 100dvh;
     display: flex;
     align-items: center;
     justify-content: center;

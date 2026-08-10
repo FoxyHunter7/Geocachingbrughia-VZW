@@ -14,6 +14,7 @@ type Message struct {
 	ID           int64                `json:"id"`
 	State        string               `json:"state"`
 	Priority     int                  `json:"priority"`
+	UpdatedAt    string               `json:"updated_at"`
 	Translations []MessageTranslation `json:"translations,omitempty"`
 }
 
@@ -28,7 +29,7 @@ func (h *Handler) GetPublicMessages(w http.ResponseWriter, r *http.Request) {
 	lang := r.URL.Query().Get("lang")
 
 	rows, err := h.db.Query(`
-		SELECT id, state, priority
+		SELECT id, state, priority, updated_at
 		FROM messages
 		WHERE state = 'published'
 		ORDER BY priority DESC, created_at DESC
@@ -42,7 +43,7 @@ func (h *Handler) GetPublicMessages(w http.ResponseWriter, r *http.Request) {
 	messages := []Message{}
 	for rows.Next() {
 		var msg Message
-		if err := rows.Scan(&msg.ID, &msg.State, &msg.Priority); err != nil {
+		if err := rows.Scan(&msg.ID, &msg.State, &msg.Priority, &msg.UpdatedAt); err != nil {
 			continue
 		}
 		msg.Translations = h.getMessageTranslations(msg.ID, lang)
@@ -55,7 +56,7 @@ func (h *Handler) GetPublicMessages(w http.ResponseWriter, r *http.Request) {
 // GetAdminMessages returns all messages for admin
 func (h *Handler) GetAdminMessages(w http.ResponseWriter, r *http.Request) {
 	rows, err := h.db.Query(`
-		SELECT id, state, priority
+		SELECT id, state, priority, updated_at
 		FROM messages
 		ORDER BY created_at DESC
 	`)
@@ -68,7 +69,7 @@ func (h *Handler) GetAdminMessages(w http.ResponseWriter, r *http.Request) {
 	messages := []Message{}
 	for rows.Next() {
 		var msg Message
-		if err := rows.Scan(&msg.ID, &msg.State, &msg.Priority); err != nil {
+		if err := rows.Scan(&msg.ID, &msg.State, &msg.Priority, &msg.UpdatedAt); err != nil {
 			continue
 		}
 		msg.Translations = h.getMessageTranslations(msg.ID, "")
@@ -84,9 +85,9 @@ func (h *Handler) GetMessageByID(w http.ResponseWriter, r *http.Request) {
 
 	var msg Message
 	err := h.db.QueryRow(`
-		SELECT id, state, priority
+		SELECT id, state, priority, updated_at
 		FROM messages WHERE id = ?
-	`, id).Scan(&msg.ID, &msg.State, &msg.Priority)
+	`, id).Scan(&msg.ID, &msg.State, &msg.Priority, &msg.UpdatedAt)
 
 	if err == sql.ErrNoRows {
 		respondJSON(w, http.StatusNotFound, map[string]string{"error": "Message not found"})
@@ -111,6 +112,12 @@ func (h *Handler) CreateMessage(w http.ResponseWriter, r *http.Request) {
 
 	if msg.State == "" {
 		msg.State = "draft"
+	}
+
+	validStates := map[string]bool{"published": true, "draft": true, "archived": true}
+	if !validStates[msg.State] {
+		respondJSON(w, http.StatusBadRequest, map[string]string{"error": "Invalid state"})
+		return
 	}
 
 	result, err := h.db.Exec(`
@@ -143,6 +150,12 @@ func (h *Handler) UpdateMessage(w http.ResponseWriter, r *http.Request) {
 	var msg Message
 	if err := json.NewDecoder(r.Body).Decode(&msg); err != nil {
 		respondJSON(w, http.StatusBadRequest, map[string]string{"error": "Invalid request body"})
+		return
+	}
+
+	validStates := map[string]bool{"published": true, "draft": true, "archived": true}
+	if !validStates[msg.State] {
+		respondJSON(w, http.StatusBadRequest, map[string]string{"error": "Invalid state"})
 		return
 	}
 

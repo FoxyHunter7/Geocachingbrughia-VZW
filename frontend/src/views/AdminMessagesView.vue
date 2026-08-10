@@ -252,11 +252,8 @@ function formatDate(dateString) {
 function getStateBadge(state) {
     const badges = {
         published: 'success',
-        ONLINE: 'success',
         draft: 'warning',
-        DRAFT: 'warning',
-        archived: 'neutral',
-        ARCHIVED: 'neutral'
+        archived: 'neutral'
     };
     return badges[state] || 'neutral';
 }
@@ -410,7 +407,7 @@ onMounted(async () => {
                         <button v-if="modalMode === 'edit'" class="admin-btn admin-btn-danger" @click="handleDelete" :disabled="saving">
                             Verwijderen
                         </button>
-                        <button v-if="modalMode === 'edit' && (formData.state === 'published' || formData.state === 'ONLINE')" class="admin-btn admin-btn-secondary" @click="handleArchive" :disabled="saving">
+                        <button v-if="modalMode === 'edit' && formData.state === 'published'" class="admin-btn admin-btn-secondary" @click="handleArchive" :disabled="saving">
                             Archiveren
                         </button>
                         <div style="flex: 1;"></div>

@@ -158,6 +158,7 @@ onUnmounted(() => {
     align-items: center;
     justify-content: center;
     min-height: calc(100vh - 4.5rem);
+    min-height: calc(100dvh - 4.5rem);
     padding: 2rem 1rem;
     gap: 2.5rem;
     overflow-y: auto;
@@ -454,6 +455,7 @@ onUnmounted(() => {
 .gk-soon-image {
     max-width: min(460px, 90vw);
     max-height: calc(100vh - 4.5rem - 8rem);
+    max-height: calc(100dvh - 4.5rem - 8rem);
     object-fit: contain;
     display: block;
 }

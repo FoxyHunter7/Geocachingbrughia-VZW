@@ -12,15 +12,15 @@ import (
 
 // GoldenKeyMonth represents a monthly golden key entry
 type GoldenKeyMonth struct {
-	ID          int64  `json:"id"`
-	MonthNumber int    `json:"month_number"`
-	MonthName   string `json:"month_name"`
-	LiveDate    string `json:"live_date"`
-	FoundDate   string `json:"found_date,omitempty"`
-	State       string `json:"state"` // computed: locked, active, found
-	IsFound     bool   `json:"is_found"`
-	FinderName  string `json:"finder_name,omitempty"`
-	FinderImage string `json:"finder_image,omitempty"`
+	ID          int64      `json:"id"`
+	MonthNumber int        `json:"month_number"`
+	MonthName   string     `json:"month_name"`
+	LiveDate    time.Time  `json:"live_date"`
+	FoundDate   *time.Time `json:"found_date,omitempty"`
+	State       string     `json:"state"` // computed: locked, active, found
+	IsFound     bool       `json:"is_found"`
+	FinderName  string     `json:"finder_name,omitempty"`
+	FinderImage string     `json:"finder_image,omitempty"`
 }
 
 // GoldenKeyHint is a single hint for a month
@@ -38,12 +38,11 @@ type GoldenKeyMonthDetail struct {
 	Hints []GoldenKeyHint `json:"hints"`
 }
 
-func computeMonthState(liveDateStr string, isFound int) string {
+func computeMonthState(liveDate time.Time, isFound int) string {
 	if isFound == 1 {
 		return "found"
 	}
-	liveDate, err := parseFlexibleTime(liveDateStr)
-	if err != nil {
+	if liveDate.IsZero() {
 		return "locked"
 	}
 	if time.Now().UTC().After(liveDate) {
@@ -54,7 +53,7 @@ func computeMonthState(liveDateStr string, isFound int) string {
 
 func scanMonth(rows interface {
 	Scan(dest ...any) error
-}) (GoldenKeyMonth, string, int, error) {
+}) (GoldenKeyMonth, time.Time, int, error) {
 	var m GoldenKeyMonth
 	var liveDateStr string
 	var isFound int
@@ -66,10 +65,14 @@ func scanMonth(rows interface {
 	if finderImage.Valid {
 		m.FinderImage = finderImage.String
 	}
-	if foundDate.Valid {
-		m.FoundDate = foundDate.String
+	liveDate, _ := parseFlexibleTime(liveDateStr)
+	m.LiveDate = liveDate
+	if foundDate.Valid && foundDate.String != "" {
+		if fd, perr := parseFlexibleTime(foundDate.String); perr == nil {
+			m.FoundDate = &fd
+		}
 	}
-	return m, liveDateStr, isFound, err
+	return m, liveDate, isFound, err
 }
 
 // --- Public endpoints ---
@@ -88,13 +91,12 @@ func (h *Handler) GetGoldenKeyMonths(w http.ResponseWriter, r *http.Request) {
 
 	months := []GoldenKeyMonth{}
 	for rows.Next() {
-		m, liveDateStr, isFound, err := scanMonth(rows)
+		m, liveDate, isFound, err := scanMonth(rows)
 		if err != nil {
 			continue
 		}
-		m.LiveDate = liveDateStr
 		m.IsFound = isFound == 1
-		m.State = computeMonthState(liveDateStr, isFound)
+		m.State = computeMonthState(liveDate, isFound)
 		if m.State != "found" {
 			m.FinderName = ""
 			m.FinderImage = ""
@@ -113,14 +115,10 @@ func (h *Handler) GetGoldenKeyMonthByID(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	var m GoldenKeyMonth
-	var liveDateStr string
-	var isFound int
-	var finderName, finderImage, foundDate sql.NullString
-	err = h.db.QueryRow(`
+	m, liveDate, isFound, err := scanMonth(h.db.QueryRow(`
 		SELECT id, month_number, month_name, live_date, is_found, finder_name, finder_image, found_date
 		FROM golden_key_months WHERE id = ?
-	`, id).Scan(&m.ID, &m.MonthNumber, &m.MonthName, &liveDateStr, &isFound, &finderName, &finderImage, &foundDate)
+	`, id))
 	if err == sql.ErrNoRows {
 		respondJSON(w, http.StatusNotFound, map[string]string{"error": "Month not found"})
 		return
@@ -130,19 +128,8 @@ func (h *Handler) GetGoldenKeyMonthByID(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	if finderName.Valid {
-		m.FinderName = finderName.String
-	}
-	if finderImage.Valid {
-		m.FinderImage = finderImage.String
-	}
-	if foundDate.Valid {
-		m.FoundDate = foundDate.String
-	}
-
-	m.LiveDate = liveDateStr
 	m.IsFound = isFound == 1
-	m.State = computeMonthState(liveDateStr, isFound)
+	m.State = computeMonthState(liveDate, isFound)
 
 	if m.State == "locked" {
 		respondJSON(w, http.StatusForbidden, map[string]string{"error": "locked", "state": "locked"})
@@ -178,13 +165,12 @@ func (h *Handler) GetAdminGoldenKeyMonths(w http.ResponseWriter, r *http.Request
 
 	months := []GoldenKeyMonth{}
 	for rows.Next() {
-		m, liveDateStr, isFound, err := scanMonth(rows)
+		m, liveDate, isFound, err := scanMonth(rows)
 		if err != nil {
 			continue
 		}
-		m.LiveDate = liveDateStr
 		m.IsFound = isFound == 1
-		m.State = computeMonthState(liveDateStr, isFound)
+		m.State = computeMonthState(liveDate, isFound)
 		months = append(months, m)
 	}
 	respondJSON(w, http.StatusOK, months)
@@ -198,14 +184,10 @@ func (h *Handler) GetAdminGoldenKeyMonthByID(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	var m GoldenKeyMonth
-	var liveDateStr string
-	var isFound int
-	var finderName, finderImage, foundDate2 sql.NullString
-	err = h.db.QueryRow(`
+	m, liveDate, isFound, err := scanMonth(h.db.QueryRow(`
 		SELECT id, month_number, month_name, live_date, is_found, finder_name, finder_image, found_date
 		FROM golden_key_months WHERE id = ?
-	`, id).Scan(&m.ID, &m.MonthNumber, &m.MonthName, &liveDateStr, &isFound, &finderName, &finderImage, &foundDate2)
+	`, id))
 	if err == sql.ErrNoRows {
 		respondJSON(w, http.StatusNotFound, map[string]string{"error": "Month not found"})
 		return
@@ -214,18 +196,9 @@ func (h *Handler) GetAdminGoldenKeyMonthByID(w http.ResponseWriter, r *http.Requ
 		respondJSON(w, http.StatusInternalServerError, map[string]string{"error": "Failed to fetch month"})
 		return
 	}
-	if finderName.Valid {
-		m.FinderName = finderName.String
-	}
-	if finderImage.Valid {
-		m.FinderImage = finderImage.String
-	}
-	if foundDate2.Valid {
-		m.FoundDate = foundDate2.String
-	}
-	m.LiveDate = liveDateStr
+
 	m.IsFound = isFound == 1
-	m.State = computeMonthState(liveDateStr, isFound)
+	m.State = computeMonthState(liveDate, isFound)
 
 	hints, err := fetchHints(h, id)
 	if err != nil {
@@ -268,11 +241,21 @@ func (h *Handler) UpdateGoldenKeyMonth(w http.ResponseWriter, r *http.Request) {
 		isFound = 1
 	}
 
+	var foundDateVal interface{}
+	if req.FoundDate != "" {
+		fd, ferr := time.Parse(time.RFC3339, req.FoundDate)
+		if ferr != nil {
+			respondJSON(w, http.StatusBadRequest, map[string]string{"error": "Invalid found_date, expected RFC3339"})
+			return
+		}
+		foundDateVal = fd.UTC().Format("2006-01-02 15:04:05")
+	}
+
 	_, err = h.db.Exec(`
 		UPDATE golden_key_months
 		SET live_date = ?, is_found = ?, finder_name = ?, finder_image = ?, found_date = ?, updated_at = CURRENT_TIMESTAMP
 		WHERE id = ?
-	`, liveDate.UTC().Format("2006-01-02 15:04:05"), isFound, req.FinderName, req.FinderImage, nullableString(req.FoundDate), id)
+	`, liveDate.UTC().Format("2006-01-02 15:04:05"), isFound, req.FinderName, req.FinderImage, foundDateVal, id)
 	if err != nil {
 		respondJSON(w, http.StatusInternalServerError, map[string]string{"error": "Failed to update month"})
 		return
