@@ -92,8 +92,6 @@ services:
       - ./pretix/pretix.cfg:/etc/pretix/pretix.cfg:ro
     networks:
       - geocaching-network
-    security_opt:
-      - no-new-privileges:true
 
 networks:
   geocaching-network:
