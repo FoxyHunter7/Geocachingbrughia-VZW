@@ -50,10 +50,59 @@ services:
       timeout: 10s
       retries: 3
 
+  # =============================================
+  # PRETIX TICKETING STACK
+  # Data persists in named volumes — survives updates.
+  # See AGENTS.md §13 before touching anything here.
+  # =============================================
+
+  pretix-db:
+    image: postgres:15-alpine
+    container_name: geocaching-pretix-db
+    restart: unless-stopped
+    environment:
+      - POSTGRES_DB=pretix
+      - POSTGRES_USER=pretix
+      - POSTGRES_PASSWORD=${PRETIX_DB_PASSWORD}
+    volumes:
+      - pretix-db-data:/var/lib/postgresql/data
+    networks:
+      - geocaching-network
+    security_opt:
+      - no-new-privileges:true
+
+  pretix-redis:
+    image: redis:7-alpine
+    container_name: geocaching-pretix-redis
+    restart: unless-stopped
+    networks:
+      - geocaching-network
+    security_opt:
+      - no-new-privileges:true
+
+  pretix:
+    image: pretix/standalone:stable
+    container_name: geocaching-pretix
+    restart: unless-stopped
+    depends_on:
+      - pretix-db
+      - pretix-redis
+    volumes:
+      - pretix-data:/data:rw
+      - ./pretix/pretix.cfg:/etc/pretix/pretix.cfg:ro
+    networks:
+      - geocaching-network
+    security_opt:
+      - no-new-privileges:true
+
 networks:
   geocaching-network:
     driver: bridge
 
 volumes:
   geocaching-data:
-    # Only the database needs persistence
+    # GeocachingBrughia backend SQLite database
+  pretix-data:
+    # Pretix media files, cached data — PERSIST THIS
+  pretix-db-data:
+    # Pretix PostgreSQL database — PERSIST THIS (orders, events, tickets)

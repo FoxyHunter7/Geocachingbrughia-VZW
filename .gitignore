@@ -11,6 +11,9 @@
 .env
 *.env.local
 
+# Pretix config (contains DB password + SMTP credentials)
+/pretix/pretix.cfg
+
 # IDE
 .idea/
 .vscode/

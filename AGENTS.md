@@ -109,6 +109,9 @@ frontend/
     css/admin.css                  # admin design system + CSS vars (sidebar width here)
 data/                              # SQLite DB lives here (or Docker volume /data)
 docker-compose.yml, Dockerfile.backend, Dockerfile.frontend, nginx.conf, certs/
+pretix/                            # Pretix ticketing config
+  pretix.cfg.example               # Config template (committed)
+  pretix.cfg                       # Real config with passwords (gitignored)
 ```
 
 ## 4. Architecture & data flow (things that bite)
@@ -477,7 +480,117 @@ things.
     route.** Don't add a second auth gate inside a child view; don't remove
     the one in `AdminLayout`.
 
-## 12. Before you say "done"
+## 12. Pretix ticketing stack
+
+The docker-compose includes a self-hosted **Pretix** instance for event
+ticketing. It runs alongside the Go backend and Vue frontend in the same
+docker stack.
+
+### Architecture
+
+- **`pretix`** — the `pretix/standalone:stable` image (web + worker, `all` mode)
+- **`pretix-db`** — PostgreSQL 15 (Pretix requires Postgres, will not run on SQLite)
+- **`pretix-redis`** — Redis 7 (cache + Celery broker)
+- All three run on `geocaching-network` (same network as backend/frontend)
+- The frontend nginx has a second server block for
+  `ticketing.geocachingbrughia.be` that proxies to `pretix:80`
+- SSL is terminated by the external proxy; the docker nginx receives HTTP
+  with `Host: ticketing.geocachingbrughia.be` and routes accordingly
+
+### Data persistence (CRITICAL)
+
+Two named Docker volumes hold all Pretix data:
+
+| Volume            | Mount in container       | Contents                          |
+|-------------------|--------------------------|-----------------------------------|
+| `pretix-data`     | `/data`                  | Media files, cached data          |
+| `pretix-db-data`  | `/var/lib/postgresql/data` | Orders, events, tickets — **all transactional data** |
+
+These volumes **must never be deleted**. `git pull && docker compose up -d --build`
+preserves them (same as `geocaching-data`). Never add `volumes:` that
+bind-mount over these paths, never add `--volumes` flags to prune commands,
+and never run `docker compose down -v` in production (the `-v` flag removes
+volumes).
+
+### Configuration
+
+- `pretix/pretix.cfg.example` — committed template with placeholders
+- `pretix/pretix.cfg` — real config with DB password + SMTP credentials,
+  **gitignored** (same pattern as `.env`)
+- `PRETIX_DB_PASSWORD` in `.env` must match the `password` in `pretix.cfg`
+- The config uses docker DNS (`pretix-db`, `pretix-redis`) for internal
+  service discovery — no IP addresses or unix sockets needed
+
+### First deploy
+
+1. Copy `pretix/pretix.cfg.example` → `pretix/pretix.cfg`, fill in:
+   - `password` under `[database]` (must match `PRETIX_DB_PASSWORD` in `.env`)
+   - SMTP settings under `[mail]` (can use same SMTP as the main backend)
+2. Set `PRETIX_DB_PASSWORD` in `.env` (generate with `openssl rand -hex 16`)
+3. `docker compose up -d --build`
+4. Visit `https://ticketing.geocachingbrughia.be/control/`
+5. Log in as `admin@localhost` / `admin` — **change the password immediately**
+6. Create an organizer, then events
+
+### Cron (periodic tasks)
+
+Pretix needs a periodic cron job for sending emails, cleaning up, etc.
+Set this up **once on the host** (not in docker-compose — it's a one-time
+server config, not per-deploy):
+
+```bash
+# /etc/cron.d/pretix — runs every 15 minutes
+*/15 * * * * cd /path/to/Geocachingbrughia-VZW && docker compose exec -T pretix pretix cron
+```
+
+This survives `git pull && docker compose up -d --build` because it's in
+the host's cron, not in the repo.
+
+### Updates
+
+```bash
+docker compose pull pretix
+docker compose up -d --build
+docker compose exec -T pretix pretix upgrade
+```
+
+The `pretix upgrade` command runs database migrations. Do this after every
+pretix image update.
+
+### Embedding ticket sales on the main site
+
+Pretix does **not** support iframes or subpath reverse-proxying (the
+maintainer closed this explicitly — use the widget instead). The
+officially supported integration is the `<pretix-widget>` custom element,
+which:
+- Loads JS/CSS from `ticketing.geocachingbrughia.be` (cross-domain — that's
+  by design)
+- Renders the product/event list inline on your page
+- Opens a secure checkout iframe from the pretix server
+
+The nginx CSP in the main server block has been updated to allow
+`script-src`, `style-src`, `img-src`, `connect-src`, `frame-src`, and
+`form-action` from `https://ticketing.geocachingbrughia.be`.
+
+To embed: go to the pretix control panel → your event → Settings → Widget,
+generate the snippet, and integrate it into `ShopView.vue`. The widget
+code goes in two parts: a `<link>` + `<script>` in the document head (once),
+and a `<pretix-widget>` tag where you want the shop to appear.
+
+### Rules for an LLM editing pretix config
+
+1. **Never** remove the pretix volumes from `docker-compose.yml`.
+2. **Never** change `pretix.cfg.example` to contain real passwords.
+3. **Never** run `docker compose down -v` in production.
+4. The `pretix.cfg` file is gitignored for a reason — don't commit it.
+5. If you change the `PRETIX_DB_PASSWORD`, you must change it in **both**
+   `.env` and `pretix/pretix.cfg`.
+6. Pretix cannot run on a subpath — it must have its own (sub)domain.
+7. The cron job is on the host, not in docker-compose — don't try to add
+   a cron sidecar container (the pretix image's entrypoint doesn't support
+   it cleanly; host cron is the documented approach).
+
+## 13. Before you say "done"
 
 - [ ] `go build ./...` passes from `backend/`
 - [ ] `go vet ./...` is clean

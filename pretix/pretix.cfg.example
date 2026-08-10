@@ -1,0 +1,41 @@
+# Pretix configuration
+# Copy this file to pretix.cfg and fill in real values.
+# pretix.cfg is gitignored — never commit it with real passwords.
+#
+# The PRETIX_DB_PASSWORD must match the PRETIX_DB_PASSWORD in ../.env
+
+[pretix]
+instance_name=GeocachingBrughia
+url=https://ticketing.geocachingbrughia.be
+currency=EUR
+; DO NOT change datadir — it must point to /data inside the container
+datadir=/data
+trust_x_forwarded_for=on
+trust_x_forwarded_proto=on
+
+[database]
+backend=postgresql
+name=pretix
+user=pretix
+; Must match PRETIX_DB_PASSWORD in ../.env
+password=CHANGE_ME_TO_MATCH_ENV
+; Docker DNS — the pretix-db container is reachable at this hostname
+host=pretix-db
+
+[mail]
+; Use the same SMTP server as the main backend (see ../.env)
+from=tickets@geocachingbrughia.be
+host=smtp.example.com
+port=587
+user=notifications@geocachingbrughia.be
+password=your-smtp-password
+tls=on
+
+[redis]
+; Docker DNS — the pretix-redis container is reachable at this hostname
+location=redis://pretix-redis:6379/0
+sessions=true
+
+[celery]
+backend=redis://pretix-redis:6379/1
+broker=redis://pretix-redis:6379/2
