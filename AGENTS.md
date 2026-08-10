@@ -111,8 +111,7 @@ data/                              # SQLite DB lives here (or Docker volume /dat
 docker-compose.yml, Dockerfile.backend, Dockerfile.frontend, nginx.conf, certs/
 pretix/                            # Pretix ticketing config
   pretix.cfg.example               # Config template (committed)
-  pretix.cfg                       # Real config with passwords (gitignored)
-```
+  pretix.cfg                       # Real config with passwords (gitignored)```
 
 ## 4. Architecture & data flow (things that bite)
 
@@ -590,7 +589,63 @@ and a `<pretix-widget>` tag where you want the shop to appear.
    a cron sidecar container (the pretix image's entrypoint doesn't support
    it cleanly; host cron is the documented approach).
 
-## 13. Before you say "done"
+## 13. Shop system (merch + Stripe Checkout)
+
+The shop is built into the Go backend and Vue frontend — no separate
+service. It provides buy-now merch items with Stripe Checkout (hosted
+payment page, no PCI scope).
+
+### Architecture
+
+- **`shop_settings`** — singleton row (id=1), holds Stripe API keys,
+  webhook secret, pretix widget URL, currency. Admin-editable via the
+  panel (stored in DB, not env vars).
+- **`shop_items`** — merch items with price (cents), stock (nullable =
+  unlimited), allow_pickup + label, allow_shipping + regions,
+  auto_confirm, active, sort_order.
+- **`shop_orders`** — orders linked to items, with Stripe session/payment
+  IDs, buyer email, fulfillment type, shipping address, status flow:
+  `pending → paid → confirmed → shipped → fulfilled` (or `cancelled`).
+
+### Stripe integration
+
+- Uses **direct REST API calls** to Stripe (no SDK dependency) — keeps
+  the distroless binary small.
+- **Checkout Sessions** (hosted by Stripe) — card data never touches
+  the server. Configure enabled payment methods (Bancontact, cards,
+  Apple Pay) in the Stripe dashboard, not in code.
+- **Webhook** at `POST /api/shop/webhook` — public endpoint (no auth),
+  signature-verified with HMAC-SHA256. Handles `checkout.session.completed`
+  (marks paid, auto-confirms if enabled, decrements stock) and
+  `payment_intent.payment_failed` (cancels order). Idempotent: only
+  updates orders in `pending` status.
+- **FRONTEND_URL** env var is required for Stripe success/cancel redirect
+  URLs. Set in `.env` for production.
+
+### Setup checklist (admin panel)
+
+1. `/admin/shop` → Settings: enter Stripe secret key, publishable key,
+   webhook secret, pretix widget URL (optional), currency.
+2. In Stripe dashboard: create webhook endpoint
+   `https://YOURDOMAIN/api/shop/webhook`, subscribe to
+   `checkout.session.completed` + `payment_intent.payment_failed`,
+   copy the signing secret into admin settings.
+3. Create shop items with price, image, stock, fulfillment toggles.
+4. The public shop at `/shop` shows pretix widget (if configured) +
+   merch grid (if any active items).
+
+### Rules for an LLM editing shop code
+
+1. The Stripe webhook **must** verify signatures — never skip this.
+2. Webhook handlers **must** be idempotent (only update `pending` orders).
+3. Stock decrement only happens on `auto_confirm` items — manual-confirm
+   items need admin to confirm before stock is deducted.
+4. Stripe keys are in the DB, not env — never log them, never expose
+   the secret key in public endpoints (GetPublicShopSettings only
+   returns the publishable key).
+5. Price is stored in **cents** (integer) — never use floats for money.
+
+## 14. Before you say "done"
 
 - [ ] `go build ./...` passes from `backend/`
 - [ ] `go vet ./...` is clean

@@ -58,11 +58,9 @@ type ShopOrder struct {
 }
 
 func formatPrice(cents int, currency string) string {
-	symbol := "EUR"
+	symbol := "\u20ac"
 	if currency == "USD" {
 		symbol = "$"
-	} else {
-		symbol = "EUR"
 	}
 	return fmt.Sprintf("%s %d.%02d", symbol, cents/100, cents%100)
 }
