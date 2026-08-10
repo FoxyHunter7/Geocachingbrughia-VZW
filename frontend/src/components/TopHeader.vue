@@ -12,7 +12,8 @@
     const isNavOpen = ref(false);
 
     const langInfo = computed(() => {
-        return SCP.LANGUAGES.find(lang => lang.code === LanguageProvider.CURR_LANG.value);
+        if (!SCP.LANGUAGES || !Array.isArray(SCP.LANGUAGES)) return null;
+        return SCP.LANGUAGES.find(lang => lang.code === LanguageProvider.CURR_LANG.value) || null;
     });
 
     const dictionary = SCP.DICTIONARY;
