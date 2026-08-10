@@ -369,6 +369,20 @@ func (db *DB) Migrate() error {
 				ON shop_items(active, sort_order);
 			`,
 		},
+		{
+			name: "create_shop_item_translations_table",
+			sql: `
+				CREATE TABLE IF NOT EXISTS shop_item_translations (
+					id INTEGER PRIMARY KEY AUTOINCREMENT,
+					item_id INTEGER NOT NULL,
+					lang_code TEXT NOT NULL,
+					description TEXT NOT NULL DEFAULT '',
+					FOREIGN KEY (item_id) REFERENCES shop_items(id) ON DELETE CASCADE,
+					FOREIGN KEY (lang_code) REFERENCES languages(code) ON DELETE CASCADE,
+					UNIQUE(item_id, lang_code)
+				);
+			`,
+		},
 	}
 
 	for _, m := range migrations {

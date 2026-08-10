@@ -45,6 +45,8 @@
         langCode: String
     });
 
+    const emit = defineEmits(['update']);
+
     function parseContent(content) {
         if (!content) return '<p></p>';
         
@@ -60,7 +62,10 @@
     const editor = useEditor({
         extensions,
         editable: props.editable,
-        content: parseContent(props.content)
+        content: parseContent(props.content),
+        onUpdate: ({ editor }) => {
+            emit('update', JSON.stringify(editor.getJSON()));
+        }
     });
 
     // Watch for content changes from parent

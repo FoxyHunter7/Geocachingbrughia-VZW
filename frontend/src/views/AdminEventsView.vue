@@ -3,6 +3,7 @@ import { ref, computed, onMounted, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import AdminLayout from '@/components/admin/AdminLayout.vue';
 import TipTapEditor from '@/components/TipTapEditor.vue';
+import TranslationTabs from '@/components/TranslationTabs.vue';
 import config from '@/data/config.js';
 import QRCode from 'qrcode';
 import JSZip from 'jszip';
@@ -234,8 +235,8 @@ async function handleSave(publish = false) {
             }
         }
         
-        // Collect translations from editors
-        const translations = editors.value.map(editor => editor.getContent());
+        // Collect translations from TranslationTabs (already in formData)
+        const translations = formData.value.translations;
         
         // Determine state:
         // - If publish=true -> always 'published'
@@ -707,18 +708,22 @@ watch(statusFilter, () => {
 
                         <!-- Translations -->
                         <div class="modal-section" style="margin-top: 1.5rem;">
-                            <h3 class="section-title">Vertalingen</h3>
-                            <div class="translations-grid">
-                                <div v-for="(translation, index) in formData.translations" :key="translation.lang_code" class="translation-item">
-                                    <label class="admin-label">{{ translation.lang_code }} Beschrijving</label>
-                                    <TipTapEditor 
-                                        :content="translation.description" 
-                                        :langCode="translation.lang_code" 
-                                        :editable="true" 
-                                        ref="editors"
+                            <TranslationTabs
+                                :languages="languages"
+                                :translations="formData.translations"
+                                label="Beschrijving vertalingen"
+                                :use-slot="true"
+                                @update:translations="formData.translations = $event"
+                            >
+                                <template #default="{ lang, value, update }">
+                                    <TipTapEditor
+                                        :content="value"
+                                        :langCode="lang.code"
+                                        :editable="true"
+                                        @update="update"
                                     />
-                                </div>
-                            </div>
+                                </template>
+                            </TranslationTabs>
                         </div>
                     </div>
                     <div class="admin-modal-footer">

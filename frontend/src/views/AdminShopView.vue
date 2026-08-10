@@ -1,6 +1,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import AdminLayout from '@/components/admin/AdminLayout.vue';
+import TranslationTabs from '@/components/TranslationTabs.vue';
 import config from '@/data/config.js';
 
 // ---- State ----
@@ -19,6 +20,7 @@ const settings = ref({
 
 // Items
 const items = ref([]);
+const languages = ref([]);
 
 // Item modal
 const showModal = ref(false);
@@ -31,6 +33,7 @@ const selectedFile = ref(null);
 const itemForm = ref({
     title: '',
     description: '',
+    translations: [],
     priceEuros: '',
     image_url: '',
     stock: '',
@@ -182,6 +185,14 @@ async function saveSettings() {
 }
 
 // ---- Items ----
+async function fetchLanguages() {
+    try {
+        const res = await apiRequest('admin/languages');
+        const data = await res.json();
+        languages.value = data.data || data || [];
+    } catch { /* languages stay empty */ }
+}
+
 async function fetchItems() {
     loadingItems.value = true;
     try {
@@ -202,6 +213,7 @@ function openCreateModal() {
     itemForm.value = {
         title: '',
         description: '',
+        translations: languages.value.map(l => ({ lang_code: l.code, description: '' })),
         priceEuros: '',
         image_url: '',
         stock: '',
@@ -223,6 +235,12 @@ function openEditModal(item) {
     itemForm.value = {
         title: item.title || '',
         description: item.description || '',
+        translations: item.translations?.length
+            ? languages.value.map(l => {
+                const t = item.translations.find(t => t.lang_code === l.code);
+                return { lang_code: l.code, description: t?.description || '' };
+              })
+            : languages.value.map(l => ({ lang_code: l.code, description: '' })),
         priceEuros: centsToEuros(item.price_cents),
         image_url: item.image_url || '',
         stock: item.stock_quantity === null || item.stock_quantity === undefined ? '' : item.stock_quantity,
@@ -318,6 +336,7 @@ async function handleSaveItem() {
         const payload = {
             title: itemForm.value.title,
             description: itemForm.value.description || '',
+            translations: itemForm.value.translations,
             price_cents: priceCents,
             image_url: finalImageUrl,
             stock_quantity: itemForm.value.stock === '' ? null : parseInt(itemForm.value.stock, 10),
@@ -360,7 +379,7 @@ async function handleDeleteItem(item) {
 }
 
 onMounted(async () => {
-    await Promise.all([fetchSettings(), fetchItems()]);
+    await Promise.all([fetchSettings(), fetchLanguages(), fetchItems()]);
 });
 </script>
 
@@ -589,13 +608,24 @@ onMounted(async () => {
                         </div>
 
                         <div class="admin-form-group">
-                            <label class="admin-label" for="item-description">Beschrijving</label>
+                            <label class="admin-label" for="item-description">Korte beschrijving (standaard)</label>
                             <textarea
                                 id="item-description"
                                 v-model="itemForm.description"
                                 class="admin-textarea"
-                                rows="3"
+                                rows="2"
+                                placeholder="Korte beschrijving voor overzicht en fallback..."
                             ></textarea>
+                            <p class="admin-form-hint">Dit is de standaard beschrijving. Gebruik de tabs hieronder voor vertalingen.</p>
+                        </div>
+
+                        <div class="admin-form-group">
+                            <TranslationTabs
+                                :languages="languages"
+                                :translations="itemForm.translations"
+                                label="Beschrijving vertalingen"
+                                @update:translations="itemForm.translations = $event"
+                            />
                         </div>
 
                         <div class="admin-form-row">

@@ -1,17 +1,19 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue';
 import { getShopSettings, getShopItems, createCheckoutSession } from '@/services/ShopService';
+import LanguageProvider from '@/services/LanguageService';
 
 const loading = ref(true);
 const settings = ref({ stripe_publishable_key: '', pretix_widget_url: '', currency: 'EUR' });
 const items = ref([]);
 const error = ref('');
 const pretixLoaded = ref(false);
+const lang = computed(() => LanguageProvider.CURR_LANG.value);
 
 async function loadData() {
     loading.value = true;
     try {
-        const [s, i] = await Promise.all([getShopSettings(), getShopItems()]);
+        const [s, i] = await Promise.all([getShopSettings(), getShopItems(lang.value)]);
         settings.value = s || { stripe_publishable_key: '', pretix_widget_url: '', currency: 'EUR' };
         items.value = Array.isArray(i) ? i : [];
         if (settings.value.pretix_widget_url && !pretixLoaded.value) {

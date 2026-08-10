@@ -19,21 +19,27 @@ type ShopSettings struct {
 	Currency             string `json:"currency"`
 }
 
+type ShopItemTranslation struct {
+	LangCode    string `json:"lang_code"`
+	Description string `json:"description"`
+}
+
 type ShopItem struct {
-	ID                int64    `json:"id"`
-	Title             string   `json:"title"`
-	Description       string   `json:"description"`
-	PriceCents        int      `json:"price_cents"`
-	PriceDisplay      string   `json:"price_display"`
-	ImageURL          string   `json:"image_url,omitempty"`
-	StockQuantity     *int     `json:"stock_quantity,omitempty"`
-	AllowPickup       bool     `json:"allow_pickup"`
-	PickupLabel       string   `json:"pickup_label,omitempty"`
-	AllowShipping     bool     `json:"allow_shipping"`
-	ShippingCountries []string `json:"shipping_countries,omitempty"`
-	AutoConfirm       bool     `json:"auto_confirm"`
-	Active            bool     `json:"active"`
-	SortOrder         int      `json:"sort_order"`
+	ID                int64                 `json:"id"`
+	Title             string                `json:"title"`
+	Description       string                `json:"description"`
+	PriceCents        int                   `json:"price_cents"`
+	PriceDisplay      string                `json:"price_display"`
+	ImageURL          string                `json:"image_url,omitempty"`
+	StockQuantity     *int                  `json:"stock_quantity,omitempty"`
+	AllowPickup       bool                  `json:"allow_pickup"`
+	PickupLabel       string                `json:"pickup_label,omitempty"`
+	AllowShipping     bool                  `json:"allow_shipping"`
+	ShippingCountries []string              `json:"shipping_countries,omitempty"`
+	AutoConfirm       bool                  `json:"auto_confirm"`
+	Active            bool                  `json:"active"`
+	SortOrder         int                   `json:"sort_order"`
+	Translations      []ShopItemTranslation `json:"translations,omitempty"`
 }
 
 type ShopOrder struct {
@@ -172,6 +178,7 @@ func (h *Handler) UpdateShopSettings(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) GetPublicShopItems(w http.ResponseWriter, r *http.Request) {
 	settings, _ := h.getShopSettings()
+	lang := r.URL.Query().Get("lang")
 
 	rows, err := h.db.Query(`
 		SELECT id, title, description, price_cents, image_url, stock_quantity,
@@ -192,6 +199,15 @@ func (h *Handler) GetPublicShopItems(w http.ResponseWriter, r *http.Request) {
 			continue
 		}
 		item.PriceDisplay = formatPrice(item.PriceCents, settings.Currency)
+		if lang != "" {
+			item.Translations = h.getShopItemTranslations(item.ID, lang)
+			for _, t := range item.Translations {
+				if t.Description != "" {
+					item.Description = t.Description
+					break
+				}
+			}
+		}
 		items = append(items, item)
 	}
 
@@ -220,6 +236,7 @@ func (h *Handler) GetAdminShopItems(w http.ResponseWriter, r *http.Request) {
 			continue
 		}
 		item.PriceDisplay = formatPrice(item.PriceCents, settings.Currency)
+		item.Translations = h.getShopItemTranslations(item.ID, "")
 		items = append(items, item)
 	}
 
@@ -247,6 +264,7 @@ func (h *Handler) GetShopItemByID(w http.ResponseWriter, r *http.Request) {
 	}
 
 	item.PriceDisplay = formatPrice(item.PriceCents, settings.Currency)
+	item.Translations = h.getShopItemTranslations(item.ID, "")
 	respondJSON(w, http.StatusOK, item)
 }
 
@@ -325,6 +343,7 @@ func (h *Handler) CreateShopItem(w http.ResponseWriter, r *http.Request) {
 	}
 
 	item.ID, _ = result.LastInsertId()
+	h.saveShopItemTranslations(item.ID, item.Translations)
 	settings, _ := h.getShopSettings()
 	item.PriceDisplay = formatPrice(item.PriceCents, settings.Currency)
 	respondJSON(w, http.StatusCreated, item)
@@ -409,6 +428,7 @@ func (h *Handler) UpdateShopItem(w http.ResponseWriter, r *http.Request) {
 
 	idInt, _ := strconv.ParseInt(id, 10, 64)
 	item.ID = idInt
+	h.saveShopItemTranslations(item.ID, item.Translations)
 	settings, _ := h.getShopSettings()
 	item.PriceDisplay = formatPrice(item.PriceCents, settings.Currency)
 	respondJSON(w, http.StatusOK, item)
@@ -574,4 +594,38 @@ func nullableInt(v *int) interface{} {
 		return nil
 	}
 	return *v
+}
+
+func (h *Handler) getShopItemTranslations(itemID int64, langFilter string) []ShopItemTranslation {
+	var rows *sql.Rows
+	var err error
+
+	if langFilter != "" {
+		rows, err = h.db.Query("SELECT lang_code, description FROM shop_item_translations WHERE item_id = ? AND lang_code = ?", itemID, langFilter)
+	} else {
+		rows, err = h.db.Query("SELECT lang_code, description FROM shop_item_translations WHERE item_id = ?", itemID)
+	}
+
+	if err != nil {
+		return []ShopItemTranslation{}
+	}
+	defer rows.Close()
+
+	translations := []ShopItemTranslation{}
+	for rows.Next() {
+		var t ShopItemTranslation
+		if err := rows.Scan(&t.LangCode, &t.Description); err != nil {
+			continue
+		}
+		translations = append(translations, t)
+	}
+	return translations
+}
+
+func (h *Handler) saveShopItemTranslations(itemID int64, translations []ShopItemTranslation) {
+	for _, t := range translations {
+		desc := truncateString(strings.TrimSpace(t.Description), maxStringLength)
+		h.db.Exec(`INSERT OR REPLACE INTO shop_item_translations (item_id, lang_code, description) VALUES (?, ?, ?)`,
+			itemID, t.LangCode, desc)
+	}
 }
