@@ -353,6 +353,18 @@ func (db *DB) seedStaticContent() error {
 			"FR": "Les informations sur les articles n'ont pas pu être récupérées.",
 			"DE": "Die Artikelinformationen konnten nicht abgerufen werden.",
 		},
+		"UIShopEmpty": {
+			"EN": "The shop is currently empty.",
+			"NL": "De webshop is momenteel leeg.",
+			"FR": "La boutique est actuellement vide.",
+			"DE": "Der Shop ist derzeit leer.",
+		},
+		"UIShopEmptySubTxt": {
+			"EN": "Check back later!",
+			"NL": "Kom later terug!",
+			"FR": "Revenez plus tard !",
+			"DE": "Schauen Sie später noch einmal vorbei!",
+		},
 		"UIPageNotFound": {
 			"EN": "Page Not Found",
 			"NL": "Pagina niet gevonden",

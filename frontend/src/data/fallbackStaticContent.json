@@ -287,6 +287,18 @@
         "FR": "Les informations sur les articles n'ont pas pu être récupérées.",
         "NL": "De informatie over de artikelen kon niet worden opgehaald."
     },
+    "UIShopEmpty": {
+        "DE": "Der Shop ist derzeit leer.",
+        "EN": "The shop is currently empty.",
+        "FR": "La boutique est actuellement vide.",
+        "NL": "De webshop is momenteel leeg."
+    },
+    "UIShopEmptySubTxt": {
+        "DE": "Schauen Sie später noch einmal vorbei!",
+        "EN": "Check back later!",
+        "FR": "Revenez plus tard !",
+        "NL": "Kom later terug!"
+    },
     "UIPageNotFound": {
         "DE": "Seite nicht gefunden",
         "EN": "Page Not Found",

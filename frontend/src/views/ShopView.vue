@@ -2,6 +2,9 @@
 import { ref, computed, onMounted } from 'vue';
 import { getShopSettings, getShopItems, createCheckoutSession } from '@/services/ShopService';
 import LanguageProvider from '@/services/LanguageService';
+import { StaticContentProvider } from '@/services/StaticContentService';
+
+const dictionary = StaticContentProvider.DICTIONARY;
 
 const loading = ref(true);
 const settings = ref({ stripe_publishable_key: '', pretix_widget_url: '', currency: 'EUR' });
@@ -148,7 +151,10 @@ const checkoutCountries = computed(() => {
                     </div>
                 </div>
             </section>
-            <section v-if="!hasPretix && !hasItems" class="shop-empty"><p>De webshop is momenteel leeg. Kom later terug!</p></section>
+            <section v-if="!hasPretix && !hasItems" class="shop-empty">
+                <p>{{ dictionary.UIShopEmpty?.[lang] ?? 'De webshop is momenteel leeg.' }}</p>
+                <p class="shop-empty-sub">{{ dictionary.UIShopEmptySubTxt?.[lang] ?? 'Kom later terug!' }}</p>
+            </section>
         </template>
         <Teleport to="body">
             <div v-if="checkoutItem" class="admin-modal-overlay" @click.self="closeCheckout">
@@ -219,6 +225,7 @@ const checkoutCountries = computed(() => {
 .shop-buy-btn { margin-top: 0.75rem; padding: 0.625rem 1.25rem; background: #0d9488; color: white; border: none; border-radius: 0.5rem; font-size: 0.9375rem; font-weight: 600; cursor: pointer; transition: background 0.15s; }
 .shop-buy-btn:hover { background: #0f766e; }
 .shop-empty { text-align: center; padding: 4rem; color: #64748b; font-size: 1.125rem; }
+.shop-empty-sub { margin: 0.5rem 0 0; font-size: 0.95rem; }
 .fc { display: flex; gap: 1rem; }
 .fc-opt { display: flex; align-items: center; gap: 0.5rem; cursor: pointer; padding: 0.75rem 1rem; border: 1px solid #e2e8f0; border-radius: 0.5rem; flex: 1; }
 .fc-opt input { accent-color: #0d9488; }
