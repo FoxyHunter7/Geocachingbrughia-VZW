@@ -14,18 +14,20 @@
     const message = ref("");
 
     const lastSubmitResult = ref("");
+    const submitting = ref(false);
     async function handleFormSubmit() {
+        submitting.value = true;
         const response = await postContact(email.value, subject.value, message.value);
-
-        email.value = "";
-        subject.value = "";
-        message.value = "";
 
         if (response.success && response.data && response.data.status) {
             lastSubmitResult.value = dictionary.FormSuccess[lang.value];
+            email.value = "";
+            subject.value = "";
+            message.value = "";
         } else {
             lastSubmitResult.value = dictionary.FormFailed[lang.value];
         }
+        submitting.value = false;
     }
 </script>
 
@@ -48,7 +50,7 @@
                     <textarea v-model="message" id="message" name="message" autocomplete="off" max="5000" required></textarea>
                 </div>
                 <div>
-                    <input type="submit" :value="dictionary.FormSubmit[lang]">
+                    <input type="submit" :value="dictionary.FormSubmit[lang]" :disabled="submitting">
                     <p>{{ lastSubmitResult }}</p>
                 </div>
             </form>

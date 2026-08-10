@@ -109,10 +109,10 @@ const userInitials = computed(() => {
 </script>
 
 <template>
-    <aside class="sidebar" :class="{ collapsed, 'mobile-open': mobileOpen }">
+    <aside class="sidebar" :class="{ collapsed, 'mobile-open': mobileOpen }" :aria-label="'Navigatie'">
         <!-- Logo -->
         <div class="sidebar-brand">
-            <div class="brand-icon">
+            <div class="brand-icon" aria-hidden="true">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
                     <circle cx="12" cy="10" r="3"/>
@@ -122,17 +122,19 @@ const userInitials = computed(() => {
         </div>
 
         <!-- Navigation -->
-        <nav class="sidebar-nav">
+        <nav class="sidebar-nav" aria-label="Hoofdnavigatie">
             <template v-for="(item, index) in menuItems" :key="index">
                 <div v-if="item.type === 'divider'" class="nav-divider"></div>
                 <button
                     v-else
                     class="nav-item"
                     :class="{ active: isActive(item.route) }"
+                    :aria-current="isActive(item.route) ? 'page' : false"
+                    :aria-label="item.name"
                     @click="navigateTo(item.route)"
                     :title="collapsed ? item.name : ''"
                 >
-                    <span class="nav-icon">
+                    <span class="nav-icon" aria-hidden="true">
                         <!-- Dashboard -->
                         <svg v-if="item.icon === 'dashboard'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <rect x="3" y="3" width="7" height="9" rx="1"/>
@@ -222,7 +224,7 @@ const userInitials = computed(() => {
         </nav>
 
         <!-- Collapse Toggle -->
-        <button class="collapse-btn" @click="emit('update:collapsed', !collapsed)" :title="collapsed ? 'Expand' : 'Collapse'">
+        <button class="collapse-btn" @click="emit('update:collapsed', !collapsed)" :title="collapsed ? 'Expand' : 'Collapse'" :aria-label="collapsed ? 'Zijbalk uitklappen' : 'Zijbalk inklappen'" :aria-expanded="!collapsed">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <polyline v-if="collapsed" points="9 18 15 12 9 6"/>
                 <polyline v-else points="15 18 9 12 15 6"/>
@@ -236,7 +238,7 @@ const userInitials = computed(() => {
                 <span class="user-name">{{ userProfile.name }}</span>
                 <span class="user-email">{{ userProfile.email }}</span>
             </div>
-            <button class="logout-btn" @click="$emit('logout')" title="Logout">
+            <button class="logout-btn" @click="$emit('logout')" title="Logout" :aria-label="'Uitloggen'">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
                     <polyline points="16 17 21 12 16 7"/>

@@ -42,12 +42,14 @@ defineExpose({ addToast, removeToast });
     <Teleport to="body">
         <div class="toast-container">
             <TransitionGroup name="toast">
-                <div 
-                    v-for="toast in toasts" 
+                <div
+                    v-for="toast in toasts"
                     :key="toast.id"
                     :class="['toast', `toast-${toast.type}`, { 'toast-hiding': !toast.visible }]"
+                    role="alert"
+                    :aria-live="toast.type === 'error' ? 'assertive' : 'polite'"
                 >
-                    <span class="toast-icon">
+                    <span class="toast-icon" aria-hidden="true">
                         <!-- Success -->
                         <svg v-if="toast.type === 'success'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
@@ -73,8 +75,8 @@ defineExpose({ addToast, removeToast });
                         </svg>
                     </span>
                     <span class="toast-message">{{ toast.message }}</span>
-                    <button class="toast-close" @click="removeToast(toast.id)" aria-label="Close">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <button class="toast-close" @click="removeToast(toast.id)" aria-label="Sluiten">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                             <line x1="18" y1="6" x2="6" y2="18"/>
                             <line x1="6" y1="6" x2="18" y2="18"/>
                         </svg>

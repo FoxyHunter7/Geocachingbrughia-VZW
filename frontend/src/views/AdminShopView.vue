@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 import AdminLayout from '@/components/admin/AdminLayout.vue';
 import TranslationTabs from '@/components/TranslationTabs.vue';
 import config from '@/data/config.js';
@@ -381,6 +381,15 @@ async function handleDeleteItem(item) {
 onMounted(async () => {
     await Promise.all([fetchSettings(), fetchLanguages(), fetchItems()]);
 });
+
+function handleKeydown(e) {
+    if (e.key === 'Escape' && showModal.value && !savingItem.value) {
+        closeModal();
+    }
+}
+
+onMounted(() => document.addEventListener('keydown', handleKeydown));
+onUnmounted(() => document.removeEventListener('keydown', handleKeydown));
 </script>
 
 <template>
@@ -582,13 +591,13 @@ onMounted(async () => {
         <!-- Item Modal -->
         <Teleport to="body">
             <div v-if="showModal" class="admin-modal-overlay" @click.self="closeModal">
-                <div class="admin-modal admin-modal-lg">
+                <div class="admin-modal admin-modal-lg" role="dialog" aria-modal="true" :aria-label="modalMode === 'create' ? 'Nieuw item' : 'Item bewerken'">
                     <div class="admin-modal-header">
                         <h2 class="admin-modal-title">
                             {{ modalMode === 'create' ? 'Nieuw Item' : 'Item Bewerken' }}
                         </h2>
                         <button class="admin-modal-close" @click="closeModal" aria-label="Sluiten">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                                 <line x1="18" y1="6" x2="6" y2="18"/>
                                 <line x1="6" y1="6" x2="18" y2="18"/>
                             </svg>

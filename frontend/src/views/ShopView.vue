@@ -13,7 +13,7 @@ const lang = computed(() => LanguageProvider.CURR_LANG.value);
 async function loadData() {
     loading.value = true;
     try {
-        const [s, i] = await Promise.all([getShopSettings(), getShopItems(lang.value)]);
+        const [s, i] = await Promise.all([getShopSettings(), getShopItems()]);
         settings.value = s || { stripe_publishable_key: '', pretix_widget_url: '', currency: 'EUR' };
         items.value = Array.isArray(i) ? i : [];
         if (settings.value.pretix_widget_url && !pretixLoaded.value) {
@@ -45,7 +45,8 @@ const checkoutLoading = ref(false);
 
 function openCheckout(item) {
     checkoutItem.value = item;
-    form.value = { quantity: 1, fulfillment_type: item.allow_pickup ? 'pickup' : 'shipping', buyer_email: '', shipping_name: '', shipping_address: '', shipping_city: '', shipping_postal_code: '', shipping_country: 'BE' };
+    const defaultCountry = item.shipping_countries?.[0] || 'BE';
+    form.value = { quantity: 1, fulfillment_type: item.allow_pickup ? 'pickup' : 'shipping', buyer_email: '', shipping_name: '', shipping_address: '', shipping_city: '', shipping_postal_code: '', shipping_country: defaultCountry };
     checkoutError.value = '';
 }
 
@@ -151,10 +152,10 @@ const checkoutCountries = computed(() => {
         </template>
         <Teleport to="body">
             <div v-if="checkoutItem" class="admin-modal-overlay" @click.self="closeCheckout">
-                <div class="admin-modal admin-modal-lg">
+                <div class="admin-modal admin-modal-lg" role="dialog" aria-modal="true" aria-label="Bestellen">
                     <div class="admin-modal-header">
                         <h2 class="admin-modal-title">Bestellen: {{ checkoutItem.title }}</h2>
-                        <button class="admin-modal-close" @click="closeCheckout"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+                        <button class="admin-modal-close" @click="closeCheckout" aria-label="Sluiten"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
                     </div>
                     <div class="admin-modal-body">
                         <div class="admin-form-group"><label class="admin-label">E-mailadres *</label><input v-model="form.buyer_email" type="email" class="admin-input" required placeholder="jouw@email.be" /></div>

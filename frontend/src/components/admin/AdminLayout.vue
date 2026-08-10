@@ -252,7 +252,7 @@ onMounted(checkAuth);
     <!-- Admin layout -->
     <div v-else class="admin-panel admin-layout" :class="{ 'sidebar-collapsed': sidebarCollapsed }">
         <!-- Mobile backdrop -->
-        <div v-if="mobileOpen" class="mobile-overlay" @click="mobileOpen = false"></div>
+        <div v-if="mobileOpen" class="mobile-overlay" @click="mobileOpen = false" role="presentation"></div>
 
         <AdminSidebar 
             :userProfile="userProfile" 
@@ -266,8 +266,8 @@ onMounted(checkAuth);
 
         <main class="admin-main">
             <header class="admin-header">
-                <button class="mobile-menu-btn" @click="mobileOpen = !mobileOpen" aria-label="Toggle menu">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <button class="mobile-menu-btn" @click="mobileOpen = !mobileOpen" aria-label="Toggle menu" :aria-expanded="mobileOpen">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                         <line x1="3" y1="12" x2="21" y2="12"/>
                         <line x1="3" y1="6" x2="21" y2="6"/>
                         <line x1="3" y1="18" x2="21" y2="18"/>

@@ -74,7 +74,7 @@
                             </td>
                             <td>{{ order.buyer_email || '—' }}</td>
                             <td>{{ order.quantity }}</td>
-                            <td style="font-weight: 500;">{{ order.amount_display || order.amount || '—' }}</td>
+                            <td style="font-weight: 500;">{{ order.amount_display || '—' }}</td>
                             <td>
                                 <span class="fulfillment-cell">
                                     <span class="fulfillment-icon" v-html="getFulfillmentIcon(order.fulfillment_type)"></span>
@@ -158,7 +158,7 @@
                                     </div>
                                     <div class="detail-row">
                                         <dt>Bedrag</dt>
-                                        <dd style="font-weight: 600;">{{ orderDetails.amount_display || orderDetails.amount || '—' }}</dd>
+                                        <dd style="font-weight: 600;">{{ orderDetails.amount_display || '—' }}</dd>
                                     </div>
                                     <div class="detail-row">
                                         <dt>Levering</dt>

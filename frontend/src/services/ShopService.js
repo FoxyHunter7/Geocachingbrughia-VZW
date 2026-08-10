@@ -5,9 +5,8 @@ export async function getShopSettings() {
     return fetchFromServer("shop/settings");
 }
 
-export async function getShopItems(lang) {
-    const endpoint = lang ? `shop/items?lang=${lang}` : "shop/items";
-    return fetchFromServer(endpoint);
+export async function getShopItems() {
+    return fetchFromServer("shop/items");
 }
 
 export async function getShopItem(id) {
