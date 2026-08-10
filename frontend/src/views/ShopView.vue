@@ -82,6 +82,29 @@ function fmt(item) { return item.price_display || `\u20ac ${(item.price_cents / 
 const hasItems = computed(() => items.value.length > 0);
 const hasPretix = computed(() => !!settings.value.pretix_widget_url);
 function imgUrl(url) { return url?.startsWith('http') ? url : `/api/images/${url}`; }
+const euCountryNames = {
+    BE: 'België', NL: 'Nederland', LU: 'Luxemburg', FR: 'Frankrijk',
+    DE: 'Duitsland', GB: 'Verenigd Koninkrijk', IE: 'Ierland', ES: 'Spanje',
+    PT: 'Portugal', IT: 'Italië', AT: 'Oostenrijk', CH: 'Zwitserland',
+    DK: 'Denemarken', SE: 'Zweden', NO: 'Noorwegen', FI: 'Finland',
+    PL: 'Polen', CZ: 'Tsjechië', SK: 'Slowakije', HU: 'Hongarije',
+    RO: 'Roemenië', BG: 'Bulgarije', HR: 'Kroatië', SI: 'Slovenië',
+    EE: 'Estland', LV: 'Letland', LT: 'Litouwen', GR: 'Griekenland',
+};
+
+function countriesSummary(codes) {
+    if (!codes || codes.length === 0) return '';
+    if (codes.length <= 3) return codes.map(c => euCountryNames[c] || c).join(', ');
+    return `${codes.length} landen`;
+}
+
+const checkoutCountries = computed(() => {
+    if (!checkoutItem.value?.shipping_countries) return [];
+    return checkoutItem.value.shipping_countries.map(code => ({
+        code,
+        name: euCountryNames[code] || code,
+    }));
+});
 </script>
 
 <template>
@@ -115,7 +138,7 @@ function imgUrl(url) { return url?.startsWith('http') ? url : `/api/images/${url
                             </div>
                             <div class="shop-card-fulfillment">
                                 <span v-if="item.allow_pickup" class="fb fb-pickup">Afhalen{{ item.pickup_label ? ': ' + item.pickup_label : '' }}</span>
-                                <span v-if="item.allow_shipping" class="fb fb-shipping">Verzenden{{ item.shipping_regions ? ' (' + item.shipping_regions + ')' : '' }}</span>
+                                <span v-if="item.allow_shipping" class="fb fb-shipping">Verzenden{{ item.shipping_countries ? ' (' + countriesSummary(item.shipping_countries) + ')' : '' }}</span>
                             </div>
                             <button class="shop-buy-btn" @click="openCheckout(item)">Kopen</button>
                         </div>
@@ -138,7 +161,7 @@ function imgUrl(url) { return url?.startsWith('http') ? url : `/api/images/${url
                             <label class="admin-label">Levering *</label>
                             <div class="fc">
                                 <label class="fc-opt"><input type="radio" v-model="form.fulfillment_type" value="pickup" /><span>Afhalen{{ checkoutItem.pickup_label ? ' (' + checkoutItem.pickup_label + ')' : '' }}</span></label>
-                                <label class="fc-opt"><input type="radio" v-model="form.fulfillment_type" value="shipping" /><span>Verzenden{{ checkoutItem.shipping_regions ? ' (' + checkoutItem.shipping_regions + ')' : '' }}</span></label>
+                                <label class="fc-opt"><input type="radio" v-model="form.fulfillment_type" value="shipping" /><span>Verzenden{{ checkoutItem.shipping_countries ? ' (' + countriesSummary(checkoutItem.shipping_countries) + ')' : '' }}</span></label>
                             </div>
                         </div>
                         <template v-if="form.fulfillment_type === 'shipping'">
@@ -148,7 +171,7 @@ function imgUrl(url) { return url?.startsWith('http') ? url : `/api/images/${url
                                 <div class="admin-form-group"><label class="admin-label">Stad *</label><input v-model="form.shipping_city" type="text" class="admin-input" required /></div>
                                 <div class="admin-form-group"><label class="admin-label">Postcode *</label><input v-model="form.shipping_postal_code" type="text" class="admin-input" required /></div>
                             </div>
-                            <div class="admin-form-group"><label class="admin-label">Land *</label><select v-model="form.shipping_country" class="admin-select"><option value="BE">België</option><option value="NL">Nederland</option><option value="FR">Frankrijk</option><option value="DE">Duitsland</option><option value="LU">Luxemburg</option></select></div>
+                            <div class="admin-form-group"><label class="admin-label">Land *</label><select v-model="form.shipping_country" class="admin-select"><option v-for="c in checkoutCountries" :key="c.code" :value="c.code">{{ c.name }}</option></select></div>
                         </template>
                         <div v-if="checkoutError" class="admin-alert admin-alert-danger"><span>{{ checkoutError }}</span></div>
                         <div class="checkout-sum"><div class="checkout-sum-row"><span>Totaal:</span><strong>{{ fmt({ price_cents: checkoutItem.price_cents * form.quantity, price_display: '' }) }}</strong></div><p class="checkout-sum-note">Je wordt doorgestuurd naar de beveiligde betaalomgeving van Stripe.</p></div>

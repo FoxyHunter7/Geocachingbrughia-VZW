@@ -70,21 +70,12 @@ func (h *Handler) CreateCheckoutSession(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	var item ShopItem
-	var imageURL sql.NullString
-	var stockQty sql.NullInt64
-	var allowPickup, allowShipping, autoConfirm, active int
-
-	err = h.db.QueryRow(`
+	item, err := scanShopItem(h.db.QueryRow(`
 		SELECT id, title, description, price_cents, image_url, stock_quantity,
 		       allow_pickup, pickup_label, allow_shipping, shipping_regions,
 		       auto_confirm, active, sort_order
 		FROM shop_items WHERE id = ? AND active = 1
-	`, req.ItemID).Scan(
-		&item.ID, &item.Title, &item.Description, &item.PriceCents,
-		&imageURL, &stockQty, &allowPickup, &item.PickupLabel,
-		&allowShipping, &item.ShippingRegions, &autoConfirm, &active, &item.SortOrder,
-	)
+	`, req.ItemID))
 
 	if err == sql.ErrNoRows {
 		respondJSON(w, http.StatusNotFound, map[string]string{"error": "Item not found or inactive"})
@@ -95,17 +86,31 @@ func (h *Handler) CreateCheckoutSession(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	if req.FulfillmentType == "pickup" && allowPickup != 1 {
+	if req.FulfillmentType == "pickup" && !item.AllowPickup {
 		respondJSON(w, http.StatusBadRequest, map[string]string{"error": "Pickup not available for this item"})
 		return
 	}
-	if req.FulfillmentType == "shipping" && allowShipping != 1 {
+	if req.FulfillmentType == "shipping" && !item.AllowShipping {
 		respondJSON(w, http.StatusBadRequest, map[string]string{"error": "Shipping not available for this item"})
 		return
 	}
 
-	if stockQty.Valid {
-		remaining := int(stockQty.Int64)
+	if req.FulfillmentType == "shipping" {
+		countryAllowed := false
+		for _, c := range item.ShippingCountries {
+			if strings.EqualFold(c, req.ShippingCountry) {
+				countryAllowed = true
+				break
+			}
+		}
+		if !countryAllowed {
+			respondJSON(w, http.StatusBadRequest, map[string]string{"error": "Shipping to this country is not available for this item"})
+			return
+		}
+	}
+
+	if item.StockQuantity != nil {
+		remaining := *item.StockQuantity
 		if remaining < req.Quantity {
 			respondJSON(w, http.StatusBadRequest, map[string]string{"error": "Insufficient stock"})
 			return
@@ -156,8 +161,8 @@ func (h *Handler) CreateCheckoutSession(w http.ResponseWriter, r *http.Request) 
 	if item.Description != "" {
 		formData.Set("line_items[0][price_data][product_data][description]", item.Description)
 	}
-	if imageURL.Valid && imageURL.String != "" {
-		formData.Set("line_items[0][price_data][product_data][images][0]", imageURL.String)
+	if item.ImageURL != "" {
+		formData.Set("line_items[0][price_data][product_data][images][0]", item.ImageURL)
 	}
 
 	formData.Set("metadata[order_id]", strconv.FormatInt(orderID, 10))

@@ -37,11 +37,71 @@ const itemForm = ref({
     allow_pickup: false,
     pickup_label: '',
     allow_shipping: false,
-    shipping_regions: '',
+    shipping_countries: [],
     auto_confirm: false,
     is_active: true,
     sort_order: 0
 });
+
+const euCountries = [
+    { code: 'BE', name: 'België' },
+    { code: 'NL', name: 'Nederland' },
+    { code: 'LU', name: 'Luxemburg' },
+    { code: 'FR', name: 'Frankrijk' },
+    { code: 'DE', name: 'Duitsland' },
+    { code: 'GB', name: 'Verenigd Koninkrijk' },
+    { code: 'IE', name: 'Ierland' },
+    { code: 'ES', name: 'Spanje' },
+    { code: 'PT', name: 'Portugal' },
+    { code: 'IT', name: 'Italië' },
+    { code: 'AT', name: 'Oostenrijk' },
+    { code: 'CH', name: 'Zwitserland' },
+    { code: 'DK', name: 'Denemarken' },
+    { code: 'SE', name: 'Zweden' },
+    { code: 'NO', name: 'Noorwegen' },
+    { code: 'FI', name: 'Finland' },
+    { code: 'PL', name: 'Polen' },
+    { code: 'CZ', name: 'Tsjechië' },
+    { code: 'SK', name: 'Slowakije' },
+    { code: 'HU', name: 'Hongarije' },
+    { code: 'RO', name: 'Roemenië' },
+    { code: 'BG', name: 'Bulgarije' },
+    { code: 'HR', name: 'Kroatië' },
+    { code: 'SI', name: 'Slovenië' },
+    { code: 'EE', name: 'Estland' },
+    { code: 'LV', name: 'Letland' },
+    { code: 'LT', name: 'Litouwen' },
+    { code: 'GR', name: 'Griekenland' },
+];
+
+function toggleCountry(code) {
+    const idx = itemForm.value.shipping_countries.indexOf(code);
+    if (idx > -1) {
+        itemForm.value.shipping_countries.splice(idx, 1);
+    } else {
+        itemForm.value.shipping_countries.push(code);
+    }
+}
+
+function isCountrySelected(code) {
+    return itemForm.value.shipping_countries.includes(code);
+}
+
+function selectAllCountries() {
+    itemForm.value.shipping_countries = euCountries.map(c => c.code);
+}
+
+function clearAllCountries() {
+    itemForm.value.shipping_countries = [];
+}
+
+function countriesToString(codes) {
+    if (!codes || codes.length === 0) return '';
+    return codes.map(code => {
+        const c = euCountries.find(c => c.code === code);
+        return c ? c.name : code;
+    }).join(', ');
+}
 
 // ---- API helper ----
 function getToken() {
@@ -148,7 +208,7 @@ function openCreateModal() {
         allow_pickup: false,
         pickup_label: '',
         allow_shipping: false,
-        shipping_regions: '',
+        shipping_countries: [],
         auto_confirm: false,
         is_active: true,
         sort_order: 0
@@ -169,7 +229,7 @@ function openEditModal(item) {
         allow_pickup: !!item.allow_pickup,
         pickup_label: item.pickup_label || '',
         allow_shipping: !!item.allow_shipping,
-        shipping_regions: item.shipping_regions || '',
+        shipping_countries: item.shipping_countries || [],
         auto_confirm: !!item.auto_confirm,
         is_active: !!item.active,
         sort_order: item.sort_order || 0
@@ -233,8 +293,8 @@ async function handleSaveItem() {
         errors.push('Afhaal-label is verplicht wanneer afhalen is ingeschakeld');
     }
 
-    if (itemForm.value.allow_shipping && !itemForm.value.shipping_regions.trim()) {
-        errors.push('Verzendregio\'s zijn verplicht wanneer verzenden is ingeschakeld');
+    if (itemForm.value.allow_shipping && itemForm.value.shipping_countries.length === 0) {
+        errors.push('Selecteer minstens één land voor verzending');
     }
 
     if (errors.length > 0) {
@@ -264,7 +324,7 @@ async function handleSaveItem() {
             allow_pickup: itemForm.value.allow_pickup,
             pickup_label: itemForm.value.pickup_label || '',
             allow_shipping: itemForm.value.allow_shipping,
-            shipping_regions: itemForm.value.shipping_regions || '',
+            shipping_countries: itemForm.value.shipping_countries,
             auto_confirm: itemForm.value.auto_confirm,
             active: itemForm.value.is_active,
             sort_order: parseInt(itemForm.value.sort_order, 10) || 0
@@ -463,7 +523,7 @@ onMounted(async () => {
                             <td>
                                 <div class="fulfillment-badges">
                                     <span v-if="item.allow_pickup" class="admin-badge admin-badge-info">Afhalen</span>
-                                    <span v-if="item.allow_shipping" class="admin-badge admin-badge-success">Verzending</span>
+                                    <span v-if="item.allow_shipping" class="admin-badge admin-badge-success">Verzending ({{ item.shipping_countries ? item.shipping_countries.length : 0 }})</span>
                                     <span
                                         v-if="!item.allow_pickup && !item.allow_shipping"
                                         class="admin-text-muted"
@@ -613,14 +673,31 @@ onMounted(async () => {
                             </label>
                         </div>
                         <div v-if="itemForm.allow_shipping" class="admin-form-group">
-                            <label class="admin-label" for="item-shipping-regions">Verzendregio's</label>
-                            <input
-                                id="item-shipping-regions"
-                                v-model="itemForm.shipping_regions"
-                                type="text"
-                                class="admin-input"
-                                placeholder="bijv. België, Nederland, Luxemburg"
-                            >
+                            <div class="country-selector-header">
+                                <label class="admin-label">Verzendlanden</label>
+                                <div class="country-selector-actions">
+                                    <button type="button" class="admin-btn admin-btn-sm admin-btn-ghost" @click="selectAllCountries">Alles</button>
+                                    <button type="button" class="admin-btn admin-btn-sm admin-btn-ghost" @click="clearAllCountries">Niets</button>
+                                </div>
+                            </div>
+                            <div class="country-grid" role="group" aria-label="Verzendlanden">
+                                <label
+                                    v-for="country in euCountries"
+                                    :key="country.code"
+                                    class="country-option"
+                                    :class="{ selected: isCountrySelected(country.code) }"
+                                >
+                                    <input
+                                        type="checkbox"
+                                        :value="country.code"
+                                        :checked="isCountrySelected(country.code)"
+                                        @change="toggleCountry(country.code)"
+                                    >
+                                    <span class="country-code">{{ country.code }}</span>
+                                    <span class="country-name">{{ country.name }}</span>
+                                </label>
+                            </div>
+                            <p class="admin-form-hint">{{ itemForm.shipping_countries.length }} land(en) geselecteerd.</p>
                         </div>
 
                         <div class="form-section-title">Opties</div>
@@ -761,5 +838,71 @@ onMounted(async () => {
     .admin-form-row {
         grid-template-columns: 1fr;
     }
+}
+
+.country-selector-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.country-selector-actions {
+    display: flex;
+    gap: 0.375rem;
+}
+
+.country-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 0.5rem;
+    max-height: 280px;
+    overflow-y: auto;
+    padding: 0.75rem;
+    border: 1px solid var(--admin-border);
+    border-radius: var(--admin-radius);
+    background: var(--admin-bg);
+}
+
+.country-option {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.625rem;
+    border: 1px solid var(--admin-border);
+    border-radius: var(--admin-radius-sm);
+    cursor: pointer;
+    transition: all 0.15s;
+    background: var(--admin-surface);
+    font-size: 0.8125rem;
+}
+
+.country-option:hover {
+    border-color: var(--admin-primary);
+    background: var(--admin-primary-bg);
+}
+
+.country-option.selected {
+    border-color: var(--admin-primary);
+    background: var(--admin-primary-bg);
+    color: var(--admin-primary);
+    font-weight: 500;
+}
+
+.country-option input {
+    accent-color: var(--admin-primary);
+    flex-shrink: 0;
+}
+
+.country-code {
+    font-weight: 600;
+    font-size: 0.75rem;
+    min-width: 1.75rem;
+}
+
+.country-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 </style>

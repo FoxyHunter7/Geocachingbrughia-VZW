@@ -20,20 +20,20 @@ type ShopSettings struct {
 }
 
 type ShopItem struct {
-	ID              int64  `json:"id"`
-	Title           string `json:"title"`
-	Description     string `json:"description"`
-	PriceCents      int    `json:"price_cents"`
-	PriceDisplay    string `json:"price_display"`
-	ImageURL        string `json:"image_url,omitempty"`
-	StockQuantity   *int   `json:"stock_quantity,omitempty"`
-	AllowPickup     bool   `json:"allow_pickup"`
-	PickupLabel     string `json:"pickup_label,omitempty"`
-	AllowShipping   bool   `json:"allow_shipping"`
-	ShippingRegions string `json:"shipping_regions,omitempty"`
-	AutoConfirm     bool   `json:"auto_confirm"`
-	Active          bool   `json:"active"`
-	SortOrder       int    `json:"sort_order"`
+	ID                int64    `json:"id"`
+	Title             string   `json:"title"`
+	Description       string   `json:"description"`
+	PriceCents        int      `json:"price_cents"`
+	PriceDisplay      string   `json:"price_display"`
+	ImageURL          string   `json:"image_url,omitempty"`
+	StockQuantity     *int     `json:"stock_quantity,omitempty"`
+	AllowPickup       bool     `json:"allow_pickup"`
+	PickupLabel       string   `json:"pickup_label,omitempty"`
+	AllowShipping     bool     `json:"allow_shipping"`
+	ShippingCountries []string `json:"shipping_countries,omitempty"`
+	AutoConfirm       bool     `json:"auto_confirm"`
+	Active            bool     `json:"active"`
+	SortOrder         int      `json:"sort_order"`
 }
 
 type ShopOrder struct {
@@ -83,11 +83,12 @@ func scanShopItem(rows interface {
 	var imageURL sql.NullString
 	var stockQty sql.NullInt64
 	var allowPickup, allowShipping, autoConfirm, active int
+	var shippingRegionsJSON string
 
 	err := rows.Scan(
 		&item.ID, &item.Title, &item.Description, &item.PriceCents,
 		&imageURL, &stockQty, &allowPickup, &item.PickupLabel,
-		&allowShipping, &item.ShippingRegions, &autoConfirm, &active, &item.SortOrder,
+		&allowShipping, &shippingRegionsJSON, &autoConfirm, &active, &item.SortOrder,
 	)
 	if err != nil {
 		return item, err
@@ -99,6 +100,9 @@ func scanShopItem(rows interface {
 	if stockQty.Valid {
 		q := int(stockQty.Int64)
 		item.StockQuantity = &q
+	}
+	if shippingRegionsJSON != "" && shippingRegionsJSON != "[]" {
+		json.Unmarshal([]byte(shippingRegionsJSON), &item.ShippingCountries)
 	}
 	item.AllowPickup = allowPickup == 1
 	item.AllowShipping = allowShipping == 1
@@ -256,8 +260,30 @@ func (h *Handler) CreateShopItem(w http.ResponseWriter, r *http.Request) {
 	item.Title = strings.TrimSpace(item.Title)
 	item.Description = truncateString(item.Description, maxStringLength)
 	item.PickupLabel = truncateString(strings.TrimSpace(item.PickupLabel), maxTitleLength)
-	item.ShippingRegions = truncateString(strings.TrimSpace(item.ShippingRegions), maxTitleLength)
 	item.ImageURL = truncateString(strings.TrimSpace(item.ImageURL), 500)
+
+	// Validate and serialize shipping countries
+	var shippingCountriesJSON string
+	if item.AllowShipping {
+		if len(item.ShippingCountries) == 0 {
+			respondJSON(w, http.StatusBadRequest, map[string]string{"error": "Shipping countries are required when shipping is enabled"})
+			return
+		}
+		validCountries := []string{}
+		for _, code := range item.ShippingCountries {
+			code = strings.ToUpper(strings.TrimSpace(code))
+			if validateCountryCode(code) {
+				validCountries = append(validCountries, code)
+			}
+		}
+		if len(validCountries) == 0 {
+			respondJSON(w, http.StatusBadRequest, map[string]string{"error": "No valid shipping countries selected"})
+			return
+		}
+		item.ShippingCountries = validCountries
+		bytes, _ := json.Marshal(validCountries)
+		shippingCountriesJSON = string(bytes)
+	}
 
 	if item.Title == "" {
 		respondJSON(w, http.StatusBadRequest, map[string]string{"error": "Title is required"})
@@ -283,10 +309,6 @@ func (h *Handler) CreateShopItem(w http.ResponseWriter, r *http.Request) {
 		respondJSON(w, http.StatusBadRequest, map[string]string{"error": "Pickup label is required when pickup is enabled"})
 		return
 	}
-	if item.AllowShipping && item.ShippingRegions == "" {
-		respondJSON(w, http.StatusBadRequest, map[string]string{"error": "Shipping regions are required when shipping is enabled"})
-		return
-	}
 
 	result, err := h.db.Exec(`
 		INSERT INTO shop_items (title, description, price_cents, image_url, stock_quantity,
@@ -294,7 +316,7 @@ func (h *Handler) CreateShopItem(w http.ResponseWriter, r *http.Request) {
 		                        auto_confirm, active, sort_order)
 		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 	`, item.Title, item.Description, item.PriceCents, item.ImageURL, nullableInt(item.StockQuantity),
-		boolToInt(item.AllowPickup), item.PickupLabel, boolToInt(item.AllowShipping), item.ShippingRegions,
+		boolToInt(item.AllowPickup), item.PickupLabel, boolToInt(item.AllowShipping), shippingCountriesJSON,
 		boolToInt(item.AutoConfirm), boolToInt(item.Active), item.SortOrder)
 
 	if err != nil {
@@ -320,8 +342,30 @@ func (h *Handler) UpdateShopItem(w http.ResponseWriter, r *http.Request) {
 	item.Title = strings.TrimSpace(item.Title)
 	item.Description = truncateString(item.Description, maxStringLength)
 	item.PickupLabel = truncateString(strings.TrimSpace(item.PickupLabel), maxTitleLength)
-	item.ShippingRegions = truncateString(strings.TrimSpace(item.ShippingRegions), maxTitleLength)
 	item.ImageURL = truncateString(strings.TrimSpace(item.ImageURL), 500)
+
+	// Validate and serialize shipping countries
+	var shippingCountriesJSON string
+	if item.AllowShipping {
+		if len(item.ShippingCountries) == 0 {
+			respondJSON(w, http.StatusBadRequest, map[string]string{"error": "Shipping countries are required when shipping is enabled"})
+			return
+		}
+		validCountries := []string{}
+		for _, code := range item.ShippingCountries {
+			code = strings.ToUpper(strings.TrimSpace(code))
+			if validateCountryCode(code) {
+				validCountries = append(validCountries, code)
+			}
+		}
+		if len(validCountries) == 0 {
+			respondJSON(w, http.StatusBadRequest, map[string]string{"error": "No valid shipping countries selected"})
+			return
+		}
+		item.ShippingCountries = validCountries
+		bytes, _ := json.Marshal(validCountries)
+		shippingCountriesJSON = string(bytes)
+	}
 
 	if item.Title == "" {
 		respondJSON(w, http.StatusBadRequest, map[string]string{"error": "Title is required"})
@@ -347,10 +391,6 @@ func (h *Handler) UpdateShopItem(w http.ResponseWriter, r *http.Request) {
 		respondJSON(w, http.StatusBadRequest, map[string]string{"error": "Pickup label is required when pickup is enabled"})
 		return
 	}
-	if item.AllowShipping && item.ShippingRegions == "" {
-		respondJSON(w, http.StatusBadRequest, map[string]string{"error": "Shipping regions are required when shipping is enabled"})
-		return
-	}
 
 	_, err := h.db.Exec(`
 		UPDATE shop_items SET
@@ -359,7 +399,7 @@ func (h *Handler) UpdateShopItem(w http.ResponseWriter, r *http.Request) {
 			auto_confirm = ?, active = ?, sort_order = ?, updated_at = CURRENT_TIMESTAMP
 		WHERE id = ?
 	`, item.Title, item.Description, item.PriceCents, item.ImageURL, nullableInt(item.StockQuantity),
-		boolToInt(item.AllowPickup), item.PickupLabel, boolToInt(item.AllowShipping), item.ShippingRegions,
+		boolToInt(item.AllowPickup), item.PickupLabel, boolToInt(item.AllowShipping), shippingCountriesJSON,
 		boolToInt(item.AutoConfirm), boolToInt(item.Active), item.SortOrder, id)
 
 	if err != nil {
