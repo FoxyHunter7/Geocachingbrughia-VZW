@@ -132,10 +132,10 @@
         "NL": "verzonden"
     },
     "FormFailed": {
-        "DE": "etwas ist schief gelaufen, das Formular konnte nicht gesendet werden",
-        "EN": "omething went wrong, couldn't submit",
+        "EN": "something went wrong, couldn't submit",
+        "NL": "er liep iets mis, kon formulier niet verzenden",
         "FR": "un problème est survenu, le formulaire n'a pas pu être envoyé",
-        "NL": "er liep iets mis, kon formulier niet verzenden"
+        "DE": "etwas ist schief gelaufen, das Formular konnte nicht gesendet werden"
     },
     "NavEvents": {
         "DE": "Veranstaltungen",
@@ -730,5 +730,59 @@
         "NL": "Griekenland",
         "FR": "Grèce",
         "DE": "Griechenland"
+    },
+    "ShopOrderSuccessTitle": {
+        "EN": "Thank you for your purchase!",
+        "NL": "Bedankt voor je aankoop!",
+        "FR": "Merci pour votre achat !",
+        "DE": "Vielen Dank für Ihren Einkauf!"
+    },
+    "ShopOrderReceivedId": {
+        "EN": "Your order #///id/// has been received.",
+        "NL": "Je bestelling #///id/// is ontvangen.",
+        "FR": "Votre commande n°///id/// a été reçue.",
+        "DE": "Ihre Bestellung #///id/// wurde empfangen."
+    },
+    "ShopOrderReceived": {
+        "EN": "Your order has been received.",
+        "NL": "Je bestelling is ontvangen.",
+        "FR": "Votre commande a été reçue.",
+        "DE": "Ihre Bestellung wurde empfangen."
+    },
+    "ShopOrderNote": {
+        "EN": "You will receive a confirmation email with further details.",
+        "NL": "Je ontvangt een bevestigingsmail met verdere details.",
+        "FR": "Vous recevrez un e-mail de confirmation avec plus de détails.",
+        "DE": "Sie erhalten eine Bestätigungs-E-Mail mit weiteren Details."
+    },
+    "ShopOrderCancelTitle": {
+        "EN": "Payment cancelled",
+        "NL": "Betaling geannuleerd",
+        "FR": "Paiement annulé",
+        "DE": "Zahlung abgebrochen"
+    },
+    "ShopOrderCancelledId": {
+        "EN": "Your order #///id/// has been cancelled.",
+        "NL": "Je bestelling #///id/// is geannuleerd.",
+        "FR": "Votre commande n°///id/// a été annulée.",
+        "DE": "Ihre Bestellung #///id/// wurde abgebrochen."
+    },
+    "ShopOrderCancelled": {
+        "EN": "Your order has been cancelled.",
+        "NL": "Je bestelling is geannuleerd.",
+        "FR": "Votre commande a été annulée.",
+        "DE": "Ihre Bestellung wurde abgebrochen."
+    },
+    "ShopNoAmountCharged": {
+        "EN": "No amount was charged.",
+        "NL": "Geen bedrag werd afgeschreven.",
+        "FR": "Aucun montant n'a été débité.",
+        "DE": "Es wurde kein Betrag abgebucht."
+    },
+    "ShopBackToShop": {
+        "EN": "Back to the shop",
+        "NL": "Terug naar de webshop",
+        "FR": "Retour à la boutique",
+        "DE": "Zurück zum Shop"
     }
 }

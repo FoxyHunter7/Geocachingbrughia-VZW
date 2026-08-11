@@ -16,15 +16,12 @@ func (db *DB) SeedDefaults() error {
 		return err
 	}
 
-	// Check if static content exists
-	var staticCount int
-	db.QueryRow("SELECT COUNT(*) FROM static_content").Scan(&staticCount)
-
-	if staticCount == 0 {
-		log.Println("Seeding default static content...")
-		if err := db.seedStaticContent(); err != nil {
-			return err
-		}
+	// Seed static content idempotently: INSERT OR IGNORE only adds missing
+	// keys, so existing (possibly admin-edited) translations are preserved
+	// while newly added keys appear on the next boot.
+	log.Println("Seeding default static content...")
+	if err := db.seedStaticContent(); err != nil {
+		return err
 	}
 
 	// Create default admin user if no users exist
@@ -557,6 +554,60 @@ func (db *DB) seedStaticContent() error {
 			"FR": "Une erreur s'est produite.",
 			"DE": "Ein Fehler ist aufgetreten.",
 		},
+		"ShopOrderSuccessTitle": {
+			"EN": "Thank you for your purchase!",
+			"NL": "Bedankt voor je aankoop!",
+			"FR": "Merci pour votre achat !",
+			"DE": "Vielen Dank für Ihren Einkauf!",
+		},
+		"ShopOrderReceivedId": {
+			"EN": "Your order #///id/// has been received.",
+			"NL": "Je bestelling #///id/// is ontvangen.",
+			"FR": "Votre commande n°///id/// a été reçue.",
+			"DE": "Ihre Bestellung #///id/// wurde empfangen.",
+		},
+		"ShopOrderReceived": {
+			"EN": "Your order has been received.",
+			"NL": "Je bestelling is ontvangen.",
+			"FR": "Votre commande a été reçue.",
+			"DE": "Ihre Bestellung wurde empfangen.",
+		},
+		"ShopOrderNote": {
+			"EN": "You will receive a confirmation email with further details.",
+			"NL": "Je ontvangt een bevestigingsmail met verdere details.",
+			"FR": "Vous recevrez un e-mail de confirmation avec plus de détails.",
+			"DE": "Sie erhalten eine Bestätigungs-E-Mail mit weiteren Details.",
+		},
+		"ShopOrderCancelTitle": {
+			"EN": "Payment cancelled",
+			"NL": "Betaling geannuleerd",
+			"FR": "Paiement annulé",
+			"DE": "Zahlung abgebrochen",
+		},
+		"ShopOrderCancelledId": {
+			"EN": "Your order #///id/// has been cancelled.",
+			"NL": "Je bestelling #///id/// is geannuleerd.",
+			"FR": "Votre commande n°///id/// a été annulée.",
+			"DE": "Ihre Bestellung #///id/// wurde abgebrochen.",
+		},
+		"ShopOrderCancelled": {
+			"EN": "Your order has been cancelled.",
+			"NL": "Je bestelling is geannuleerd.",
+			"FR": "Votre commande a été annulée.",
+			"DE": "Ihre Bestellung wurde abgebrochen.",
+		},
+		"ShopNoAmountCharged": {
+			"EN": "No amount was charged.",
+			"NL": "Geen bedrag werd afgeschreven.",
+			"FR": "Aucun montant n'a été débité.",
+			"DE": "Es wurde kein Betrag abgebucht.",
+		},
+		"ShopBackToShop": {
+			"EN": "Back to the shop",
+			"NL": "Terug naar de webshop",
+			"FR": "Retour à la boutique",
+			"DE": "Zurück zum Shop",
+		},
 		"CountryBE": {
 			"EN": "Belgium",
 			"NL": "België",
@@ -797,7 +848,7 @@ func (db *DB) seedStaticContent() error {
 	for property, translations := range staticContent {
 		for langCode, content := range translations {
 			_, err := db.Exec(
-				"INSERT INTO static_content (property, lang_code, content) VALUES (?, ?, ?)",
+				"INSERT OR IGNORE INTO static_content (property, lang_code, content) VALUES (?, ?, ?)",
 				property, langCode, content,
 			)
 			if err != nil {
